@@ -1,7 +1,12 @@
-name = "real-estate-website"
+name = "mobile-crm-website"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mobile-crm-website"
+database_id = "29ac8dce-f4f3-4878-aa36-53648608b38c"
 
 [vars]
 ADMIN_EMAILS = "admin@sahyak.com,team@sahyak.com"
