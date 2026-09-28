@@ -6,7 +6,7 @@ export const prerender = false;
 
 export const GET: APIRoute = async ({ url }) => {
   try {
-    const dimension = (url.searchParams.get('type') || url.searchParams.get('dimension') || 'all') as 'all' | 'queries' | 'pages' | 'countries' | 'dates';
+    const dimension = (url.searchParams.get('type') || url.searchParams.get('dimension') || 'all') as 'all' | 'queries' | 'pages' | 'countries' | 'dates' | 'opportunities' | 'clusters' | 'market' | 'audit' | 'truth' | 'authority';
     const range = (url.searchParams.get('range') as '7d' | '28d' | '90d') || '28d';
 
     const env = await getRuntimeEnv();

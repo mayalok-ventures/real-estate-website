@@ -76,6 +76,109 @@ export interface URLInspectionResult {
   inspectedAt: string;
 }
 
+export interface GSCAlert {
+  id: string;
+  severity: 'good' | 'info' | 'warning' | 'critical';
+  title: string;
+  message: string;
+  timestamp: string;
+  actionLabel?: string;
+  actionUrl?: string;
+}
+
+export interface GSCTopicCluster {
+  id: string;
+  name: string;
+  persona: string;
+  targetPages: string[];
+  totalVolume: number;
+  rankingCount: number;
+  intent: 'Transactional' | 'Commercial' | 'Informational';
+  topKeywords: string[];
+  color: string;
+}
+
+export interface GSCTopicNode {
+  topic: string;
+  pillar: string;
+  authorityScore: number; // 0-100
+  rankingKeywords: number;
+  targetUrl: string;
+  internalLinks: number;
+  status: 'Dominant' | 'Strong' | 'Growing' | 'Emerging';
+}
+
+export interface GSCProductTruth {
+  query: string;
+  claimedFeature: string;
+  landingPage: string;
+  verifiedStatus: '100% Verified Truth' | 'Aligned' | 'Feature Supported';
+  accuracyScore: number; // 0-100
+  notes: string;
+}
+
+export interface GSCCompetitorComparison {
+  name: string;
+  domain: string;
+  overlapPercentage: number;
+  pricePosition: string;
+  advantages: string;
+  vulnerability: string;
+}
+
+export interface GSCMarketIntelligence {
+  marketSharePercentage: number;
+  competitors: GSCCompetitorComparison[];
+  intentBreakdown: {
+    transactional: number;
+    commercial: number;
+    informational: number;
+  };
+  highVolumeLowKDKeywords: {
+    keyword: string;
+    volume: number;
+    kd: number;
+    cpc: string;
+    intent: string;
+  }[];
+}
+
+export interface GSCConversionPage {
+  page: string;
+  organicClicks: number;
+  formInquiries: number;
+  conversionRate: number;
+  estimatedRevenueValue: string;
+}
+
+export interface GSCConversionData {
+  totalOrganicLeads: number;
+  avgConversionRate: number;
+  estimatedAdSavings: string;
+  topPages: GSCConversionPage[];
+}
+
+export interface GSCAuditCheck {
+  id: string;
+  name: string;
+  category: 'Technical' | 'Content' | 'Schema' | 'Mobile' | 'Core Web Vitals';
+  status: 'passed' | 'warning' | 'failed';
+  score: string;
+  details: string;
+}
+
+export interface GSCHealthOverview {
+  overallScore: number;
+  indexingCoverageRate: number;
+  coreWebVitalsStatus: 'Passed' | 'Needs Improvement';
+  lcpValue: string;
+  clsValue: string;
+  inpValue: string;
+  mobileUsability: string;
+  securityIssues: number;
+  manualActions: number;
+}
+
 export interface GSCDataSummary {
   status: 'connected' | 'not_configured' | 'auth_error' | 'permission_denied';
   statusMessage: string;
@@ -97,4 +200,14 @@ export interface GSCDataSummary {
   sitemaps: GSCSitemapRow[];
   opportunities: GSCOpportunity[];
   lastFetchedAt: string;
+  // Enhanced 14-Module Suite
+  healthOverview: GSCHealthOverview;
+  alerts: GSCAlert[];
+  marketIntelligence: GSCMarketIntelligence;
+  conversions: GSCConversionData;
+  authorityNodes: GSCTopicNode[];
+  productTruth: GSCProductTruth[];
+  clusters: GSCTopicCluster[];
+  auditIssues: GSCAuditCheck[];
 }
+
