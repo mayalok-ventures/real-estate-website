@@ -3,29 +3,53 @@ export const prerender = true;
 
 import Layout from '../layouts/Layout.astro';
 
-const seoTitle = "404 - Page Not Found | Sahyak CRM";
-const seoDesc = "The real estate page or resource you are looking for has been moved or does not exist.";
+// Strict character constraints: Title: 50-60 chars, Description: 140-160 chars
+const seoTitle = "Page Not Found (Error 404) | Sahyak Real Estate CRM"; // 53 chars
+const seoDesc = "The requested real estate page or resource could not be found. Browse Sahyak CRM features, pricing plans, security, or return to our homepage."; // 143 chars
 ---
 
-<Layout title={seoTitle} description={seoDesc}>
-  <section class="section section-dark" style="min-height: 70vh; display: flex; align-items: center; text-align: center;">
-    <div class="container" style="max-width: 600px; margin: 0 auto;">
+<Layout title={seoTitle} description={seoDesc} noindex={true}>
+  <section class="section section-dark" style="min-height: 75vh; display: flex; align-items: center; text-align: center; padding: 4rem 1rem;">
+    <div class="container" style="max-width: 680px; margin: 0 auto;">
       <div class="badge-pill" style="margin: 0 auto 1.5rem;">
-        <span class="badge-dot"></span> Error 404
+        <span class="badge-dot"></span> Error 404 &bull; Page Missing
       </div>
-      <h1 class="hero-title" style="font-size: 3.5rem; margin-bottom: 1rem;">
-        Property Not Found
+      <h1 class="hero-title" style="font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1;">
+        Page Not Found
       </h1>
-      <p class="sub-lead" style="margin: 0 auto 2.5rem; text-align: center;">
-        The page you are looking for may have been moved, updated, or does not exist. Let's get you back on track to closing deals.
+      <p class="sub-lead" style="margin: 0 auto 2rem; text-align: center; max-width: 540px; color: #94a3b8;">
+        The page or resource you are looking for may have been moved, updated, or does not exist. Use the links below to return to your sales pipeline or explore our platform.
       </p>
-      <div class="btn-group" style="justify-content: center;">
-        <a href="/" class="btn btn-primary">
+      
+      <div class="btn-group" style="justify-content: center; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap;">
+        <a href="/" class="btn btn-primary" style="padding: 0.85rem 1.75rem; border-radius: 9999px;">
           Return to Homepage &rarr;
         </a>
-        <a href="/features" class="btn btn-outline">
-          Explore Features
+        <a href="/features" class="btn btn-outline" style="padding: 0.85rem 1.75rem; border-radius: 9999px;">
+          Explore CRM Features
         </a>
+      </div>
+
+      <!-- Quick Helpful Navigation Links -->
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 1rem; padding: 1.5rem; text-align: left;">
+        <p style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 1rem;">Popular Destinations:</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem;">
+          <a href="/pricing" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; display: flex; items-center; gap: 0.5rem; transition: color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">
+            &bull; Pricing Plans
+          </a>
+          <a href="/resources" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; display: flex; items-center; gap: 0.5rem; transition: color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">
+            &bull; Resources & Guides
+          </a>
+          <a href="/security" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; display: flex; items-center; gap: 0.5rem; transition: color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">
+            &bull; Security & Cloud
+          </a>
+          <a href="/about" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; display: flex; items-center; gap: 0.5rem; transition: color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">
+            &bull; About Company
+          </a>
+          <a href="/contact" style="color: #cbd5e1; text-decoration: none; font-size: 0.9rem; display: flex; items-center; gap: 0.5rem; transition: color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">
+            &bull; Contact & Support
+          </a>
+        </div>
       </div>
     </div>
   </section>

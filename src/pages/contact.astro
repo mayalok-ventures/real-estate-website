@@ -4,8 +4,115 @@ export const prerender = true;
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
-const seoTitle = "Sahyak CRM - Contact Global Sales & Support";
-const seoDesc = "Have a question, need an enterprise demo or want to see how Sahyak CRM scales across 15+ countries? Contact our global team today.";
+const seoTitle = "Contact Sahyak CRM — Sales, Enterprise Demos & 24/7 Support";
+const seoDesc = "Contact Sahyak CRM specialists for custom enterprise demos, pricing inquiries, or 24/7 technical support. Phone: +91 87964 75107, Email: support@sahyak.com.";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://sahyak.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Contact",
+      "item": "https://sahyak.com/contact"
+    }
+  ]
+};
+
+const contactPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": seoTitle,
+  "description": seoDesc,
+  "url": "https://sahyak.com/contact",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "Sahyak CRM",
+    "url": "https://sahyak.com",
+    "logo": "https://sahyak.com/images/logo.png",
+    "email": "support@sahyak.com",
+    "telephone": "+91 87964 75107",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Bandra Kurla Complex (BKC)",
+      "addressLocality": "Mumbai",
+      "addressRegion": "Maharashtra",
+      "postalCode": "400051",
+      "addressCountry": "IN"
+    },
+    "contactPoint": [
+      {
+        "@type": "ContactPoint",
+        "telephone": "+91 87964 75107",
+        "contactType": "sales",
+        "email": "support@sahyak.com",
+        "areaServed": ["IN", "AE", "US", "GB", "AU", "CA", "SG"],
+        "availableLanguage": ["en", "hi"]
+      },
+      {
+        "@type": "ContactPoint",
+        "telephone": "+91 87964 75107",
+        "contactType": "technical support",
+        "email": "support@sahyak.com",
+        "availableLanguage": ["en", "hi"]
+      }
+    ]
+  }
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How quickly do you respond to inquiries?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We typically respond within 1 business day. For urgent matters, please reach out via phone (+91 87964 75107) or WhatsApp."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I get a live demo of Sahyak CRM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, you can schedule an interactive 1-on-1 walkthrough directly through our contact form or hotline."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you offer support for bulk team onboarding?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, we provide dedicated support and free data migration for teams looking to onboard multiple agents and managers simultaneously."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I integrate WhatsApp with Sahyak?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Sahyak offers seamless WhatsApp Web automation and official Meta Cloud WhatsApp Business API integration."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a free trial available?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer a 14-day free trial for all new users. No credit card required to get started."
+      }
+    }
+  ]
+};
 ---
 
 <!DOCTYPE html>
@@ -16,9 +123,37 @@ const seoDesc = "Have a question, need an enterprise demo or want to see how Sah
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
     <link rel="canonical" href="https://sahyak.com/contact" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sahyak.com/contact" />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={seoDesc} />
+    <meta property="og:image" content="https://sahyak.com/images/contact/1.png" />
+    <meta property="og:site_name" content="Sahyak CRM" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://sahyak.com/contact" />
+    <meta property="twitter:title" content={seoTitle} />
+    <meta property="twitter:description" content={seoDesc} />
+    <meta property="twitter:image" content="https://sahyak.com/images/contact/1.png" />
+
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN-MH" />
+    <meta name="geo.placename" content="Mumbai" />
+    <meta name="geo.position" content="19.0657;72.8682" />
+    <meta name="ICBM" content="19.0657, 72.8682" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <script type="application/ld+json" set:html={JSON.stringify(contactPageSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
     <style is:global>
         :root {
             --bg-dark: #0A1C16;
@@ -757,31 +892,29 @@ const seoDesc = "Have a question, need an enterprise demo or want to see how Sah
         }
     </style>
 
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "ContactPage",
-      "name": "Contact Sahyak CRM",
-      "description": seoDesc,
-      "url": "https://sahyak.com/contact",
-      "publisher": {
-        "@type": "Organization",
-        "name": "Sahyak CRM",
-        "url": "https://sahyak.com",
-        "email": "support@sahyak.com",
-        "telephone": "+91 87964 75107",
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "telephone": "+91 87964 75107",
-          "contactType": "Customer Support",
-          "email": "support@sahyak.com"
-        }
-      }
-    })} />
 </head>
 <body>
+    <a href="#contact-form" class="skip-link">Skip to contact form</a>
 
     <!-- Global Navigation -->
     <Navbar active="contact" />
+
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-container" style="max-width: 1200px; width: 90%; margin: 0 auto; padding: 16px 0 0 0;">
+        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+            <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+                    <meta itemprop="position" content="1" />
+                </li>
+                <li class="breadcrumb-separator" aria-hidden="true">/</li>
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span class="breadcrumb-current" itemprop="name" aria-current="page">Contact</span>
+                    <meta itemprop="position" content="2" />
+                </li>
+            </ol>
+        </nav>
+    </div>
 
     <!-- HERO SECTION -->
     <header class="hero">
@@ -795,17 +928,17 @@ const seoDesc = "Have a question, need an enterprise demo or want to see how Sah
                     <a href="/pricing" class="btn btn-outline">Start free</a>
                 </div>
                 <div class="hero-trust">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" alt="User">
-                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop" alt="User" style="margin-left:-15px;">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="User" style="margin-left:-15px;">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" width="40" height="40" loading="lazy" decoding="async" alt="Broker client avatar">
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop" width="40" height="40" loading="lazy" decoding="async" alt="Commercial agent avatar" style="margin-left:-15px;">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" width="40" height="40" loading="lazy" decoding="async" alt="Developer executive avatar" style="margin-left:-15px;">
                     <span>Trusted by real estate teams across 15+ countries worldwide</span>
                 </div>
             </div>
             
             <div class="hero-visuals reveal">
                 <!-- POV / First-Person Perspective & Editorial Magazine Collage -->
-                <img src="/images/contact/1.png" alt="Man on phone" class="collage-img-1">
-                <img src="/images/contact/2.png" alt="Secondary collage visual" class="collage-img-2">
+                <img src="/images/contact/1.png" width="500" height="600" fetchpriority="high" loading="eager" alt="Real estate agent communicating with prospective home buyers on mobile" class="collage-img-1">
+                <img src="/images/contact/2.png" width="400" height="500" fetchpriority="high" loading="eager" alt="Sahyak CRM contact and consultation services" class="collage-img-2">
                 
                 <!-- Floating Element -->
                 <svg class="floating-arrow floating-element" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -824,7 +957,7 @@ const seoDesc = "Have a question, need an enterprise demo or want to see how Sah
     <section class="contact-form-section" id="contact-form">
         <!-- Subtle Background Visual (Professional woman) -->
         <div class="form-bg-visual">
-            <img src="/images/contact/3.png" alt="Professional real estate advisor" class="form-bg-img">
+            <img src="/images/contact/3.png" width="700" height="900" loading="lazy" decoding="async" alt="Professional Sahyak CRM real estate sales advisor and customer manager" class="form-bg-img">
         </div>
         <div class="container form-grid">
             <div class="form-info reveal">
@@ -918,7 +1051,7 @@ const seoDesc = "Have a question, need an enterprise demo or want to see how Sah
                 
                 <!-- Split-Screen Contrast / High-Contrast Duotone Visual -->
                 <div style="margin-top: 2rem; border-radius: 12px; overflow: hidden; height: 200px; aspect-ratio: 2 / 1; position: relative;">
-                    <img src="/images/contact/4.png" alt="Man looking down" style="width:100%; height:100%; object-fit:cover; object-position:center; filter: grayscale(100%) contrast(1.25); opacity: 0.75;">
+                    <img src="/images/contact/4.png" width="600" height="300" loading="lazy" decoding="async" alt="Sahyak CRM executive client support specialist consulting on phone" style="width:100%; height:100%; object-fit:cover; object-position:center; filter: grayscale(100%) contrast(1.25); opacity: 0.75;">
                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; letter-spacing: 1px; text-shadow: 0 2px 12px rgba(0,0,0,0.9); white-space: nowrap;">
                         SAME PEOPLE<br>REAL ANSWERS
                     </div>
@@ -990,7 +1123,7 @@ const seoDesc = "Have a question, need an enterprise demo or want to see how Sah
 
             <div class="location-map reveal">
                 <!-- Map Placeholder -->
-                <img src="/images/contact/5.png" alt="Map Location" style="width: 100%; height: 100%; object-fit: cover; object-position: center; filter: grayscale(100%) contrast(1.15);">
+                <img src="/images/contact/5.png" width="600" height="400" loading="lazy" decoding="async" alt="Sahyak CRM global real estate customer service footprint and headquarters map" style="width: 100%; height: 100%; object-fit: cover; object-position: center; filter: grayscale(100%) contrast(1.15);">
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 10px 20px; border-radius: 30px; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                     Sahyak
@@ -1006,7 +1139,7 @@ const seoDesc = "Have a question, need an enterprise demo or want to see how Sah
                 <!-- Isometric 3D Diorama / POV Phone Mockup -->
                 <div class="phone-mockup floating-element">
                     <div class="phone-notch"></div>
-                    <img src="/images/contact/6.png" alt="App Interface" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                    <img src="/images/contact/6.png" width="300" height="600" loading="lazy" decoding="async" alt="Sahyak CRM smartphone app preview with instant contact support" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
                 </div>
             </div>
             
@@ -1067,7 +1200,7 @@ const seoDesc = "Have a question, need an enterprise demo or want to see how Sah
 
     <!-- CTA SECTION -->
     <section class="footer-cta">
-        <img src="/images/contact/7.png" alt="City Background" class="footer-bg">
+        <img src="/images/contact/7.png" width="1920" height="800" loading="lazy" decoding="async" alt="Modern commercial architectural skyline in night lighting" class="footer-bg">
         
         <div class="container reveal" style="position: relative; z-index: 2;">
             <div class="section-tag">Let's Build Together</div>

@@ -4,8 +4,71 @@ export const prerender = true;
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
-const seoTitle = "Sahyak CRM - The Real Estate CRM Built for Real People";
-const seoDesc = "Capture leads, follow up automatically, share listings, coordinate client inspections and close more transactions across 15+ countries with Sahyak CRM.";
+const seoTitle = "Sahyak CRM — Real Estate CRM for Developers & Brokers";
+const seoDesc = "Mobile-first Real Estate CRM for agents, brokers, and developers. Automate lead capture, WhatsApp tracking, site visits, and sales pipelines across 15+ countries.";
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://sahyak.com/#organization",
+  "name": "Sahyak CRM",
+  "legalName": "Sahyak Real Estate Technologies Private Limited",
+  "url": "https://sahyak.com",
+  "logo": "https://sahyak.com/images/sahyak-logo.png",
+  "description": "Mobile-first Real Estate CRM engineered for brokers, developers, and sales agencies across 15+ countries.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Bandra Kurla Complex, Bandra East",
+    "addressLocality": "Mumbai",
+    "addressRegion": "Maharashtra",
+    "postalCode": "400051",
+    "addressCountry": "IN"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 19.0657,
+    "longitude": 72.8682
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+91 87964 75107",
+    "contactType": "sales",
+    "email": "support@sahyak.com",
+    "availableLanguage": ["English", "Hindi"]
+  }
+};
+
+const webSiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://sahyak.com/#website",
+  "url": "https://sahyak.com",
+  "name": "Sahyak CRM",
+  "publisher": { "@id": "https://sahyak.com/#organization" },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://sahyak.com/resources?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Sahyak Real Estate CRM",
+  "operatingSystem": "Web, Android, iOS",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "499",
+    "priceCurrency": "INR"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "148"
+  }
+};
 ---
 
 <!DOCTYPE html>
@@ -15,11 +78,46 @@ const seoDesc = "Capture leads, follow up automatically, share listings, coordin
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
-    <link rel="canonical" href="https://sahyak.com/" />
+    <link rel="canonical" href="https://sahyak.com" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- GEO SEO Meta Tags -->
+    <meta name="geo.region" content="IN-MH" />
+    <meta name="geo.placename" content="Mumbai, Maharashtra, India" />
+    <meta name="geo.position" content="19.0657;72.8682" />
+    <meta name="ICBM" content="19.0657, 72.8682" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sahyak.com" />
+    <meta property="og:site_name" content="Sahyak Real Estate CRM" />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={seoDesc} />
+    <meta property="og:image" content="https://sahyak.com/images/previews/homepage.png" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="en_IN" />
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@sahyakcrm" />
+    <meta name="twitter:title" content={seoTitle} />
+    <meta name="twitter:description" content={seoDesc} />
+    <meta name="twitter:image" content="https://sahyak.com/images/previews/homepage.png" />
+
+    <link rel="icon" type="image/png" href="/images/sahyak-logo.png" />
+    <link rel="apple-touch-icon" href="/images/sahyak-logo.png" />
+
     <!-- Tailwind CSS with is:inline to guarantee synchronous initialization -->
     <script is:inline src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Playfair Display (Headings), Inter (Body), Caveat (Handwritten notes) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Schema Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(webSiteSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
     
     <script is:inline>
         tailwind.config = {
@@ -42,7 +140,6 @@ const seoDesc = "Capture leads, follow up automatically, share listings, coordin
         }
     </script>
     <style is:global>
-        /* Custom styles for specific overlapping effects */
         .hero-bg-sketch {
             background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
@@ -55,9 +152,26 @@ const seoDesc = "Capture leads, follow up automatically, share listings, coordin
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #4ADE80;
+            color: #0A1C16;
+            padding: 8px 16px;
+            font-weight: 700;
+            z-index: 10000;
+            transition: top 0.2s ease;
+            text-decoration: none;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
     </style>
 </head>
 <body class="font-sans antialiased text-textDark bg-lightBg overflow-x-hidden">
+    <a href="#hero-content" class="skip-link">Skip to main content</a>
+
 
     <!-- Global Navigation -->
     <Navbar active="home" />
@@ -118,9 +232,9 @@ const seoDesc = "Capture leads, follow up automatically, share listings, coordin
                     A SMARTER <br> WAY <br> TO SELL <br> REAL ESTATE
                 </div>
 
-                <!-- Phone Mockup with 1.png (rotated 180deg horizontally) -->
+                <!-- Phone Mockup with 1.png (Hero LCP Optimized) -->
                 <div class="relative w-[300px] sm:w-[350px] md:w-[380px] lg:w-[420px] flex items-center justify-center">
-                    <img src="/images/homepage/1.png" alt="Sahyak CRM Phone in Hand Mockup" class="w-full h-auto object-contain drop-shadow-2xl -scale-x-100" style="transform: scaleX(-1);">
+                    <img src="/images/homepage/1.png" alt="Sahyak Real Estate CRM mobile app displaying client inquiry pipeline and site visits" width="420" height="780" fetchpriority="high" loading="eager" class="w-full h-auto object-contain drop-shadow-2xl -scale-x-100" style="transform: scaleX(-1);">
                 </div>
             </div>
         </div>
@@ -145,7 +259,7 @@ const seoDesc = "Capture leads, follow up automatically, share listings, coordin
 
             <!-- Right Images Collage with 2.png -->
             <div class="relative min-h-[460px] lg:min-h-[500px] w-full flex items-center justify-end">
-                <img src="/images/homepage/2.png" alt="Stressed agent managing multiple tools" class="w-full h-auto max-h-[480px] object-contain rounded-2xl drop-shadow-xl z-10">
+                <img src="/images/homepage/2.png" alt="Real estate broker dealing with fragmented communication tools and missed client inquiries" width="600" height="480" loading="lazy" decoding="async" class="w-full h-auto max-h-[480px] object-contain rounded-2xl drop-shadow-xl z-10">
                 
                 <!-- Floating UI Cards (CSS built) -->
                 <div class="absolute top-0 left-0 bg-white p-4 rounded-xl shadow-lg z-20 w-48 border border-gray-100 hidden sm:block">
@@ -227,7 +341,7 @@ const seoDesc = "Capture leads, follow up automatically, share listings, coordin
 
             <!-- Bottom Image Area with 3.png (rotated 180deg horizontally) -->
             <div class="relative mt-16 rounded-3xl overflow-hidden bg-darkGreen min-h-[380px] md:h-[400px] flex items-center">
-                <img src="/images/homepage/3.png" alt="Real estate professional on mobile" class="absolute right-0 bottom-0 h-full max-h-[380px] md:max-h-[400px] w-auto object-contain object-bottom z-0 -scale-x-100" style="transform: scaleX(-1);">
+                <img src="/images/homepage/3.png" alt="Real estate agent scheduling client property viewings on mobile phone" width="450" height="400" loading="lazy" decoding="async" class="absolute right-0 bottom-0 h-full max-h-[380px] md:max-h-[400px] w-auto object-contain object-bottom z-0 -scale-x-100" style="transform: scaleX(-1);">
                 
                 <div class="relative z-10 p-8 md:p-12 max-w-lg">
                     <h3 class="text-3xl font-serif text-white mb-4">Built for on-the-go teams</h3>
@@ -264,7 +378,7 @@ const seoDesc = "Capture leads, follow up automatically, share listings, coordin
 
             <!-- Right Image (Isometric Illustration with 4.png) -->
             <div class="relative w-full flex items-center justify-center">
-                <img src="/images/homepage/4.png" alt="Sahyak CRM Ecosystem 3D Isometric Illustration" class="w-full h-auto max-h-[500px] object-contain drop-shadow-2xl rounded-2xl">
+                <img src="/images/homepage/4.png" alt="Sahyak Real Estate CRM ecosystem 3D isometric diagram of lead capture and inventory tools" width="600" height="500" loading="lazy" decoding="async" class="w-full h-auto max-h-[500px] object-contain drop-shadow-2xl rounded-2xl">
             </div>
         </div>
     </section>
@@ -274,7 +388,7 @@ const seoDesc = "Capture leads, follow up automatically, share listings, coordin
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Image with 5.png -->
             <div class="relative h-[500px] md:h-[600px] rounded-3xl overflow-hidden">
-                <img src="/images/homepage/5.png" alt="Confident real estate entrepreneur" class="w-full h-full object-cover">
+                <img src="/images/homepage/5.png" alt="Confident real estate entrepreneur and broker scaling property sales" width="600" height="600" loading="lazy" decoding="async" class="w-full h-full object-cover">
                 <!-- Green Overlay Shape -->
                 <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-darkGreen to-transparent"></div>
                 
@@ -333,7 +447,7 @@ const seoDesc = "Capture leads, follow up automatically, share listings, coordin
     <section class="relative bg-darkGreen text-white py-24 px-6 md:px-12 lg:px-20 overflow-hidden">
         <!-- Background Image with 6.png -->
         <div class="absolute inset-0 z-0 opacity-30">
-            <img src="/images/homepage/6.png" alt="Futuristic Cityscape" class="w-full h-full object-cover">
+            <img src="/images/homepage/6.png" alt="Futuristic smart city high-rise architecture representing modern real estate technology" width="1920" height="1080" loading="lazy" decoding="async" class="w-full h-full object-cover">
         </div>
 
         <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">

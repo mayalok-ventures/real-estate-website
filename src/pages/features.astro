@@ -4,8 +4,31 @@ export const prerender = true;
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
-const seoTitle = "Sahyak CRM - Real Estate Features & Sales Pipeline";
-const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you all the tools to manage sales pipelines, automated follow-ups, client visits, property inventory and teams across 15+ countries.";
+const seoTitle = "Real Estate CRM Features — Leads & Site Visits | Sahyak";
+const seoDesc = "Explore Sahyak CRM features: automated lead capture, WhatsApp hub, real-time site visit tracking, multi-project inventory control, and agent sales analytics.";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://sahyak.com" },
+    { "@type": "ListItem", "position": 2, "name": "Features", "item": "https://sahyak.com/features" }
+  ]
+};
+
+const featuresSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Sahyak Real Estate CRM Core Features",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Lead Management & Auto Capture", "description": "Multi-source lead capture from portals, ads, and website inquiries with automated follow-up reminders." },
+    { "@type": "ListItem", "position": 2, "name": "Property & Tower Inventory Management", "description": "Real-time project inventory tracking, floor plans, and instant brochure sharing." },
+    { "@type": "ListItem", "position": 3, "name": "Site Visit & Inspection Coordinator", "description": "Automated site visit scheduling, agent assignment, and client attendance tracking." },
+    { "@type": "ListItem", "position": 4, "name": "Team Roles & Pipeline Collaboration", "description": "Role-based access control for brokers, sales managers, and telecallers." },
+    { "@type": "ListItem", "position": 5, "name": "WhatsApp Automation & Communication Hub", "description": "Direct WhatsApp engagement, verified templates, and chat history logs." },
+    { "@type": "ListItem", "position": 6, "name": "Sales Analytics & Deal Forecasting", "description": "Real-time performance metrics, conversion funnels, and revenue forecasting." }
+  ]
+};
 ---
 
 <!DOCTYPE html>
@@ -16,8 +39,43 @@ const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you 
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
     <link rel="canonical" href="https://sahyak.com/features" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- GEO SEO Meta Tags -->
+    <meta name="geo.region" content="IN-MH" />
+    <meta name="geo.placename" content="Mumbai, Maharashtra, India" />
+    <meta name="geo.position" content="19.0657;72.8682" />
+    <meta name="ICBM" content="19.0657, 72.8682" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sahyak.com/features" />
+    <meta property="og:site_name" content="Sahyak Real Estate CRM" />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={seoDesc} />
+    <meta property="og:image" content="https://sahyak.com/images/previews/features.png" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="en_IN" />
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@sahyakcrm" />
+    <meta name="twitter:title" content={seoTitle} />
+    <meta name="twitter:description" content={seoDesc} />
+    <meta name="twitter:image" content="https://sahyak.com/images/previews/features.png" />
+
+    <link rel="icon" type="image/png" href="/images/sahyak-logo.png" />
+    <link rel="apple-touch-icon" href="/images/sahyak-logo.png" />
+
     <script is:inline src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Schema Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(featuresSchema)} />
+
     <style is:global>
         :root {
             --bg-dark: #0a1f15;
@@ -32,6 +90,47 @@ const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you 
             color: var(--text-light);
             overflow-x: hidden;
         }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #a3e635;
+            color: #000;
+            padding: 8px 16px;
+            font-weight: 700;
+            z-index: 10000;
+            transition: top 0.2s ease;
+            text-decoration: none;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .breadcrumb-nav {
+            padding: 0.65rem 0;
+            background: #081712;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.8rem;
+        }
+        .breadcrumb-list {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .breadcrumb-list a {
+            color: #9CA3AF;
+            text-decoration: none;
+        }
+        .breadcrumb-list a:hover {
+            color: var(--accent-green);
+        }
+        .breadcrumb-current {
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
         
         /* Animations */
         .fade-up {
@@ -114,11 +213,22 @@ const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you 
     <!-- Global Navigation -->
     <Navbar active="features" />
 
+    <!-- Breadcrumbs Navigation -->
+    <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+        <div class="max-w-7xl mx-auto px-4 md:px-10">
+            <ol class="breadcrumb-list">
+                <li><a href="/">Home</a></li>
+                <li class="text-gray-500">&rsaquo;</li>
+                <li class="breadcrumb-current" aria-current="page">Features</li>
+            </ol>
+        </div>
+    </nav>
+
     <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center pt-20 pb-10 px-4 md:px-10 overflow-hidden">
-        <!-- Background Image (Low-Angle Hero Shot) -->
+    <section class="relative min-h-[90vh] flex items-center justify-center pt-16 pb-10 px-4 md:px-10 overflow-hidden">
+        <!-- Background Image (Hero LCP Optimized) -->
         <div class="absolute inset-0 z-0 opacity-40">
-            <img src="/images/features/1.png" class="w-full h-full object-cover collage-img" alt="City Skyline">
+            <img src="/images/features/1.png" class="w-full h-full object-cover collage-img" alt="Modern commercial architectural skyline representing real estate property development" width="1920" height="1080" fetchpriority="high" loading="eager">
         </div>
         
         <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -225,7 +335,7 @@ const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you 
             <!-- Right Collage / Floating Elements -->
             <div class="relative h-[500px] fade-up" style="transition-delay: 200ms;">
                 <!-- Background Image -->
-                <img src="/images/features/2.png" class="absolute inset-0 w-full h-full object-cover rounded-2xl collage-img" alt="Real Estate">
+                <img src="/images/features/2.png" width="800" height="600" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover rounded-2xl collage-img" alt="Sahyak Lead Management pipeline and multi-channel lead capture interface">
                 
                 <!-- Floating Cards -->
                 <div class="absolute top-10 -left-6 md:-left-12 bg-white p-4 rounded-xl shadow-xl floating-card z-10 w-48">
@@ -280,7 +390,7 @@ const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you 
             <div class="relative flex justify-center items-center fade-up" style="transition-delay: 200ms;">
                 <!-- Background Glow -->
                 <div class="absolute inset-0 bg-[var(--accent-green)] opacity-20 blur-[100px] rounded-full pointer-events-none"></div>
-                <img src="/images/features/3.png" alt="Show the right properties to the right buyers" class="w-full h-auto max-h-[550px] object-contain drop-shadow-2xl rounded-2xl relative z-10 transition-transform duration-500 hover:scale-[1.02]">
+                <img src="/images/features/3.png" width="800" height="550" loading="lazy" decoding="async" alt="Sahyak Real Estate Inventory management with towers, floor plans, and unit pricing" class="w-full h-auto max-h-[550px] object-contain drop-shadow-2xl rounded-2xl relative z-10 transition-transform duration-500 hover:scale-[1.02]">
             </div>
         </div>
     </section>
@@ -304,7 +414,7 @@ const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you 
             
             <!-- Right Visual -->
             <div class="relative h-[500px] fade-up" style="transition-delay: 200ms;">
-                <img src="/images/features/4.png" class="absolute inset-0 w-full h-full object-cover rounded-2xl collage-img" alt="Field Operations">
+                <img src="/images/features/4.png" width="800" height="600" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover rounded-2xl collage-img" alt="Sahyak Site Visits coordination, agent scheduling, and field operations tracker">
                 
                 <!-- Floating Cards -->
                 <div class="absolute top-10 left-10 bg-white p-4 rounded-xl shadow-xl floating-card z-10 w-56">
@@ -345,7 +455,7 @@ const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you 
             <!-- Right Visual -->
             <div class="relative fade-up" style="transition-delay: 200ms;">
                 <div class="relative rounded-2xl overflow-hidden">
-                    <img src="/images/features/5.png" class="w-full h-[500px] object-cover" alt="Team">
+                    <img src="/images/features/5.png" width="800" height="500" loading="lazy" decoding="async" class="w-full h-[500px] object-cover" alt="Sahyak Team Collaboration, role-based telecaller access, and manager permissions">
                     <div class="absolute inset-0 bg-[var(--bg-dark)] mix-blend-multiply opacity-70"></div>
                     <div class="absolute inset-0 bg-[var(--accent-green)] mix-blend-overlay opacity-30"></div>
                 </div>
@@ -387,7 +497,7 @@ const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you 
             <!-- Right Visual (WhatsApp & Communication Hub) -->
             <div class="relative flex justify-center items-center fade-up" style="transition-delay: 200ms;">
                 <div class="absolute inset-0 bg-[#25D366] opacity-15 blur-[100px] rounded-full pointer-events-none"></div>
-                <img src="/images/features/6.png" alt="Engage buyers where they are on WhatsApp" class="w-full h-auto max-h-[550px] object-contain drop-shadow-2xl rounded-2xl relative z-10 transition-transform duration-500 hover:scale-[1.02]">
+                <img src="/images/features/6.png" width="800" height="550" loading="lazy" decoding="async" alt="Sahyak WhatsApp Business API automation and verified broker chat templates" class="w-full h-auto max-h-[550px] object-contain drop-shadow-2xl rounded-2xl relative z-10 transition-transform duration-500 hover:scale-[1.02]">
             </div>
         </div>
     </section>
@@ -413,7 +523,7 @@ const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you 
             <div class="relative flex justify-center items-center fade-up" style="transition-delay: 200ms;">
                 <!-- Background Glow -->
                 <div class="absolute inset-0 bg-[var(--accent-green)] opacity-20 blur-[100px] rounded-full pointer-events-none"></div>
-                <img src="/images/features/7.png" alt="Clear insights and smarter decisions with real-time analytics" class="w-full h-auto max-h-[550px] object-contain drop-shadow-2xl rounded-2xl relative z-10 transition-transform duration-500 hover:scale-[1.02]">
+                <img src="/images/features/7.png" width="800" height="550" loading="lazy" decoding="async" alt="Sahyak Real Estate Analytics dashboard tracking broker conversions and revenue" class="w-full h-auto max-h-[550px] object-contain drop-shadow-2xl rounded-2xl relative z-10 transition-transform duration-500 hover:scale-[1.02]">
             </div>
         </div>
     </section>

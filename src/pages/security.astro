@@ -4,8 +4,46 @@ export const prerender = true;
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
-const seoTitle = "Sahyak CRM - Data Security & Enterprise CRM";
+const seoTitle = "Real Estate CRM Security & Data Compliance | Sahyak CRM";
 const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, bank-grade encryption and role-based access for real estate teams across 15+ countries.";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://sahyak.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Security",
+      "item": "https://sahyak.com/security"
+    }
+  ]
+};
+
+const securitySchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": seoTitle,
+  "description": seoDesc,
+  "url": "https://sahyak.com/security",
+  "mainEntity": {
+    "@type": "SecurityService",
+    "name": "Sahyak CRM Enterprise Security Architecture",
+    "serviceType": "Cloud CRM Security & Data Compliance",
+    "provider": {
+      "@type": "Organization",
+      "name": "Sahyak CRM",
+      "url": "https://sahyak.com"
+    },
+    "description": "AES-256 bit encryption at rest and in transit, multi-tenant isolation, role-based access controls, and automated compliance backups for real estate developers and brokers."
+  }
+};
 ---
 
 <!DOCTYPE html>
@@ -16,8 +54,35 @@ const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, 
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
     <link rel="canonical" href="https://sahyak.com/security" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sahyak.com/security" />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={seoDesc} />
+    <meta property="og:image" content="https://sahyak.com/images/security/1.png" />
+    <meta property="og:site_name" content="Sahyak CRM" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://sahyak.com/security" />
+    <meta property="twitter:title" content={seoTitle} />
+    <meta property="twitter:description" content={seoDesc} />
+    <meta property="twitter:image" content="https://sahyak.com/images/security/1.png" />
+
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN-MH" />
+    <meta name="geo.placename" content="Mumbai" />
+    <meta name="geo.position" content="19.0657;72.8682" />
+    <meta name="ICBM" content="19.0657, 72.8682" />
+
     <script is:inline src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <script type="application/ld+json" set:html={JSON.stringify(securitySchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
     <style is:global>
         :root {
             --neon: #39FF14;
@@ -114,16 +179,35 @@ const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, 
     </style>
 </head>
 <body class="antialiased">
+    <a href="#commitment" class="skip-link">Skip to main content</a>
 
     <!-- Global Navigation -->
     <Navbar active="security" />
+
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-container max-w-7xl mx-auto px-6 lg:px-8 pt-4">
+        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+            <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+                    <meta itemprop="position" content="1" />
+                </li>
+                <li class="breadcrumb-separator" aria-hidden="true">/</li>
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span class="breadcrumb-current" itemprop="name" aria-current="page">Security</span>
+                    <meta itemprop="position" content="2" />
+                </li>
+            </ol>
+        </nav>
+    </div>
 
     <!-- ================= SECTION 1: HERO (Low-Angle Hero Shot) ================= -->
     <section class="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
         <!-- Background Image Placeholder -->
         <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop" 
-                 alt="Low angle skyscraper" class="w-full h-full object-cover opacity-40 mix-blend-luminosity">
+                 width="1920" height="1080" fetchpriority="high" loading="eager"
+                 alt="Modern commercial architectural skyscraper symbolizing enterprise security" class="w-full h-full object-cover opacity-40 mix-blend-luminosity">
             <div class="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
         </div>
 
@@ -160,9 +244,9 @@ const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, 
 
                     <div class="flex items-center gap-4">
                         <div class="flex -space-x-3">
-                            <img src="https://i.pravatar.cc/100?img=11" alt="User" class="w-10 h-10 rounded-full border-2 border-[#0a0a0a]">
-                            <img src="https://i.pravatar.cc/100?img=12" alt="User" class="w-10 h-10 rounded-full border-2 border-[#0a0a0a]">
-                            <img src="https://i.pravatar.cc/100?img=13" alt="User" class="w-10 h-10 rounded-full border-2 border-[#0a0a0a]">
+                            <img src="https://i.pravatar.cc/100?img=11" width="40" height="40" loading="lazy" decoding="async" alt="Enterprise broker avatar" class="w-10 h-10 rounded-full border-2 border-[#0a0a0a]">
+                            <img src="https://i.pravatar.cc/100?img=12" width="40" height="40" loading="lazy" decoding="async" alt="Real estate developer avatar" class="w-10 h-10 rounded-full border-2 border-[#0a0a0a]">
+                            <img src="https://i.pravatar.cc/100?img=13" width="40" height="40" loading="lazy" decoding="async" alt="Property manager avatar" class="w-10 h-10 rounded-full border-2 border-[#0a0a0a]">
                         </div>
                         <p class="text-sm text-gray-400">Trusted by real estate teams <br> across 15+ countries worldwide</p>
                     </div>
@@ -172,7 +256,8 @@ const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, 
                 <div class="lg:col-span-5 relative h-full min-h-[400px] hidden lg:block reveal">
                     <!-- Main Image -->
                     <img src="/images/security/1.png" 
-                         alt="Businessman" class="absolute right-0 top-0 w-full h-full object-cover object-center rounded-2xl opacity-90" style="clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%);">
+                         width="600" height="700" fetchpriority="high" loading="eager"
+                         alt="Enterprise real estate security architecture and lead data protection" class="absolute right-0 top-0 w-full h-full object-cover object-center rounded-2xl opacity-90" style="clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%);">
                     
                     <!-- Floating Card 1 -->
                     <div class="absolute top-10 right-10 glass-card p-4 animate-float w-48">
@@ -244,7 +329,8 @@ const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, 
                 <div class="relative reveal">
                     <!-- Isometric Image Placeholder -->
                     <img src="/images/security/2.png" 
-                         alt="Isometric 3D Security" class="w-full h-auto rounded-2xl shadow-2xl object-cover object-center">
+                         width="800" height="550" loading="lazy" decoding="async"
+                         alt="Sahyak CRM multi-layered security and encryption commitment diorama" class="w-full h-auto rounded-2xl shadow-2xl object-cover object-center">
                     
                     <!-- Floating Labels -->
                     <div class="absolute top-10 left-0 glass-card-light p-3 flex items-center gap-2 animate-float">
@@ -310,7 +396,8 @@ const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, 
                 <div class="relative reveal">
                     <!-- POV Image Placeholder -->
                     <img src="/images/security/3.png" 
-                         alt="Woman looking at phone" class="w-full h-auto rounded-2xl object-cover object-center">
+                         width="800" height="550" loading="lazy" decoding="async"
+                         alt="Real estate broker securely accessing customer CRM records on smartphone" class="w-full h-auto rounded-2xl object-cover object-center">
                     
                     <!-- Floating Phone UI Card -->
                     <div class="absolute -bottom-10 -right-4 lg:right-10 glass-card p-6 w-64 animate-float">
@@ -346,7 +433,8 @@ const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, 
                 <div class="relative reveal">
                     <!-- Isometric 3D Buildings Placeholder -->
                     <img src="/images/security/4.png" 
-                         alt="Isometric 3D Buildings" class="w-full h-auto rounded-2xl shadow-xl object-cover object-center">
+                         width="800" height="550" loading="lazy" decoding="async"
+                         alt="Multi-tenant cloud architecture with complete organizational data isolation" class="w-full h-auto rounded-2xl shadow-xl object-cover object-center">
                     
                     <!-- Floating Labels -->
                     <div class="absolute top-1/4 left-0 glass-card-light p-3 flex items-center gap-2 animate-float">
@@ -402,7 +490,8 @@ const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, 
                 <div class="relative reveal editorial-overlap">
                     <!-- Editorial Image Placeholder -->
                     <img src="/images/security/5.png" 
-                         alt="Man looking at screen" class="w-full h-auto rounded-2xl object-cover object-center">
+                         width="800" height="550" loading="lazy" decoding="async"
+                         alt="Granular role-based access control and manager permissions interface" class="w-full h-auto rounded-2xl object-cover object-center">
                     
                     <!-- Floating UI Card (Access Control) -->
                     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 glass-card p-6 w-72 animate-float shadow-2xl">
@@ -494,7 +583,8 @@ const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, 
                 <div class="relative reveal">
                     <!-- Infrastructure Image Placeholder -->
                     <img src="/images/security/6.png" 
-                         alt="Data Center" class="w-full h-auto rounded-2xl object-cover object-center">
+                         width="800" height="550" loading="lazy" decoding="async"
+                         alt="Secure cloud data center hosting Sahyak real estate database instances" class="w-full h-auto rounded-2xl object-cover object-center">
                     
                     <!-- Floating Cards -->
                     <div class="absolute top-1/4 -right-4 lg:right-0 glass-card p-4 animate-float w-56 border-l-4 border-l-neon">
@@ -534,7 +624,8 @@ const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, 
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
             <img src="/images/security/7.png" 
-                 alt="Cityscape" class="w-full h-full object-cover object-center opacity-40">
+                 width="1920" height="1080" loading="lazy" decoding="async"
+                 alt="Modern metropolitan real estate skyline protected by Sahyak CRM cloud security" class="w-full h-full object-cover object-center opacity-40">
             <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
         </div>
 

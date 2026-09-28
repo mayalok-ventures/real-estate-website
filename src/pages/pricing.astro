@@ -5,8 +5,8 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { isCountrySupported, getCountryPricing, COUNTRY_PRICING, type SupportedCountryCode } from '../lib/pricingData';
 
-const seoTitle = "Sahyak CRM - Transparent Pricing Across 15+ Countries";
-const seoDesc = "Choose the capacity you need — users, leads, storage and connected platforms. Transparent multi-currency pricing for real estate teams worldwide.";
+const seoTitle = "Real Estate CRM Pricing — ₹499 Base Access | Sahyak CRM";
+const seoDesc = "Transparent real estate CRM pricing. Start with ₹499 base access, zero hidden fees, unlimited WhatsApp messaging, and add seats as your team expands.";
 
 // Server-side country detection from headers / query
 const queryCountry = Astro.url.searchParams.get('country');
@@ -30,6 +30,87 @@ if (candidate) {
 }
 
 const initialPricing = serverDetectedCountry ? getCountryPricing(serverDetectedCountry) : getCountryPricing('IN')!;
+
+const pricingFaqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is included in Sahyak CRM Base Access?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Base Access provides complete CRM functionality: lead pipelines, WhatsApp chat integration, automated site visit tracking, property inventory management, and basic sales analytics."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I scale users and lead capacity anytime?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Sahyak CRM is fully modular. You can add or reduce team seats, lead storage tiers, and document capacity anytime with immediate prorated adjustments."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are there setup or data migration charges?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. There are zero setup fees and zero data migration charges. We provide free CSV imports and guided team onboarding for all plans."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is WhatsApp Business messaging included?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Sahyak includes built-in WhatsApp Web automation and official Meta Cloud WhatsApp Business API integration without separate platform markup."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Sahyak support international multi-currency pricing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, we support localized pricing across 15+ countries including India (INR), UAE (AED), United States (USD), United Kingdom (GBP), Australia (AUD), and Canada (CAD)."
+      }
+    }
+  ]
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://sahyak.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Pricing",
+      "item": "https://sahyak.com/pricing"
+    }
+  ]
+};
+
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Sahyak CRM",
+  "operatingSystem": "Web, iOS, Android",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": initialPricing?.currency || "INR",
+    "lowPrice": initialPricing?.basePrice || 499,
+    "offerCount": "15"
+  },
+  "description": "Transparent, modular real estate CRM pricing for brokers and developers across 15+ countries."
+};
 ---
 
 <!DOCTYPE html>
@@ -40,24 +121,37 @@ const initialPricing = serverDetectedCountry ? getCountryPricing(serverDetectedC
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
     <link rel="canonical" href="https://sahyak.com/pricing" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sahyak.com/pricing" />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={seoDesc} />
+    <meta property="og:image" content="https://sahyak.com/images/pricing/1.png" />
+    <meta property="og:site_name" content="Sahyak CRM" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://sahyak.com/pricing" />
+    <meta property="twitter:title" content={seoTitle} />
+    <meta property="twitter:description" content={seoDesc} />
+    <meta property="twitter:image" content="https://sahyak.com/images/pricing/1.png" />
+
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN-MH" />
+    <meta name="geo.placename" content="Mumbai" />
+    <meta name="geo.position" content="19.0657;72.8682" />
+    <meta name="ICBM" content="19.0657, 72.8682" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "Sahyak CRM",
-      "operatingSystem": "Web, iOS, Android",
-      "applicationCategory": "BusinessApplication",
-      "offers": {
-        "@type": "AggregateOffer",
-        "priceCurrency": initialPricing?.currency || "USD",
-        "lowPrice": initialPricing?.basePrice || 59,
-        "offerCount": "15"
-      },
-      "description": "Developer-ready country-specific pricing for real estate businesses across 15 priority markets worldwide."
-    })} />
+    <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(pricingFaqSchema)} />
 
     <style is:global>
         /* CSS VARIABLES (HOMEPAGE UNIFIED PALETTE) */
@@ -543,13 +637,31 @@ const initialPricing = serverDetectedCountry ? getCountryPricing(serverDetectedC
     </style>
 </head>
 <body class={!serverIsSupported ? "unsupported-region" : ""}>
+    <a href="#calculator" class="skip-link">Skip to pricing calculator</a>
 
     <Navbar active="pricing" />
+
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-container" style="max-width: 1200px; margin: 0 auto; padding: 16px 24px 0 24px;">
+        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+            <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+                    <meta itemprop="position" content="1" />
+                </li>
+                <li class="breadcrumb-separator" aria-hidden="true">/</li>
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span class="breadcrumb-current" itemprop="name" aria-current="page">Pricing</span>
+                    <meta itemprop="position" content="2" />
+                </li>
+            </ol>
+        </nav>
+    </div>
 
     <!-- SECTION 1: HERO -->
     <section class="hero">
         <div class="hero-bg-wrapper">
-            <img src="/images/pricing/1.png" alt="Sahyak CRM Pricing Hero Background" class="hero-bg-img">
+            <img src="/images/pricing/1.png" width="1920" height="1080" fetchpriority="high" loading="eager" alt="Sahyak Real Estate CRM pricing plans and modular calculator background" class="hero-bg-img">
             <div class="hero-bg-overlay"></div>
         </div>
         <div class="container hero-content reveal reveal-left">
@@ -561,9 +673,9 @@ const initialPricing = serverDetectedCountry ? getCountryPricing(serverDetectedC
                 <a href="/contact" class="btn btn-outline">Start free</a>
             </div>
             <div class="trust-badge">
-                <img src="https://i.pravatar.cc/100?img=1" alt="User">
-                <img src="https://i.pravatar.cc/100?img=2" alt="User">
-                <img src="https://i.pravatar.cc/100?img=3" alt="User">
+                <img src="https://i.pravatar.cc/100?img=1" width="40" height="40" loading="lazy" decoding="async" alt="Real estate broker avatar">
+                <img src="https://i.pravatar.cc/100?img=2" width="40" height="40" loading="lazy" decoding="async" alt="Property developer avatar">
+                <img src="https://i.pravatar.cc/100?img=3" width="40" height="40" loading="lazy" decoding="async" alt="Real estate team lead avatar">
                 <span>Trusted by real estate teams<br>across 15+ countries worldwide</span>
             </div>
         </div>
@@ -620,7 +732,7 @@ const initialPricing = serverDetectedCountry ? getCountryPricing(serverDetectedC
                 <p>Start with Base Access and add the exact capacity your business requires. No hidden fees, no per-project billing, and WhatsApp messaging included.</p>
             </div>
             <div class="isometric-visual reveal reveal-right">
-                <img src="/images/pricing/2.png" alt="Isometric 3D Diorama" class="iso-img floating">
+                <img src="/images/pricing/2.png" width="580" height="480" loading="lazy" decoding="async" alt="Sahyak Real Estate modular CRM pricing scale for users, leads, and connected portals" class="iso-img floating">
                 <div class="floating-card fc-1">
                     <span style="color: var(--green-primary);">&#128101;</span> Users<br><small>Scale your sales team</small>
                 </div>
@@ -829,7 +941,7 @@ const initialPricing = serverDetectedCountry ? getCountryPricing(serverDetectedC
             <div class="features-visual reveal reveal-right">
                 <!-- Ambient Background (Dynamic Action Splash 3.png) -->
                 <div class="features-ambient-wrapper">
-                    <img src="/images/pricing/3.png" alt="Features Dynamic Action Splash" class="features-ambient-img">
+                    <img src="/images/pricing/3.png" width="600" height="600" loading="lazy" decoding="async" alt="Sahyak CRM feature suite including lead pipeline, site visit tracker, and inventory" class="features-ambient-img">
                 </div>
                 <div class="features-phone">
                     <div class="features-screen">
@@ -912,7 +1024,7 @@ const initialPricing = serverDetectedCountry ? getCountryPricing(serverDetectedC
                 <div class="portal-frame floating">
                     <div class="portal-notch"></div>
                     <div class="portal-reflection"></div>
-                    <img src="/images/pricing/4.png" alt="Surrealist Portal into Sahyak CRM" class="portal-img">
+                    <img src="/images/pricing/4.png" width="320" height="620" loading="lazy" decoding="async" alt="Sahyak CRM mobile real estate sales portal on smartphone" class="portal-img">
                 </div>
             </div>
         </div>

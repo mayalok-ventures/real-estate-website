@@ -4,8 +4,61 @@ export const prerender = true;
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
-const seoTitle = "Sahyak CRM - Resources, Video Tutorials & Practical Guides";
-const seoDesc = "Step-by-step guides, video tutorials, downloadable templates and searchable help articles to help your real estate sales team scale across 15+ countries.";
+const seoTitle = "Real Estate CRM Resources, Guides & Playbooks | Sahyak";
+const seoDesc = "Access practical real estate sales playbooks, WhatsApp templates, video walkthroughs, and buyer follow-up guides curated by top industry real estate experts.";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://sahyak.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Resources",
+      "item": "https://sahyak.com/resources"
+    }
+  ]
+};
+
+const resourcesSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": seoTitle,
+  "description": seoDesc,
+  "url": "https://sahyak.com/resources",
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "Sahyak Real Estate Learning & Sales Enablement Hub",
+    "itemListElement": [
+      {
+        "@type": "HowTo",
+        "position": 1,
+        "name": "Quick Start Onboarding & Team Setup",
+        "description": "Get your real estate agency up and running in minutes with contact imports and WhatsApp configuration."
+      },
+      {
+        "@type": "VideoObject",
+        "position": 2,
+        "name": "Sahyak CRM Platform Walkthrough & Feature Masterclass",
+        "description": "Full video tutorial covering lead management, automated site visit tracking, and sales analytics.",
+        "thumbnailUrl": "https://sahyak.com/images/resources/3.png",
+        "uploadDate": "2026-01-15T08:00:00+05:30"
+      },
+      {
+        "@type": "DigitalDocument",
+        "position": 3,
+        "name": "High-Converting Real Estate WhatsApp Script Templates",
+        "description": "Downloadable verified message templates for instant buyer replies, site visit bookings, and follow-ups."
+      }
+    ]
+  }
+};
 ---
 
 <!DOCTYPE html>
@@ -16,9 +69,36 @@ const seoDesc = "Step-by-step guides, video tutorials, downloadable templates an
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
     <link rel="canonical" href="https://sahyak.com/resources" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sahyak.com/resources" />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={seoDesc} />
+    <meta property="og:image" content="https://sahyak.com/images/resources/1.png" />
+    <meta property="og:site_name" content="Sahyak CRM" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://sahyak.com/resources" />
+    <meta property="twitter:title" content={seoTitle} />
+    <meta property="twitter:description" content={seoDesc} />
+    <meta property="twitter:image" content="https://sahyak.com/images/resources/1.png" />
+
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN-MH" />
+    <meta name="geo.placename" content="Mumbai" />
+    <meta name="geo.position" content="19.0657;72.8682" />
+    <meta name="ICBM" content="19.0657, 72.8682" />
+
     <script is:inline src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script type="application/ld+json" set:html={JSON.stringify(resourcesSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
     <script is:inline>
         tailwind.config = {
             theme: {
@@ -73,15 +153,27 @@ const seoDesc = "Step-by-step guides, video tutorials, downloadable templates an
     </style>
 </head>
 <body class="bg-brand-dark text-white font-sans antialiased overflow-x-hidden">
+    <a href="#quick-start" class="skip-link">Skip to main content</a>
 
     <!-- Global Navigation -->
     <Navbar active="resources" />
+
+    <!-- Visual Breadcrumbs -->
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <div class="breadcrumb-container">
+            <ol class="breadcrumb-list">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-separator" aria-hidden="true">/</li>
+                <li class="breadcrumb-item"><span class="breadcrumb-current" aria-current="page">Resources & Playbooks</span></li>
+            </ol>
+        </div>
+    </nav>
 
     <!-- SECTION 1: HERO -->
     <section class="relative min-h-screen flex items-center pt-24 pb-12 px-6 lg:px-20 overflow-hidden">
         <!-- Background Image (Hero) -->
         <div class="absolute inset-0 z-0">
-            <img src="/images/resources/1.png" alt="Sahyak CRM Resources Hero" class="w-full h-full object-cover opacity-40 grayscale mix-blend-luminosity">
+            <img src="/images/resources/1.png" alt="Sahyak Real Estate CRM Knowledge Base and Training Center" class="w-full h-full object-cover opacity-40 grayscale mix-blend-luminosity" width="1920" height="1080" fetchpriority="high" loading="eager" decoding="async">
             <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/80 to-transparent"></div>
         </div>
 
@@ -117,9 +209,9 @@ const seoDesc = "Step-by-step guides, video tutorials, downloadable templates an
 
                 <div class="flex items-center gap-4 pt-4">
                     <div class="flex -space-x-2">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" class="w-10 h-10 rounded-full border-2 border-brand-dark object-cover" alt="User">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" class="w-10 h-10 rounded-full border-2 border-brand-dark object-cover" alt="User">
-                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop" class="w-10 h-10 rounded-full border-2 border-brand-dark object-cover" alt="User">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" class="w-10 h-10 rounded-full border-2 border-brand-dark object-cover" alt="Real Estate Broker using Sahyak CRM" width="40" height="40" loading="lazy" decoding="async">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" class="w-10 h-10 rounded-full border-2 border-brand-dark object-cover" alt="Property Consultant using Sahyak CRM" width="40" height="40" loading="lazy" decoding="async">
+                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop" class="w-10 h-10 rounded-full border-2 border-brand-dark object-cover" alt="Realtor Team Lead using Sahyak CRM" width="40" height="40" loading="lazy" decoding="async">
                     </div>
                     <span class="text-xs text-gray-400">Trusted by real estate teams worldwide</span>
                 </div>
@@ -207,7 +299,7 @@ const seoDesc = "Step-by-step guides, video tutorials, downloadable templates an
 
             <!-- Right Phone Mockup -->
             <div class="hidden lg:block relative reveal">
-                <img src="/images/resources/2.png" alt="Quick Start Background" class="absolute inset-0 w-full h-full object-cover rounded-3xl opacity-20 grayscale">
+                <img src="/images/resources/2.png" alt="Quick Start Onboarding and Setup in Sahyak Real Estate CRM" class="absolute inset-0 w-full h-full object-cover rounded-3xl opacity-20 grayscale" width="600" height="600" loading="lazy" decoding="async">
                 <div class="relative z-10 bg-brand-dark text-white rounded-3xl p-6 shadow-2xl border border-gray-800 w-72 mx-auto animate-float">
                     <div class="flex justify-between items-center mb-6">
                         <span class="font-bold text-sm">Sahyak</span>
@@ -270,7 +362,7 @@ const seoDesc = "Step-by-step guides, video tutorials, downloadable templates an
             <div class="relative reveal">
                 <!-- Main Video Player -->
                 <div class="relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer">
-                    <img src="/images/resources/3.png" alt="Video Tutorial Thumbnail" class="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-700">
+                    <img src="/images/resources/3.png" alt="Video Tutorial Thumbnail for Sahyak CRM Setup and Walkthrough" class="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-700" width="800" height="400" loading="lazy" decoding="async">
                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
                         <div class="w-20 h-20 bg-brand-green rounded-full flex items-center justify-center text-brand-dark text-2xl group-hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-play ml-1"></i>
@@ -313,7 +405,7 @@ const seoDesc = "Step-by-step guides, video tutorials, downloadable templates an
     <!-- SECTION 4: STEP-BY-STEP GUIDES -->
     <section id="guides" class="bg-brand-light text-brand-dark py-24 px-6 lg:px-20 relative overflow-hidden">
         <div class="absolute inset-0 z-0 opacity-10">
-            <img src="/images/resources/4.png" alt="Step-by-Step Guides Background" class="w-full h-full object-cover">
+            <img src="/images/resources/4.png" alt="Step-by-Step Practical Guides and Documentation for Real Estate Brokers" class="w-full h-full object-cover" width="1920" height="800" loading="lazy" decoding="async">
         </div>
         
         <div class="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
@@ -379,7 +471,7 @@ const seoDesc = "Step-by-step guides, video tutorials, downloadable templates an
     <!-- SECTION 5: TEMPLATES & DOWNLOADS -->
     <section id="templates" class="bg-brand-dark py-24 px-6 lg:px-20 relative overflow-hidden">
         <div class="absolute inset-0 z-0 opacity-20">
-            <img src="/images/resources/5.png" alt="Templates & Downloads Background" class="w-full h-full object-cover">
+            <img src="/images/resources/5.png" alt="Real Estate Templates, Checklists and Downloadable Playbooks" class="w-full h-full object-cover" width="1920" height="800" loading="lazy" decoding="async">
         </div>
 
         <div class="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
@@ -525,7 +617,7 @@ const seoDesc = "Step-by-step guides, video tutorials, downloadable templates an
         <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
             <!-- Left Image (Split-Screen Contrast) -->
             <div class="relative reveal h-[400px] rounded-2xl overflow-hidden">
-                <img src="/images/resources/6.png" alt="Additional Support" class="w-full h-full object-cover">
+                <img src="/images/resources/6.png" alt="24/7 Dedicated Support and Help Desk for Real Estate Teams" class="w-full h-full object-cover" width="600" height="500" loading="lazy" decoding="async">
                 <div class="absolute inset-0 duotone-overlay"></div>
                 <div class="absolute bottom-6 left-6 text-brand-green font-handwriting text-3xl rotate-[-10deg]">
                     STILL<br>NEED<br>HELP?
@@ -580,7 +672,7 @@ const seoDesc = "Step-by-step guides, video tutorials, downloadable templates an
     <section class="relative bg-black py-24 px-6 lg:px-20 overflow-hidden">
         <!-- Background with Surrealist Portal Effect -->
         <div class="absolute inset-0 z-0">
-            <img src="/images/resources/7.png" alt="Footer CTA Background" class="w-full h-full object-cover opacity-30 grayscale">
+            <img src="/images/resources/7.png" alt="Sahyak Real Estate CRM Knowledge Base Portal" class="w-full h-full object-cover opacity-30 grayscale" width="1920" height="800" loading="lazy" decoding="async">
             <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
             <!-- Portal Effect -->
             <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[400px] border-4 border-brand-green/30 rounded-t-[100px] bg-brand-green/5 backdrop-blur-sm z-0 hidden lg:block"></div>

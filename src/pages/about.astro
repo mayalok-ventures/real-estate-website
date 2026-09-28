@@ -4,8 +4,62 @@ export const prerender = true;
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
-const seoTitle = "About Sahyak CRM - Built for Global Real Estate Teams";
-const seoDesc = "Sahyak CRM is a high-performance, mobile-first CRM designed for real estate brokerages across 15+ countries — closing deals with speed and clarity.";
+const seoTitle = "About Sahyak CRM — Built for Modern Real Estate Teams";
+const seoDesc = "Learn about Sahyak CRM: our mission, leadership, broker-first innovation, and how we empower real estate developers across 15+ countries worldwide.";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://sahyak.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "About Us",
+      "item": "https://sahyak.com/about"
+    }
+  ]
+};
+
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": seoTitle,
+  "description": seoDesc,
+  "url": "https://sahyak.com/about",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "Sahyak CRM",
+    "url": "https://sahyak.com",
+    "logo": "https://sahyak.com/images/logo.png",
+    "foundingLocation": {
+      "@type": "Place",
+      "name": "Mumbai, Maharashtra, India"
+    },
+    "founder": {
+      "@type": "Person",
+      "name": "Sahyak Engineering & Real Estate Leadership",
+      "jobTitle": "Co-Founders & Real Estate Architects",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Sahyak CRM"
+      }
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+91-87964-75107",
+      "contactType": "customer service",
+      "email": "support@sahyak.com",
+      "areaServed": ["IN", "AE", "US", "GB", "AU", "CA", "SG"],
+      "availableLanguage": ["en", "hi"]
+    }
+  }
+};
 ---
 
 <!DOCTYPE html>
@@ -16,19 +70,34 @@ const seoDesc = "Sahyak CRM is a high-performance, mobile-first CRM designed for
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
     <link rel="canonical" href="https://sahyak.com/about" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sahyak.com/about" />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={seoDesc} />
+    <meta property="og:image" content="https://sahyak.com/images/about/1.png" />
+    <meta property="og:site_name" content="Sahyak CRM" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://sahyak.com/about" />
+    <meta property="twitter:title" content={seoTitle} />
+    <meta property="twitter:description" content={seoDesc} />
+    <meta property="twitter:image" content="https://sahyak.com/images/about/1.png" />
+
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN-MH" />
+    <meta name="geo.placename" content="Mumbai" />
+    <meta name="geo.position" content="19.0657;72.8682" />
+    <meta name="ICBM" content="19.0657, 72.8682" />
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "AboutPage",
-      "name": "About Sahyak CRM",
-      "description": seoDesc,
-      "publisher": {
-        "@type": "Organization",
-        "name": "Sahyak CRM",
-        "url": "https://sahyak.com"
-      }
-    })} />
+    <script type="application/ld+json" set:html={JSON.stringify(aboutSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
     <style is:global>
         /* --- GLOBAL VARIABLES (UNIFIED HOMEPAGE PALETTE) --- */
@@ -768,8 +837,26 @@ const seoDesc = "Sahyak CRM is a high-performance, mobile-first CRM designed for
     </style>
 </head>
 <body>
+    <a href="#purpose" class="skip-link">Skip to main content</a>
 
     <Navbar active="about" />
+
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-container" style="max-width: 1400px; width: 90%; margin: 0 auto; padding: 16px 0 0 0;">
+        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+            <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+                    <meta itemprop="position" content="1" />
+                </li>
+                <li class="breadcrumb-separator" aria-hidden="true">/</li>
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span class="breadcrumb-current" itemprop="name" aria-current="page">About Us</span>
+                    <meta itemprop="position" content="2" />
+                </li>
+            </ol>
+        </nav>
+    </div>
 
     <!-- HERO SECTION -->
     <section class="hero section-dark">
@@ -784,16 +871,16 @@ const seoDesc = "Sahyak CRM is a high-performance, mobile-first CRM designed for
                 </div>
                 <div class="hero-social">
                     <div class="avatars">
-                        <img src="https://i.pravatar.cc/100?img=1" alt="User">
-                        <img src="https://i.pravatar.cc/100?img=2" alt="User">
-                        <img src="https://i.pravatar.cc/100?img=3" alt="User">
+                        <img src="https://i.pravatar.cc/100?img=1" width="40" height="40" loading="lazy" decoding="async" alt="Broker partner avatar">
+                        <img src="https://i.pravatar.cc/100?img=2" width="40" height="40" loading="lazy" decoding="async" alt="Real estate consultant avatar">
+                        <img src="https://i.pravatar.cc/100?img=3" width="40" height="40" loading="lazy" decoding="async" alt="Agency director avatar">
                     </div>
                     <span>Built for real estate teams across India and beyond</span>
                 </div>
             </div>
             <div class="hero-visual reveal">
                 <!-- AI Image 1 (Hero section main visual) -->
-                <img src="/images/about/1.png" alt="Real Estate Agent" class="hero-img-main">
+                <img src="/images/about/1.png" width="600" height="700" fetchpriority="high" loading="eager" alt="Real estate agent closing property deals with Sahyak CRM on mobile" class="hero-img-main">
                 <div class="floating-note note-1">REAL PEOPLE<br>REAL CONVERSATIONS<br>REAL GROWTH</div>
                 <div class="floating-note note-2">A CRM THAT UNDERSTANDS REAL ESTATE</div>
             </div>
@@ -811,7 +898,7 @@ const seoDesc = "Sahyak CRM is a high-performance, mobile-first CRM designed for
             </div>
             <div class="purpose-visual reveal">
                 <!-- AI Image 2 (Purpose section visual) -->
-                <img src="/images/about/2.png" alt="Team Working" class="purpose-img">
+                <img src="/images/about/2.png" width="600" height="450" loading="lazy" decoding="async" alt="Real estate brokerage sales team collaborating on client follow-ups" class="purpose-img">
                 <div class="ui-card">&#128222; Capture Leads</div>
                 <div class="ui-card">&#9200; Follow Up on Time</div>
                 <div class="ui-card">&#128205; Coordinate Site Visits</div>
@@ -831,9 +918,9 @@ const seoDesc = "Sahyak CRM is a high-performance, mobile-first CRM designed for
             </div>
             <div class="teams-visual reveal">
                 <!-- AI Image 3 (Magazine Collage - 3 Images) -->
-                <img src="/images/about/3.1.png" alt="Individual Agent" class="collage-img collage-1">
-                <img src="/images/about/3.2.png" alt="Developers & Channel Partners" class="collage-img collage-2">
-                <img src="/images/about/3.3.png" alt="Brokerage Team" class="collage-img collage-3">
+                <img src="/images/about/3.1.png" width="400" height="450" loading="lazy" decoding="async" alt="Individual real estate broker managing buyer pipelines" class="collage-img collage-1">
+                <img src="/images/about/3.2.png" width="400" height="450" loading="lazy" decoding="async" alt="Real estate developers and channel partner network" class="collage-img collage-2">
+                <img src="/images/about/3.3.png" width="400" height="450" loading="lazy" decoding="async" alt="Real estate brokerage sales managers tracking team performance" class="collage-img collage-3">
                 
                 <span class="collage-label" style="top: 10%; left: 10%;">Individual Agents</span>
                 <span class="collage-label" style="top: 30%; right: 10%;">Developers & Channel Partners</span>
@@ -853,7 +940,7 @@ const seoDesc = "Sahyak CRM is a high-performance, mobile-first CRM designed for
             </div>
             <div class="phone-mockup reveal">
                 <div class="phone-frame">
-                    <img src="/images/about/4.png" alt="Sahyak CRM Mobile App" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                    <img src="/images/about/4.png" width="340" height="680" loading="lazy" decoding="async" alt="Sahyak CRM mobile real estate application user interface" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                 </div>
             </div>
         </div>
@@ -862,7 +949,7 @@ const seoDesc = "Sahyak CRM is a high-performance, mobile-first CRM designed for
     <!-- BELIEFS SECTION -->
     <section class="beliefs section-dark">
         <!-- AI Image 5 (Beliefs section background) -->
-        <img src="/images/about/5.png" alt="Cityscape" class="beliefs-bg">
+        <img src="/images/about/5.png" width="1920" height="800" loading="lazy" decoding="async" alt="Urban metropolitan architecture symbolizing growth and foundation" class="beliefs-bg">
         <div class="container">
             <div class="beliefs-text reveal">
                 <div class="tagline">Our Beliefs</div>
@@ -906,7 +993,7 @@ const seoDesc = "Sahyak CRM is a high-performance, mobile-first CRM designed for
             <div class="road-visual reveal">
                 <div class="portal-circle"></div>
                 <!-- AI Image 6 (Road Ahead section portal visual) -->
-                <img src="/images/about/6.png" alt="Portal" class="road-img">
+                <img src="/images/about/6.png" width="500" height="500" loading="lazy" decoding="async" alt="Futuristic portal representing continuous real estate innovation" class="road-img">
             </div>
         </div>
     </section>
@@ -925,7 +1012,7 @@ const seoDesc = "Sahyak CRM is a high-performance, mobile-first CRM designed for
             </div>
             <div class="footer-visual reveal">
                 <!-- AI Image 7 (Footer section phone close-up) -->
-                <img src="/images/about/7.png" alt="Sahyak CRM Mobile App" class="footer-phone-img">
+                <img src="/images/about/7.png" width="320" height="640" loading="lazy" decoding="async" alt="Sahyak CRM smartphone application in broker field operations" class="footer-phone-img">
                 <div class="floating-note-footer">REAL ESTATE GROWS WITH PEOPLE LIKE YOU</div>
             </div>
         </div>

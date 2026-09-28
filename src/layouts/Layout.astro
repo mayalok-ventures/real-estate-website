@@ -1,67 +1,145 @@
 ---
 import '../styles/global.css';
 
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
 interface Props {
   title: string;
   description: string;
   canonicalUrl?: string;
   ogImage?: string;
+  ogType?: 'website' | 'article' | 'product';
   schema?: Record<string, any> | Record<string, any>[];
   activeNav?: 'home' | 'features' | 'pricing' | 'about' | 'resources' | 'security' | 'contact';
+  breadcrumbs?: BreadcrumbItem[];
+  noindex?: boolean;
 }
 
 const {
   title,
   description,
-  canonicalUrl = Astro.url.href,
+  canonicalUrl = `https://sahyak.com${Astro.url.pathname.replace(/\/$/, '') || '/'}`,
   ogImage = 'https://sahyak.com/images/sahyak-logo.png',
+  ogType = 'website',
   schema,
-  activeNav = 'home'
+  activeNav = 'home',
+  breadcrumbs,
+  noindex = false
 } = Astro.props;
 
-// Base Organization Schema for Google & AI discoverability
+// Base Organization Schema for Google & AI discoverability with full E-E-A-T credentials
 const baseOrgSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": "https://sahyak.com/#organization",
   "name": "Sahyak CRM",
+  "legalName": "Sahyak Real Estate Technologies Private Limited",
   "url": "https://sahyak.com",
-  "logo": "https://sahyak.com/images/sahyak-logo.png",
-  "description": "Mobile-first Real Estate CRM built for brokers, sales agents, and real estate developers across 15+ countries.",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://sahyak.com/images/sahyak-logo.png",
+    "width": "512",
+    "height": "512"
+  },
+  "description": "Enterprise mobile-first Real Estate CRM engineered for property developers, brokers, and channel partners across 15+ countries.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Bandra Kurla Complex, Bandra East",
+    "addressLocality": "Mumbai",
+    "addressRegion": "Maharashtra",
+    "postalCode": "400051",
+    "addressCountry": "IN"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 19.0657,
+    "longitude": 72.8682
+  },
   "sameAs": [
     "https://twitter.com/sahyakcrm",
-    "https://linkedin.com/company/sahyakcrm"
+    "https://linkedin.com/company/sahyakcrm",
+    "https://github.com/mayalok-ventures/real-estate-website"
   ],
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": "+91 87964 75107",
-    "contactType": "Customer Support",
-    "email": "support@sahyak.com",
-    "availableLanguage": ["English", "Hindi", "Spanish", "French", "German", "Japanese", "Arabic"]
-  }
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "telephone": "+91 87964 75107",
+      "contactType": "sales",
+      "email": "support@sahyak.com",
+      "areaServed": ["IN", "AE", "US", "GB", "SG"],
+      "availableLanguage": ["English", "Hindi"]
+    },
+    {
+      "@type": "ContactPoint",
+      "telephone": "+91 87964 75107",
+      "contactType": "customer service",
+      "email": "support@sahyak.com",
+      "availableLanguage": ["English", "Hindi"]
+    }
+  ],
+  "knowsAbout": [
+    "Real Estate CRM Software",
+    "WhatsApp Automation for Property Sales",
+    "Site Visit Coordination & Attendance Tracking",
+    "RERA Compliance & Broker Inventory",
+    "Multi-Project Lead Management"
+  ]
+};
+
+// WebSite Schema with Sitelinks Searchbox
+const webSiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://sahyak.com/#website",
+  "url": "https://sahyak.com",
+  "name": "Sahyak CRM",
+  "publisher": { "@id": "https://sahyak.com/#organization" },
+  "inLanguage": "en-US"
 };
 
 // Software Application Schema
 const softwareSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "Sahyak CRM",
-  "operatingSystem": "Web, Android, iOS",
+  "name": "Sahyak Real Estate CRM",
+  "operatingSystem": "Web, iOS, Android, Cloudflare Edge",
   "applicationCategory": "BusinessApplication",
   "offers": {
     "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "INR"
+    "price": "499",
+    "priceCurrency": "INR",
+    "priceValidUntil": "2027-12-31",
+    "availability": "https://schema.org/InStock"
   },
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.9",
-    "reviewCount": "128"
+    "reviewCount": "148",
+    "bestRating": "5",
+    "worstRating": "1"
   }
 };
 
+// BreadcrumbList Schema (if breadcrumbs provided)
+const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": breadcrumbs.map((crumb, idx) => ({
+    "@type": "ListItem",
+    "position": idx + 1,
+    "name": crumb.name,
+    "item": crumb.url.startsWith('http') ? crumb.url : `https://sahyak.com${crumb.url}`
+  }))
+} : null;
+
 const fullSchemaList = [
   baseOrgSchema,
+  webSiteSchema,
   softwareSchema,
+  ...(breadcrumbSchema ? [breadcrumbSchema] : []),
   ...(schema ? (Array.isArray(schema) ? schema : [schema]) : [])
 ];
 ---
@@ -74,24 +152,39 @@ const fullSchemaList = [
   <title>{title}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonicalUrl} />
+  <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"} />
   
+  <!-- GEO SEO & Local Targeting -->
+  <meta name="geo.region" content="IN-MH" />
+  <meta name="geo.placename" content="Mumbai, Maharashtra, India" />
+  <meta name="geo.position" content="19.0657;72.8682" />
+  <meta name="ICBM" content="19.0657, 72.8682" />
+
   <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
+  <meta property="og:type" content={ogType} />
   <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:site_name" content="Sahyak Real Estate CRM" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={ogImage} />
+  <meta property="og:image:alt" content="Sahyak CRM — The Operating System for Real Estate" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="en_IN" />
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content={canonicalUrl} />
-  <meta property="twitter:title" content={title} />
-  <meta property="twitter:description" content={description} />
-  <meta property="twitter:image" content={ogImage} />
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@sahyakcrm" />
+  <meta name="twitter:creator" content="@sahyakcrm" />
+  <meta name="twitter:url" content={canonicalUrl} />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+  <meta name="twitter:image:alt" content="Sahyak Real Estate CRM" />
 
   <!-- Theme & Icons -->
   <meta name="theme-color" content="#0A1C16" />
   <link rel="icon" type="image/png" href="/images/sahyak-logo.png" />
+  <link rel="apple-touch-icon" href="/images/sahyak-logo.png" />
 
   <!-- Google Fonts: Playfair Display (Serif), Inter (Sans), Caveat (Handwritten) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -104,11 +197,14 @@ const fullSchemaList = [
   ))}
 </head>
 <body>
+  <!-- Accessibility: Skip to Main Content -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <!-- Header Navigation -->
   <header class="site-header" id="site-header">
     <div class="container header-inner">
       <a href="/" class="site-logo" aria-label="Sahyak CRM Homepage">
-        <img src="/images/sahyak-logo.png" alt="Sahyak CRM" style="height: 34px; width: auto; object-fit: contain; border-radius: 4px;" />
+        <img src="/images/sahyak-logo.png" alt="Sahyak CRM — Real Estate Operating System" width="34" height="34" style="height: 34px; width: auto; object-fit: contain; border-radius: 4px;" />
         <span>Sahyak CRM</span>
       </a>
 
@@ -152,6 +248,26 @@ const fullSchemaList = [
       </div>
     </div>
   </header>
+
+  <!-- Breadcrumbs Visual Navigation Trail -->
+  {breadcrumbs && breadcrumbs.length > 0 && (
+    <nav aria-label="Breadcrumbs" class="breadcrumb-nav">
+      <div class="container">
+        <ol class="breadcrumb-list">
+          {breadcrumbs.map((crumb, idx) => (
+            <li class="breadcrumb-item">
+              {idx > 0 && <span class="breadcrumb-separator" aria-hidden="true">&rsaquo;</span>}
+              {idx === breadcrumbs.length - 1 ? (
+                <span class="breadcrumb-current" aria-current="page">{crumb.name}</span>
+              ) : (
+                <a href={crumb.url}>{crumb.name}</a>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </nav>
+  )}
 
   <!-- Main Slot -->
   <main id="main-content">

@@ -1236,3 +1236,61 @@ p {
   .lg\:text-7xl { font-size: 4.5rem; line-height: 1.05; }
 }
 
+/* Accessibility: Skip to Main Content */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #00E676;
+  color: #0A1C16;
+  padding: 8px 16px;
+  font-weight: 700;
+  z-index: 10000;
+  transition: top 0.2s ease;
+  border-radius: 0 0 8px 0;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* SEO & Accessibility: Breadcrumbs Navigation */
+.breadcrumb-nav {
+  padding: 0.75rem 0;
+  background: #081712;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.82rem;
+}
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #9CA3AF;
+}
+.breadcrumb-item a {
+  color: #9CA3AF;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.breadcrumb-item a:hover {
+  color: #4ADE80;
+}
+.breadcrumb-separator {
+  color: #4B5563;
+  font-size: 0.7rem;
+}
+.breadcrumb-current {
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+

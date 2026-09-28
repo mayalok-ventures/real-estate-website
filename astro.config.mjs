@@ -13,6 +13,9 @@ export default defineConfig({
   integrations: [
     sitemap({
       filter: (page) => !page.includes('/admin') && !page.includes('/api/'),
+      customPages: [
+        'https://sahyak.com/pricing',
+      ],
     }),
   ],
 });
