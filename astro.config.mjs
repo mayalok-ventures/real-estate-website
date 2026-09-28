@@ -7,8 +7,10 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://sahyak.com',
   output: 'server',
+  session: false,
   adapter: cloudflare({
     imageService: 'passthrough',
+    prerenderEnvironment: 'node',
   }),
   integrations: [
     sitemap({

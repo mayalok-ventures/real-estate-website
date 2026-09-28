@@ -1,0 +1,14 @@
+name = "real-estate-website"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sahyak-crm-db"
+database_id = "local-sahyak-db"
+
+[vars]
+ADMIN_EMAILS = "admin@sahyak.com,team@sahyak.com"
+ADMIN_SECRET = "sahyak_admin_secure_key_2026"
+APP_ENV = "production"
