@@ -66,6 +66,70 @@ export function normalizePrivateKey(key: string): string {
   return clean;
 }
 
+// Universal RS256 JWT signature helper supporting both Node.js crypto and WebCrypto API
+async function signJwtRS256(signingInput: string, privateKeyPem: string): Promise<string> {
+  // 1. Try Node.js crypto module
+  try {
+    const nodeCrypto = await import('node:crypto');
+    if (nodeCrypto && typeof nodeCrypto.createSign === 'function') {
+      const sign = nodeCrypto.createSign('RSA-SHA256');
+      sign.update(signingInput);
+      return sign.sign(privateKeyPem, 'base64url');
+    }
+  } catch {
+    // Continue to WebCrypto fallback
+  }
+
+  // 2. Try universal WebCrypto subtle API (Cloudflare Workers, modern Node)
+  try {
+    const pemContents = privateKeyPem
+      .replace(/-----BEGIN [A-Z ]+-----/g, '')
+      .replace(/-----END [A-Z ]+-----/g, '')
+      .replace(/\s+/g, '');
+
+    const binaryDerString = atob(pemContents);
+    const binaryDer = new Uint8Array(binaryDerString.length);
+    for (let i = 0; i < binaryDerString.length; i++) {
+      binaryDer[i] = binaryDerString.charCodeAt(i);
+    }
+
+    const subtle = (globalThis as any).crypto?.subtle;
+    if (subtle) {
+      const key = await subtle.importKey(
+        'pkcs8',
+        binaryDer.buffer,
+        {
+          name: 'RSASSA-PKCS1-v1_5',
+          hash: { name: 'SHA-256' },
+        },
+        false,
+        ['sign']
+      );
+
+      const encoder = new TextEncoder();
+      const signature = await subtle.sign(
+        'RSASSA-PKCS1-v1_5',
+        key,
+        encoder.encode(signingInput)
+      );
+
+      const sigBytes = new Uint8Array(signature);
+      let binary = '';
+      for (let i = 0; i < sigBytes.byteLength; i++) {
+        binary += String.fromCharCode(sigBytes[i]);
+      }
+      return btoa(binary)
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+    }
+  } catch (webErr: any) {
+    throw new Error(`WebCrypto RSA signing failed: ${webErr?.message || String(webErr)}`);
+  }
+
+  throw new Error('No compatible cryptographic provider available for RS256 signing.');
+}
+
 // Generate Google OAuth2 Access Token using RS256 JWT
 export async function getGoogleAccessToken(
   clientEmail: string,
@@ -105,15 +169,16 @@ export async function getGoogleAccessToken(
       iat
     };
 
-    const encodeBase64Url = (obj: any) =>
-      Buffer.from(JSON.stringify(obj)).toString('base64url');
+    const encodeBase64Url = (obj: any) => {
+      const jsonStr = JSON.stringify(obj);
+      if (typeof Buffer !== 'undefined') {
+        return Buffer.from(jsonStr).toString('base64url');
+      }
+      return btoa(jsonStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    };
 
     const signingInput = `${encodeBase64Url(header)}.${encodeBase64Url(payload)}`;
-
-    const sign = crypto.createSign('RSA-SHA256');
-    sign.update(signingInput);
-    const signature = sign.sign(privateKey, 'base64url');
-
+    const signature = await signJwtRS256(signingInput, privateKey);
     const assertion = `${signingInput}.${signature}`;
 
     const res = await fetch('https://oauth2.googleapis.com/token', {
@@ -774,8 +839,13 @@ export async function getSearchConsoleData(
   // Calculate dates (Search Console data has a 2-day reporting latency)
   const daysBack = range === '7d' ? 7 : (range === '90d' ? 90 : 28);
   const endD = new Date(now - 2 * 24 * 3600 * 1000);
-  // Check if credentials are provided
-  if (!clientEmail || !hasPrivateKey) {
+  const startD = new Date(endD.getTime() - daysBack * 24 * 3600 * 1000);
+  const endDate = endD.toISOString().split('T')[0];
+  const startDate = startD.toISOString().split('T')[0];
+
+  try {
+    // Check if credentials are provided
+    if (!clientEmail || !hasPrivateKey) {
     const timeSeries = generateBaselineTimeSeries(daysBack);
     const totalClicks = timeSeries.reduce((s, r) => s + r.clicks, 0);
     const totalImpressions = timeSeries.reduce((s, r) => s + r.impressions, 0);
@@ -1138,7 +1208,73 @@ export async function getSearchConsoleData(
     expiresAt: now + 15 * 60 * 1000
   };
 
-  return result;
+    return result;
+  } catch (err: any) {
+    console.error('[GSC] Unexpected error in getSearchConsoleData:', err);
+    const timeSeries = generateBaselineTimeSeries(daysBack);
+    const totalClicks = timeSeries.reduce((s, r) => s + r.clicks, 0);
+    const totalImpressions = timeSeries.reduce((s, r) => s + r.impressions, 0);
+    const avgCtr = Math.round((totalClicks / totalImpressions) * 1000) / 10;
+    const avgPosition = 3.4;
+    const modules = generateEnterpriseGSCModules(siteUrl, totalClicks, totalImpressions, BASELINE_QUERIES);
+
+    return {
+      status: 'auth_error',
+      statusMessage: `Search Console Initialization Warning: ${err?.message || 'Check RSA private key and service account permissions in environment variables.'}`,
+      siteUrl,
+      clientEmail,
+      hasPrivateKey,
+      isKeyFormatValid,
+      startDate,
+      endDate,
+      totalClicks,
+      totalImpressions,
+      avgCtr,
+      avgPosition,
+      topQueries: BASELINE_QUERIES,
+      topPages: BASELINE_PAGES,
+      countries: BASELINE_COUNTRIES,
+      devices: BASELINE_DEVICES,
+      timeSeries,
+      sitemaps: [
+        {
+          path: `${siteUrl}/sitemap.xml`,
+          lastSubmitted: '2026-09-28',
+          isPending: false,
+          isSitemapsIndex: false,
+          type: 'XML',
+          errors: 0,
+          warnings: 0,
+          submitted: 7,
+          indexed: 7
+        },
+        {
+          path: `${siteUrl}/sitemap-index.xml`,
+          lastSubmitted: '2026-09-28',
+          isPending: false,
+          isSitemapsIndex: true,
+          type: 'Index',
+          errors: 0,
+          warnings: 0,
+          submitted: 7,
+          indexed: 7
+        }
+      ],
+      opportunities: [
+        {
+          type: 'striking_distance',
+          query: 'real estate crm with whatsapp integration',
+          clicks: 36,
+          impressions: 1040,
+          ctr: 3.5,
+          position: 4.6,
+          recommendation: 'Currently ranking #4.6. Target key query for WhatsApp hub workflow.'
+        }
+      ],
+      lastFetchedAt: new Date().toISOString(),
+      ...modules
+    };
+  }
 }
 
 // Generate CSV Exports for Google Search Console data across all dimensions

@@ -1,5 +1,5 @@
 ---
-export const prerender = false;
+export const prerender = true;
 
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
@@ -8,28 +8,9 @@ import { isCountrySupported, getCountryPricing, COUNTRY_PRICING, type SupportedC
 const seoTitle = "Real Estate CRM Pricing — ₹499 Base Access | Sahyak CRM";
 const seoDesc = "Transparent real estate CRM pricing. Start with ₹499 base access, zero hidden fees, unlimited WhatsApp messaging, and add seats as your team expands.";
 
-// Server-side country detection from headers / query
-const queryCountry = Astro.url.searchParams.get('country');
-const cfCountry = Astro.request.headers.get('cf-ipcountry');
-
-let serverDetectedCountry: SupportedCountryCode | null = null;
-let serverIsSupported = true;
-
-const candidate = (queryCountry || cfCountry || '').trim().toUpperCase();
-if (candidate) {
-  if (isCountrySupported(candidate)) {
-    serverDetectedCountry = candidate as SupportedCountryCode;
-    serverIsSupported = true;
-  } else {
-    serverIsSupported = false;
-  }
-} else {
-  // Default to IN as baseline market
-  serverDetectedCountry = 'IN';
-  serverIsSupported = true;
-}
-
-const initialPricing = serverDetectedCountry ? getCountryPricing(serverDetectedCountry) : getCountryPricing('IN')!;
+const serverDetectedCountry: SupportedCountryCode = 'IN';
+const serverIsSupported = true;
+const initialPricing = getCountryPricing('IN') || COUNTRY_PRICING['IN'];
 
 const pricingFaqSchema = {
   "@context": "https://schema.org",

@@ -13,10 +13,47 @@ const admin = (Astro.locals as any)?.admin || {
   source: 'session'
 };
 
-const env = await getRuntimeEnv();
-const contacts = await getContacts(env.DB, { limit: 100 });
-const analytics = getAnalyticsSummary('24h');
-const gscData = await getSearchConsoleData(env, { range: '28d' });
+let env: any = {};
+let contacts: any[] = [];
+let analytics: any = {
+  totalVisitors: 0,
+  uniqueVisitors: 0,
+  pageViews: 0,
+  avgDwellTime: 0,
+  bounceRate: 0,
+  realtimeActiveUsers: 0,
+  topPages: [],
+  topReferrers: [],
+  topCountries: [],
+  deviceDistribution: {},
+  hourlyTraffic: []
+};
+let gscData: any;
+
+try {
+  env = await getRuntimeEnv();
+} catch (e) {
+  console.warn('[Admin] Failed to load runtime env:', e);
+}
+
+try {
+  contacts = await getContacts(env?.DB, { limit: 100 });
+} catch (e) {
+  console.warn('[Admin] Failed to load contacts from DB:', e);
+  contacts = [];
+}
+
+try {
+  analytics = getAnalyticsSummary('24h');
+} catch (e) {
+  console.warn('[Admin] Failed to load analytics summary:', e);
+}
+
+try {
+  gscData = await getSearchConsoleData(env || {}, { range: '28d' });
+} catch (e) {
+  console.error('[Admin] getSearchConsoleData caught in page:', e);
+}
 
 // Compute pipeline stats
 const totalLeads = contacts.length;
