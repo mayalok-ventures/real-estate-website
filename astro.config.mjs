@@ -18,4 +18,9 @@ export default defineConfig({
       ],
     }),
   ],
+  vite: {
+    optimizeDeps: {
+      exclude: ['astro_virtual-modules_middleware', '@astrojs/cloudflare'],
+    },
+  },
 });
