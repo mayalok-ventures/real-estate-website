@@ -7,8 +7,8 @@
   },
   "scripts": {
     "dev": "astro dev --force",
-    "build": "astro build",
-    "pages:build": "astro build",
+    "build": "astro build && node scripts/prepare-cloudflare.js",
+    "pages:build": "astro build && node scripts/prepare-cloudflare.js",
     "preview": "astro preview",
     "astro": "astro"
   },
