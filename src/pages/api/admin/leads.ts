@@ -55,7 +55,7 @@ export const GET: APIRoute = async ({ request }) => {
 
 export const PATCH: APIRoute = async ({ request }) => {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as any;
     const { id, status, admin_notes } = body;
 
     if (!id || !status) {

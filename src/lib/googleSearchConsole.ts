@@ -190,7 +190,7 @@ export async function getGoogleAccessToken(
       }).toString()
     });
 
-    const tokenData = await res.json();
+    const tokenData = (await res.json()) as any;
 
     if (!res.ok) {
       return {
@@ -243,12 +243,12 @@ async function querySearchConsole(
     });
 
     if (!res.ok) {
-      const errJson = await res.json().catch(() => ({}));
+      const errJson = (await res.json().catch(() => ({}))) as any;
       const msg = errJson?.error?.message || `Google API returned status ${res.status}`;
       return { error: msg };
     }
 
-    const data = await res.json();
+    const data = (await res.json()) as any;
     return { rows: data.rows || [] };
   } catch (err: any) {
     return { error: err.message || String(err) };
@@ -270,7 +270,7 @@ async function querySitemaps(
 
     if (!res.ok) return [];
 
-    const data = await res.json();
+    const data = (await res.json()) as any;
     const list = data.sitemap || [];
 
     return list.map((sm: any) => {

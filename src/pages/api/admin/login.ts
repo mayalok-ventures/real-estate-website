@@ -5,7 +5,7 @@ export const prerender = false;
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as any;
     const { email, password } = body;
 
     const env = await getRuntimeEnv();

@@ -5,6 +5,7 @@ import type {
   TrafficSourceSummary,
   TrafficDomainSummary,
   TimeSeriesData,
+  AnalyticsSummary,
 } from '../types/analytics';
 import type { D1Database } from '../types/db';
 
@@ -531,7 +532,7 @@ export function exportAnalyticsToCsv(type: 'visitors' | 'pages' | 'sources' | 'a
 
   if (type === 'visitors') {
     const headers = ['Session ID', 'Visitor ID', 'Country', 'City', 'Region', 'Page Visited', 'Traffic Source', 'Referrer Domain', 'Device', 'Browser', 'Stay Duration (Sec)', 'Stay Duration (Formatted)', 'Last Active'];
-    const rows = summary.visitorLogs.map(v => [
+    const rows = summary.visitorLogs.map((v: VisitorSession) => [
       `"${v.session_id}"`,
       `"${v.visitor_id}"`,
       `"${v.country}"`,
@@ -546,12 +547,12 @@ export function exportAnalyticsToCsv(type: 'visitors' | 'pages' | 'sources' | 'a
       `"${formatDuration(v.duration_seconds)}"`,
       `"${v.last_active_at}"`
     ]);
-    return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    return [headers.join(','), ...rows.map((r: (string | number)[]) => r.join(','))].join('\n');
   }
 
   if (type === 'pages') {
     const headers = ['Page URL', 'Page Title', 'Total Pageviews', 'Unique Visitors', 'Avg Duration (Sec)', 'Avg Duration (Formatted)', 'Bounce Rate (%)', 'Most Engaged Section'];
-    const rows = summary.pages.map(p => [
+    const rows = summary.pages.map((p: PageInsight) => [
       `"${p.page}"`,
       `"${p.title.replace(/"/g, '""')}"`,
       p.totalViews,
@@ -561,12 +562,12 @@ export function exportAnalyticsToCsv(type: 'visitors' | 'pages' | 'sources' | 'a
       `${p.bounceRate}%`,
       `"${p.topSection}"`
     ]);
-    return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    return [headers.join(','), ...rows.map((r: (string | number)[]) => r.join(','))].join('\n');
   }
 
   if (type === 'sources') {
     const headers = ['Platform / Domain Name', 'Full Domain', 'Channel Category', 'Visitor Count', 'Traffic Share (%)', 'Avg Duration (Sec)', 'Avg Duration (Formatted)'];
-    const rows = summary.trafficDomains.map(d => [
+    const rows = summary.trafficDomains.map((d: TrafficDomainSummary) => [
       `"${d.platformName.replace(/"/g, '""')}"`,
       `"${d.domain}"`,
       `"${d.channel}"`,
@@ -575,7 +576,7 @@ export function exportAnalyticsToCsv(type: 'visitors' | 'pages' | 'sources' | 'a
       d.avgDurationSeconds,
       `"${formatDuration(d.avgDurationSeconds)}"`
     ]);
-    return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    return [headers.join(','), ...rows.map((r: (string | number)[]) => r.join(','))].join('\n');
   }
 
   // Type === 'all' (Master Summary Report)
@@ -589,19 +590,19 @@ export function exportAnalyticsToCsv(type: 'visitors' | 'pages' | 'sources' | 'a
   lines.push('');
   lines.push('--- TOP PAGES BY ENGAGEMENT ---');
   lines.push('Page,Views,Unique Visitors,Avg Duration,Top Section');
-  summary.pages.forEach(p => {
+  summary.pages.forEach((p: PageInsight) => {
     lines.push(`"${p.page}",${p.totalViews},${p.uniqueVisitors},"${formatDuration(p.avgDurationSeconds)}","${p.topSection}"`);
   });
   lines.push('');
   lines.push('--- TOP TRAFFIC CHANNELS ---');
   lines.push('Channel,Visitors,Percentage,Avg Duration');
-  summary.trafficChannels.forEach(c => {
+  summary.trafficChannels.forEach((c: TrafficSourceSummary) => {
     lines.push(`"${c.channel}",${c.count},${c.percentage}%,"${formatDuration(c.avgDurationSeconds)}"`);
   });
   lines.push('');
   lines.push('--- RECENT VISITOR SESSIONS ---');
   lines.push('Country,City,Page,Source,Device,Duration,Last Active');
-  summary.visitorLogs.slice(0, 30).forEach(v => {
+  summary.visitorLogs.slice(0, 30).forEach((v: VisitorSession) => {
     lines.push(`"${v.country}","${v.city}","${v.page}","${v.traffic_source}","${v.device}","${formatDuration(v.duration_seconds)}","${v.last_active_at}"`);
   });
 

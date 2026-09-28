@@ -11,7 +11,7 @@ export const POST: APIRoute = async ({ request }) => {
     const contentType = request.headers.get('content-type') || '';
 
     if (contentType.includes('application/json')) {
-      payload = await request.json();
+      payload = (await request.json()) as TrackPayload;
     } else {
       // Handles sendBeacon text or form-data
       const text = await request.text();
