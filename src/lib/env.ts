@@ -1,4 +1,4 @@
-import type { Env } from '../types/db';
+import type { Env, D1Database } from '../types/db';
 
 export interface ProductionRuntimeEnv {
   DB?: D1Database;

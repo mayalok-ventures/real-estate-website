@@ -1,4 +1,4 @@
-import type { ContactSubmission, ResourceItem } from '../types/db';
+import type { ContactSubmission, ResourceItem, D1Database } from '../types/db';
 
 let tablesInitialized = false;
 

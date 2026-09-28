@@ -1,3 +1,7 @@
+import type { D1Database, Fetcher } from '@cloudflare/workers-types';
+
+export type { D1Database, Fetcher };
+
 export interface ContactSubmission {
   id?: number;
   name: string;

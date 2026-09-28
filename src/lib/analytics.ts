@@ -5,8 +5,8 @@ import type {
   TrafficSourceSummary,
   TrafficDomainSummary,
   TimeSeriesData,
-  AnalyticsSummary
 } from '../types/analytics';
+import type { D1Database } from '../types/db';
 
 // Memory store for analytics sessions (starts empty, populates ONLY with real visitor tracking)
 let memorySessions: VisitorSession[] = [];
