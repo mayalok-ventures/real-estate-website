@@ -1,0 +1,146 @@
+---
+// Client-side analytics & dwell-time tracker for Sahyak CRM
+---
+
+<script is:inline>
+  (function() {
+    // Only track in browser context and skip for admin pages
+    if (typeof window === 'undefined' || window.location.pathname.startsWith('/admin')) return;
+
+    try {
+      // 1. Persistent Visitor ID & Session ID
+      let visitorId = localStorage.getItem('sahyak_vid');
+      if (!visitorId) {
+        visitorId = 'v_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+        localStorage.setItem('sahyak_vid', visitorId);
+      }
+
+      let sessionId = sessionStorage.getItem('sahyak_sid');
+      if (!sessionId) {
+        sessionId = 's_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+        sessionStorage.setItem('sahyak_sid', sessionId);
+      }
+
+      const currentPage = window.location.pathname + window.location.search;
+      const pageTitle = document.title || 'Sahyak CRM';
+      const referrer = document.referrer || 'direct';
+
+      const startTime = Date.now();
+      let lastHeartbeat = startTime;
+      let activeSection = 'hero';
+      const sectionDurations = {};
+      let currentVisibleSection = 'hero';
+      let currentSectionStart = Date.now();
+
+      // Section intersection observer to track which section is currently viewed
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
+            const secId = entry.target.id || entry.target.getAttribute('data-section') || entry.target.tagName.toLowerCase();
+            
+            // Record elapsed time for previous visible section
+            const now = Date.now();
+            const elapsedSec = Math.round((now - currentSectionStart) / 1000);
+            if (elapsedSec > 0) {
+              sectionDurations[currentVisibleSection] = (sectionDurations[currentVisibleSection] || 0) + elapsedSec;
+            }
+
+            currentVisibleSection = secId;
+            currentSectionStart = now;
+
+            // Recalculate top section with highest duration
+            let maxSec = 0;
+            for (const [sec, dur] of Object.entries(sectionDurations)) {
+              if (dur > maxSec) {
+                maxSec = dur;
+                activeSection = sec;
+              }
+            }
+          }
+        });
+      }, { threshold: [0.35, 0.7] });
+
+      // Observe sections once DOM is ready
+      function observeSections() {
+        document.querySelectorAll('section, header, main > div[id]').forEach(el => {
+          observer.observe(el);
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', observeSections);
+      } else {
+        observeSections();
+      }
+
+      // Payload builder
+      function buildPayload(eventName) {
+        const now = Date.now();
+        const totalDurationSec = Math.round((now - startTime) / 1000);
+
+        // Update current section duration
+        const currentElapsed = Math.round((now - currentSectionStart) / 1000);
+        if (currentElapsed > 0) {
+          sectionDurations[currentVisibleSection] = (sectionDurations[currentVisibleSection] || 0) + currentElapsed;
+          currentSectionStart = now;
+        }
+
+        return {
+          event: eventName,
+          session_id: sessionId,
+          visitor_id: visitorId,
+          page: currentPage,
+          page_title: pageTitle,
+          referrer: referrer,
+          duration_seconds: totalDurationSec,
+          active_section: activeSection,
+          section_durations: sectionDurations,
+          screen_width: window.innerWidth
+        };
+      }
+
+      // Send tracking event
+      function sendTrack(eventName, useBeacon) {
+        const payload = buildPayload(eventName);
+        const url = '/api/analytics/track';
+
+        if (useBeacon && navigator.sendBeacon) {
+          navigator.sendBeacon(url, JSON.stringify(payload));
+        } else {
+          fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            keepalive: true
+          }).catch(function() {});
+        }
+      }
+
+      // 1. Initial Pageview
+      sendTrack('pageview', false);
+
+      // 2. Heartbeat every 15 seconds to track active presence
+      const heartbeatInterval = setInterval(function() {
+        sendTrack('heartbeat', false);
+      }, 15000);
+
+      // 3. Page visibility change / leave beacon
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+          sendTrack('leave', true);
+        } else {
+          currentSectionStart = Date.now();
+          sendTrack('heartbeat', false);
+        }
+      });
+
+      window.addEventListener('pagehide', function() {
+        clearInterval(heartbeatInterval);
+        sendTrack('leave', true);
+      });
+
+    } catch (e) {
+      // Fail silently to never impact user experience
+    }
+  })();
+</script>

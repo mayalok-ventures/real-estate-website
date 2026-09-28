@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahyak - Real Estate CRM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* --- GLOBAL VARIABLES --- */
+        :root {
+            --bg-dark: #0A0A0A;
+            --bg-light: #F4F4F0;
+            --text-dark: #1A1A1A;
+            --text-light: #FFFFFF;
+            --text-muted: #888888;
+            --accent: #00E676;
+            --accent-dark: #00B85C;
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        /* --- RESET & BASE --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* --- UTILITY CLASSES --- */
+        .section-dark { background-color: var(--bg-dark); color: var(--text-light); }
+        .section-light { background-color: var(--bg-light); color: var(--text-dark); }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 230, 118, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-light);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .tagline {
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tagline::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- SECTIONS --- */
+        
+        /* Hero Section */
+        .hero {
+            padding: 8rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
+        }
+
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text h1 span {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        .hero-text p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-social {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .avatars {
+            display: flex;
+        }
+
+        .avatars img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-dark);
+            margin-left: -10px;
+        }
+
+        .avatars img:first-child { margin-left: 0; }
+
+        .hero-visual {
+            position: relative;
+            height: 600px;
+        }
+
+        .hero-img-main {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            filter: grayscale(20%) contrast(110%);
+        }
+
+        .floating-note {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            max-width: 200px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .note-1 {
+            top: 10%;
+            right: -5%;
+            transform: rotate(5deg);
+            background: rgba(0, 230, 118, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .note-2 {
+            bottom: 20%;
+            left: -10%;
+            transform: rotate(-3deg);
+            animation-delay: 2s;
+        }
+
+        /* Purpose Section */
+        .purpose {
+            padding: 6rem 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            position: relative;
+        }
+
+        .purpose .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .purpose-text h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .purpose-text h2 span {
+            color: var(--accent-dark);
+            font-style: italic;
+        }
+
+        .purpose-text p {
+            color: #555;
+            margin-bottom: 2rem;
+        }
+
+        .purpose-visual {
+            position: relative;
+        }
+
+        .purpose-img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .ui-card {
+            position: absolute;
+            background: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .ui-card:nth-child(2) { top: 10%; left: -10%; animation-delay: 1s; }
+        .ui-card:nth-child(3) { top: 40%; right: -10%; animation-delay: 2s; }
+        .ui-card:nth-child(4) { bottom: 10%; left: 10%; animation-delay: 3s; }
+
+        /* Teams Section */
+        .teams {
+            padding: 6rem 0;
+            background-color: var(--bg-dark);
+        }
+
+        .teams .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .teams-text h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .teams-text h2 span {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        .teams-visual {
+            position: relative;
+            height: 600px;
+        }
+
+        .collage-img {
+            position: absolute;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            transition: transform 0.4s ease;
+        }
+
+        .collage-img:hover {
+            transform: scale(1.05) rotate(0deg) !important;
+            z-index: 10;
+        }
+
+        .collage-1 { top: 0; left: 0; width: 60%; height: 50%; transform: rotate(-3deg); }
+        .collage-2 { top: 20%; right: 0; width: 55%; height: 45%; transform: rotate(4deg); }
+        .collage-3 { bottom: 0; left: 15%; width: 70%; height: 45%; transform: rotate(-2deg); }
+
+        .collage-label {
+            position: absolute;
+            background: var(--accent);
+            color: var(--bg-dark);
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 4px;
+            z-index: 5;
+        }
+
+        /* Product Section */
+        .product {
+            padding: 6rem 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .product .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .product-text h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .product-text h2 span {
+            color: var(--accent-dark);
+            font-style: italic;
+        }
+
+        .phone-mockup {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone-frame {
+            width: 300px;
+            height: 600px;
+            background: #111;
+            border-radius: 40px;
+            border: 8px solid #333;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #1A1A1A;
+            padding: 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .app-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-card {
+            background: #2A2A2A;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stat-card span:first-child {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-card span:last-child {
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #2A2A2A;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .activity-icon {
+            width: 30px;
+            height: 30px;
+            background: rgba(0, 230, 118, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        /* Beliefs Section */
+        .beliefs {
+            padding: 6rem 0;
+            background-color: var(--bg-dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .beliefs-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+            mask-image: linear-gradient(to right, black 50%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, black 50%, transparent 100%);
+        }
+
+        .beliefs .container {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .beliefs-text h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .beliefs-text h2 span {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        .beliefs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .belief-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .belief-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .belief-item h4 {
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .belief-item p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Road Ahead Section */
+        .road-ahead {
+            padding: 6rem 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .road-ahead .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .road-text h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .road-text h2 span {
+            color: var(--accent-dark);
+            font-style: italic;
+        }
+
+        .road-visual {
+            position: relative;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .portal-circle {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 0.3; }
+        }
+
+        .road-img {
+            position: relative;
+            z-index: 2;
+            width: 80%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            mask-image: radial-gradient(circle, black 50%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle, black 50%, transparent 100%);
+        }
+
+        /* Footer / Final CTA */
+        .footer-cta {
+            padding: 6rem 0;
+            background-color: var(--bg-dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-cta .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .footer-text h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-text h2 span {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        .footer-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .footer-phone {
+            width: 250px;
+            height: 500px;
+            background: #111;
+            border-radius: 30px;
+            border: 6px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: float 7s ease-in-out infinite;
+        }
+
+        .footer-phone-logo {
+            width: 80px;
+            height: 80px;
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .floating-note-footer {
+            position: absolute;
+            top: 10%;
+            right: 0;
+            background: rgba(0, 230, 118, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 1rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            max-width: 180px;
+            transform: rotate(5deg);
+            animation: float 5s ease-in-out infinite;
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 992px) {
+            .grid-2, .hero .container, .purpose .container, .teams .container, 
+            .product .container, .beliefs .container, .road-ahead .container, 
+            .footer-cta .container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .hero-visual, .teams-visual, .road-visual {
+                height: 400px;
+            }
+
+            .beliefs-bg {
+                width: 100%;
+                mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+                -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+            }
+
+            .beliefs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .floating-note, .ui-card {
+                display: none; /* Hide floating elements on mobile for cleaner look */
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-text h1, .purpose-text h2, .teams-text h2, .product-text h2, 
+            .beliefs-text h2, .road-text h2, .footer-text h2 {
+                font-size: 2rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <section class="hero section-dark">
+        <div class="container">
+            <div class="hero-text reveal">
+                <div class="tagline">About Sahyak</div>
+                <h1>Built around the people who build <span>real estates.</span></h1>
+                <p>Sahyak is a mobile-first CRM designed for real estate teams — to help you capture leads, follow up, coordinate site visits and close more deals, with less chaos.</p>
+                <div class="hero-cta">
+                    <a href="#" class="btn btn-primary">Our story →</a>
+                    <a href="#" class="btn btn-secondary">Explore product</a>
+                </div>
+                <div class="hero-social">
+                    <div class="avatars">
+                        <img src="https://i.pravatar.cc/100?img=1" alt="User">
+                        <img src="https://i.pravatar.cc/100?img=2" alt="User">
+                        <img src="https://i.pravatar.cc/100?img=3" alt="User">
+                    </div>
+                    <span>Built for real estate teams across India and beyond</span>
+                </div>
+            </div>
+            <div class="hero-visual reveal">
+                <!-- Replace with AI Image 1 -->
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Real Estate Agent" class="hero-img-main">
+                <div class="floating-note note-1">REAL PEOPLE<br>REAL CONVERSATIONS<br>REAL GROWTH</div>
+                <div class="floating-note note-2">A CRM THAT UNDERSTANDS REAL ESTATE</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PURPOSE SECTION -->
+    <section class="purpose section-light">
+        <div class="container">
+            <div class="purpose-text reveal">
+                <div class="tagline" style="color: var(--accent-dark);">Our Purpose</div>
+                <h2>To make real estate work simpler, smarter and <span>more human.</span></h2>
+                <p>Real estate runs on relationships, follow-ups and timely action. We built Sahyak to give brokers, teams and developers a simple, practical CRM that fits the way they actually work.</p>
+                <a href="#" class="btn btn-primary" style="background: var(--text-dark); color: white;">Why we built Sahyak →</a>
+            </div>
+            <div class="purpose-visual reveal">
+                <!-- Replace with AI Image 2 -->
+                <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Team Working" class="purpose-img">
+                <div class="ui-card">📞 Capture Leads</div>
+                <div class="ui-card">⏰ Follow Up on Time</div>
+                <div class="ui-card">📍 Coordinate Site Visits</div>
+                <div class="ui-card">✅ Close More Deals</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAMS SECTION -->
+    <section class="teams section-dark">
+        <div class="container">
+            <div class="teams-text reveal">
+                <div class="tagline">Built for Real Estate Teams</div>
+                <h2>From individual agents to growing <span>brokerages.</span></h2>
+                <p>Sahyak is made for real estate professionals who are on the move — from independent brokers to large teams. A CRM that is practical, easy to use and built for real-world sales.</p>
+                <a href="#" class="btn btn-primary">See who it's for →</a>
+            </div>
+            <div class="teams-visual reveal">
+                <!-- Replace with AI Image 3 -->
+                <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Individual Agent" class="collage-img collage-1">
+                <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Brokerage Team" class="collage-img collage-2">
+                <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Developer" class="collage-img collage-3">
+                
+                <span class="collage-label" style="top: 10%; left: 10%;">Individual Agents</span>
+                <span class="collage-label" style="top: 30%; right: 10%;">Developers & Channel Partners</span>
+                <span class="collage-label" style="bottom: 10%; left: 30%;">Brokerage Teams</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT SECTION -->
+    <section class="product section-light">
+        <div class="container">
+            <div class="product-text reveal">
+                <div class="tagline" style="color: var(--accent-dark);">A Product Rooted in Reality</div>
+                <h2>Built from the ground up <span>for real estate.</span></h2>
+                <p>We focus on what actually matters — leads, follow-ups, site visits, inventory and deal progress. Sahyak brings these together in one mobile-first CRM, designed around real estate workflows.</p>
+                <a href="#" class="btn btn-primary" style="background: var(--text-dark); color: white;">Explore key features →</a>
+            </div>
+            <div class="phone-mockup reveal">
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <div class="app-header">
+                            <span>Sahyak</span>
+                            <span style="font-size: 0.8rem; color: #888;">Today</span>
+                        </div>
+                        <div class="app-stats">
+                            <div class="stat-card">
+                                <span>24</span>
+                                <span>Leads</span>
+                            </div>
+                            <div class="stat-card">
+                                <span>8</span>
+                                <span>Site Visits</span>
+                            </div>
+                            <div class="stat-card">
+                                <span>12</span>
+                                <span>Follow Ups</span>
+                            </div>
+                            <div class="stat-card">
+                                <span>5</span>
+                                <span>Deals</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: #888; margin-top: 10px;">Recent Activity</div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">📞</div>
+                                <div style="font-size: 0.7rem;">New lead received<br><span style="color: #666;">2 min ago</span></div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">📍</div>
+                                <div style="font-size: 0.7rem;">Site visit scheduled<br><span style="color: #666;">1 hr ago</span></div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">✅</div>
+                                <div style="font-size: 0.7rem;">Follow-up done<br><span style="color: #666;">3 hrs ago</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BELIEFS SECTION -->
+    <section class="beliefs section-dark">
+        <!-- Replace with AI Image 5 (Background) -->
+        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Cityscape" class="beliefs-bg">
+        <div class="container">
+            <div class="beliefs-text reveal">
+                <div class="tagline">Our Beliefs</div>
+                <h2>Practical tools. <span>Real impact.</span></h2>
+                <p>We believe real estate teams deserve technology that is easy to use, actually helpful and built for their day-to-day reality — not complicated systems that slow them down.</p>
+            </div>
+            <div class="beliefs-grid reveal">
+                <div class="belief-item">
+                    <div class="belief-icon">💡</div>
+                    <h4>Keep it simple</h4>
+                    <p>Tools that are easy to learn and use</p>
+                </div>
+                <div class="belief-item">
+                    <div class="belief-icon">🎯</div>
+                    <h4>Focus on what matters</h4>
+                    <p>Built around real estate workflows</p>
+                </div>
+                <div class="belief-item">
+                    <div class="belief-icon">👥</div>
+                    <h4>Enable real people</h4>
+                    <p>Made for brokers, teams and on-ground sales</p>
+                </div>
+                <div class="belief-item">
+                    <div class="belief-icon">📈</div>
+                    <h4>Grow together</h4>
+                    <p>Continuously improving with real user feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROAD AHEAD SECTION -->
+    <section class="road-ahead section-light">
+        <div class="container">
+            <div class="road-text reveal">
+                <div class="tagline" style="color: var(--accent-dark);">The Road Ahead</div>
+                <h2>A stronger real estate <span>ecosystem.</span></h2>
+                <p>We're committed to building a product and community that helps real estate professionals do more, with better tools, clearer processes and stronger support.</p>
+                <a href="#" class="btn btn-primary" style="background: var(--text-dark); color: white;">Be part of the journey →</a>
+            </div>
+            <div class="road-visual reveal">
+                <div class="portal-circle"></div>
+                <!-- Replace with AI Image 6 -->
+                <img src="https://images.unsplash.com/photo-1448630360428-65456885c650?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Portal" class="road-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER CTA SECTION -->
+    <section class="footer-cta section-dark">
+        <div class="container">
+            <div class="footer-text reveal">
+                <div class="tagline">Let's Build Together</div>
+                <h2>Ready to experience a simpler way <span>to grow?</span></h2>
+                <p>Join real estate teams who use Sahyak to capture leads, stay organized and close more deals.</p>
+                <div class="hero-cta" style="margin-top: 2rem;">
+                    <a href="#" class="btn btn-primary">Start free →</a>
+                    <a href="#" class="btn btn-secondary">Talk to us</a>
+                </div>
+            </div>
+            <div class="footer-visual reveal">
+                <div class="footer-phone">
+                    <div class="footer-phone-logo">S</div>
+                </div>
+                <div class="floating-note-footer">REAL ESTATE GROWS WITH PEOPLE LIKE YOU</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JAVASCRIPT FOR SCROLL ANIMATIONS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const reveals = document.querySelectorAll('.reveal');
+
+            const revealOnScroll = () => {
+                const windowHeight = window.innerHeight;
+                const elementVisible = 150;
+
+                reveals.forEach((reveal) => {
+                    const elementTop = reveal.getBoundingClientRect().top;
+                    if (elementTop < windowHeight - elementVisible) {
+                        reveal.classList.add('active');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll(); // Trigger once on load
+        });
+    </script>
+</body>
+</html>

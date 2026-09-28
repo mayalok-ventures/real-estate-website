@@ -1,0 +1,1275 @@
+---
+export const prerender = false;
+
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { isCountrySupported, getCountryPricing, COUNTRY_PRICING, type SupportedCountryCode } from '../lib/pricingData';
+
+const seoTitle = "Sahyak CRM - Transparent Pricing Across 15+ Countries";
+const seoDesc = "Choose the capacity you need — users, leads, storage and connected platforms. Transparent multi-currency pricing for real estate teams worldwide.";
+
+// Server-side country detection from headers / query
+const queryCountry = Astro.url.searchParams.get('country');
+const cfCountry = Astro.request.headers.get('cf-ipcountry');
+
+let serverDetectedCountry: SupportedCountryCode | null = null;
+let serverIsSupported = true;
+
+const candidate = (queryCountry || cfCountry || '').trim().toUpperCase();
+if (candidate) {
+  if (isCountrySupported(candidate)) {
+    serverDetectedCountry = candidate as SupportedCountryCode;
+    serverIsSupported = true;
+  } else {
+    serverIsSupported = false;
+  }
+} else {
+  // Default to IN as baseline market
+  serverDetectedCountry = 'IN';
+  serverIsSupported = true;
+}
+
+const initialPricing = serverDetectedCountry ? getCountryPricing(serverDetectedCountry) : getCountryPricing('IN')!;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{seoTitle}</title>
+    <meta name="description" content={seoDesc} />
+    <link rel="canonical" href="https://sahyak.com/pricing" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Sahyak CRM",
+      "operatingSystem": "Web, iOS, Android",
+      "applicationCategory": "BusinessApplication",
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": initialPricing?.currency || "USD",
+        "lowPrice": initialPricing?.basePrice || 59,
+        "offerCount": "15"
+      },
+      "description": "Developer-ready country-specific pricing for real estate businesses across 15 priority markets worldwide."
+    })} />
+
+    <style is:global>
+        /* CSS VARIABLES (HOMEPAGE UNIFIED PALETTE) */
+        :root {
+            --bg-dark: #0A1C16;
+            --bg-light: #F4F6F4;
+            --green-primary: #4ADE80;
+            --green-hover: #22c55e;
+            --text-white: #FFFFFF;
+            --text-dark: #111827;
+            --text-gray: #6B7280;
+            --text-light-gray: #9CA3AF;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        section {
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ANIMATIONS */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-left { transform: translateX(-40px); }
+        .reveal-right { transform: translateX(40px); }
+        .reveal-left.active, .reveal-right.active { transform: translateX(0); }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating { animation: float 6s ease-in-out infinite; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background-color: var(--green-primary);
+            color: #0A1C16;
+            font-weight: 700;
+        }
+        .btn-primary:hover {
+            background-color: var(--green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(74, 222, 128, 0.3);
+        }
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-white);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .btn-outline:hover {
+            border-color: var(--text-white);
+            background: rgba(255,255,255,0.1);
+        }
+        .btn-dark-outline {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+        .btn-dark-outline:hover {
+            border-color: var(--text-dark);
+            background: rgba(0,0,0,0.05);
+        }
+
+        /* SECTION 1: HERO */
+        .hero {
+            background-color: var(--bg-dark);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            min-height: 90vh;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg-wrapper {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .hero-bg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            filter: contrast(125%) brightness(0.7);
+        }
+        .hero-bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(10, 28, 22, 0.88) 0%, rgba(10, 28, 22, 0.95) 60%, rgba(10, 28, 22, 0.84) 100%);
+            mix-blend-mode: multiply;
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .hero h1 { font-size: 3.8rem; margin-bottom: 20px; }
+        .hero h1 span { color: var(--green-primary); font-style: italic; }
+        .hero p { font-size: 1.1rem; color: var(--text-light-gray); margin-bottom: 30px; max-width: 440px; }
+        .hero-cta { display: flex; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
+        .trust-badge { display: flex; align-items: center; gap: 15px; font-size: 0.9rem; color: var(--text-light-gray); }
+        .trust-badge img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--bg-dark); margin-left: -15px; }
+        .trust-badge img:first-child { margin-left: 0; }
+        
+        .hero-visual { position: relative; z-index: 1; display: flex; justify-content: center; }
+        .phone-mockup {
+            width: 330px;
+            min-height: 640px;
+            background: #fff;
+            border-radius: 40px;
+            border: 8px solid #1a1a1a;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            animation: float 6s ease-in-out infinite;
+        }
+        .phone-screen { padding: 24px; color: var(--text-dark); height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+        .phone-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .phone-header h4 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1.1rem; }
+        .phone-plan { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 14px; border-radius: 12px; margin-bottom: 18px; }
+        .phone-plan h5 { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem; color: #166534; margin-bottom: 4px; }
+        .phone-plan p { font-size: 0.8rem; color: var(--text-gray); }
+        .phone-slider { margin-bottom: 16px; }
+        .phone-slider label { font-size: 0.8rem; font-weight: 600; display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .phone-slider input { width: 100%; accent-color: var(--green-primary); }
+        .phone-total { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; }
+        .phone-total h3 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1.5rem; color: var(--text-dark); }
+
+        /* SECTION 2: ISOMETRIC */
+        .isometric-section { background-color: var(--bg-light); color: var(--text-dark); position: relative; overflow: hidden; }
+        .isometric-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; }
+        .isometric-text h2 { font-size: 3rem; margin-bottom: 20px; }
+        .isometric-text h2 span { color: var(--green-primary); font-style: italic; }
+        .isometric-text p { color: var(--text-gray); font-size: 1.1rem; }
+        .isometric-visual { position: relative; min-height: 480px; display: flex; justify-content: center; align-items: center; }
+        .iso-img {
+            width: 100%;
+            max-width: 580px;
+            max-height: 480px;
+            object-fit: contain;
+            border-radius: 20px;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.12));
+            transition: transform 0.5s ease;
+        }
+        .iso-img.floating {
+            animation: float 7s ease-in-out infinite;
+        }
+        .floating-card {
+            position: absolute;
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+            font-weight: 600;
+            font-size: 0.9rem;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .fc-1 { top: 8%; left: -10px; animation: float 5s ease-in-out infinite; }
+        .fc-2 { bottom: 10%; left: 15px; animation: float 7s ease-in-out infinite 1s; }
+        .fc-3 { top: 22%; right: -10px; animation: float 6s ease-in-out infinite 0.5s; }
+
+        /* SECTION 3: CALCULATOR */
+        .calculator-section { background-color: var(--bg-dark); }
+        .calc-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 60px; align-items: center; }
+        .calc-text h2 { font-size: 3.5rem; margin-bottom: 20px; }
+        .calc-text h2 span { color: var(--green-primary); font-style: italic; }
+        .calc-text p { color: var(--text-light-gray); font-size: 1.1rem; margin-bottom: 25px; }
+        .billing-toggle-wrapper { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 30px; width: fit-content; border: 1px solid rgba(255,255,255,0.1); }
+        .billing-toggle-label { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-light-gray); }
+        .billing-toggle-label.active { color: var(--green-primary); }
+        .billing-switch {
+            position: relative; display: inline-block; width: 44px; height: 24px;
+        }
+        .billing-switch input { opacity: 0; width: 0; height: 0; }
+        .billing-slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #374151; transition: .3s; border-radius: 24px;
+        }
+        .billing-slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .3s; border-radius: 50%;
+        }
+        input:checked + .billing-slider { background-color: var(--green-primary); }
+        input:checked + .billing-slider:before { transform: translateX(20px); }
+        .discount-pill { background: rgba(74, 222, 128, 0.2); color: var(--green-primary); font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; font-weight: 700; margin-left: 6px; }
+
+        .calc-visual {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            color: var(--text-dark);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .calc-controls label { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; }
+        .calc-controls input[type="range"] { width: 100%; margin-bottom: 22px; accent-color: var(--green-primary); cursor: pointer; }
+        .calc-summary { border-left: 1px solid #eee; padding-left: 40px; display: flex; flex-direction: column; justify-content: space-between; }
+        .calc-summary h4 { font-family: 'Inter', sans-serif; font-size: 1.2rem; margin-bottom: 16px; }
+        .calc-line { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-gray); margin-bottom: 10px; }
+        .calc-total { display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 700; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; color: var(--text-dark); }
+        .calc-note { font-size: 0.75rem; color: var(--text-gray); margin-top: 6px; }
+
+        /* SECTION 4: PRICING CARDS */
+        .pricing-section { background-color: var(--bg-light); color: var(--text-dark); }
+        .pricing-header { text-align: center; margin-bottom: 60px; }
+        .pricing-header h2 { font-size: 3.5rem; margin-bottom: 20px; }
+        .pricing-header h2 span { color: var(--green-primary); font-style: italic; }
+        .pricing-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 900px; margin: 0 auto; }
+        .pricing-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #eee;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .pricing-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+        .pricing-card.popular { border: 2px solid var(--green-primary); position: relative; }
+        .popular-badge {
+            position: absolute;
+            top: -15px;
+            right: 40px;
+            background: var(--green-primary);
+            color: #0A1C16;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .pricing-card h3 { font-family: 'Inter', sans-serif; font-size: 1.5rem; margin-bottom: 10px; }
+        .pricing-card .price { font-size: 3rem; font-weight: 700; margin-bottom: 15px; color: var(--text-dark); }
+        .pricing-card .price span { font-size: 1rem; color: var(--text-gray); font-weight: 400; }
+        .pricing-card ul { list-style: none; margin-bottom: 35px; }
+        .pricing-card ul li { margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px; color: var(--text-gray); font-size: 0.95rem; }
+        .pricing-card ul li::before { content: '✓'; color: #16a34a; font-weight: bold; }
+
+        /* NON-SUPPORTED COUNTRY SPECIFIC CARD */
+        .unsupported-cta-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 820px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            border: 2px solid #e5e7eb;
+            text-align: center;
+        }
+        .unsupported-badge {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #065f46;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px solid #a7f3d0;
+        }
+        .unsupported-cta-box h3 { font-size: 2.4rem; margin-bottom: 16px; color: var(--text-dark); }
+        .unsupported-cta-box p { color: var(--text-gray); font-size: 1.1rem; line-height: 1.7; max-width: 650px; margin: 0 auto 30px auto; }
+        .unsupported-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            text-align: left;
+            margin-bottom: 35px;
+            padding: 24px;
+            background: #f9fafb;
+            border-radius: 16px;
+        }
+        .unsupported-feat-item { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 0.95rem; color: #374151; }
+        .unsupported-feat-item span { color: #16a34a; font-weight: bold; font-size: 1.1rem; }
+
+        /* SECTION 5: FEATURES */
+        .features-section { background-color: var(--bg-dark); position: relative; overflow: hidden; }
+        .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
+        .features-text h2 { font-size: 3.5rem; margin-bottom: 20px; }
+        .features-text h2 span { color: var(--green-primary); font-style: italic; }
+        .features-text p { color: var(--text-light-gray); font-size: 1.1rem; margin-bottom: 30px; }
+        .features-visual { position: relative; display: flex; justify-content: center; align-items: center; }
+        .features-ambient-wrapper {
+            position: absolute;
+            inset: -40px -40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .features-ambient-img {
+            width: 100%;
+            height: 100%;
+            max-width: 600px;
+            object-fit: cover;
+            border-radius: 30px;
+            opacity: 0.35;
+            filter: contrast(120%) brightness(0.85);
+            mix-blend-mode: screen;
+            transform: scale(1.06);
+            transition: opacity 0.3s ease;
+        }
+        .features-phone {
+            width: 350px;
+            height: 700px;
+            background: #fff;
+            border-radius: 45px;
+            border: 10px solid #1a1a1a;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 50px rgba(74, 222, 128, 0.15);
+        }
+        .features-screen { padding: 30px; color: var(--text-dark); height: 100%; }
+        .features-screen h4 { font-family: 'Inter', sans-serif; font-size: 1.2rem; margin-bottom: 20px; }
+        .feature-item { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding: 15px; border-radius: 12px; background: #f9f9f9; }
+        .feature-icon { width: 40px; height: 40px; background: var(--green-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #0A1C16; font-weight: bold; }
+
+        /* SECTION 6: TRANSPARENT */
+        .transparent-section { background-color: var(--bg-light); color: var(--text-dark); }
+        .trans-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 60px; align-items: center; }
+        .trans-text h2 { font-size: 3.5rem; margin-bottom: 20px; }
+        .trans-text h2 span { color: var(--green-primary); font-style: italic; }
+        .trans-text p { color: var(--text-gray); font-size: 1.1rem; }
+        .trans-features { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .trans-item { display: flex; gap: 15px; }
+        .trans-item-icon { width: 50px; height: 50px; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #16a34a; font-size: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); flex-shrink: 0; }
+        .trans-item h4 { font-family: 'Inter', sans-serif; font-size: 1rem; margin-bottom: 5px; }
+        .trans-item p { font-size: 0.9rem; color: var(--text-gray); }
+
+        /* SECTION 7: CTA */
+        .cta-section { background-color: var(--bg-dark); text-align: left; padding: 120px 0; position: relative; }
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=2070&auto=format&fit=crop') center/cover;
+            opacity: 0.15;
+            filter: grayscale(100%) contrast(120%);
+            pointer-events: none;
+        }
+        .cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
+        .cta-text h2 { font-size: 4rem; margin-bottom: 20px; }
+        .cta-text h2 span { color: var(--green-primary); font-style: italic; }
+        .cta-text p { color: var(--text-light-gray); font-size: 1.1rem; margin-bottom: 30px; }
+        .cta-visual { display: flex; justify-content: center; }
+        .portal-frame {
+            width: 320px;
+            height: 620px;
+            border: 5px solid var(--green-primary);
+            border-radius: 45px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 60px rgba(74, 222, 128, 0.35), 0 30px 60px rgba(0,0,0,0.6);
+            background: #000;
+        }
+        .portal-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            transition: transform 0.8s ease;
+        }
+        .portal-frame:hover img {
+            transform: scale(1.04);
+        }
+        .portal-notch {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 18px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 10;
+        }
+        .portal-reflection {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* VIEW TOGGLE HELPERS */
+        .pricing-supported-only { display: block; }
+        .pricing-unsupported-only { display: none; }
+
+        body.unsupported-region .pricing-supported-only { display: none !important; }
+        body.unsupported-region .pricing-unsupported-only { display: block !important; }
+
+        /* RESPONSIVE DESIGN (Mobile First) */
+        @media (max-width: 1024px) {
+            .hero h1 { font-size: 3rem; }
+            .calc-grid, .features-grid, .trans-grid, .cta-grid { grid-template-columns: 1fr; gap: 40px; }
+            .calc-visual { grid-template-columns: 1fr; }
+            .calc-summary { border-left: none; border-top: 1px solid #eee; padding-left: 0; padding-top: 20px; }
+            .isometric-grid { grid-template-columns: 1fr; }
+            .pricing-cards { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .hero { grid-template-columns: 1fr; text-align: center; padding-top: 60px; }
+            .hero-cta { justify-content: center; }
+            .trust-badge { justify-content: center; }
+            .hero-visual { margin-top: 40px; }
+            .hero h1 { font-size: 2.5rem; }
+            .isometric-text h2, .calc-text h2, .pricing-header h2, .features-text h2, .trans-text h2, .cta-text h2 { font-size: 2.5rem; }
+            .trans-features { grid-template-columns: 1fr; }
+            .phone-mockup, .features-phone { width: 300px; height: 600px; }
+            .portal-frame { width: 270px; height: 530px; }
+            .features-ambient-wrapper { inset: -20px -20px; }
+            .fc-1 { left: 0; }
+            .fc-2 { left: 10px; }
+            .fc-3 { right: 0; }
+        }
+        @media (max-width: 480px) {
+            .phone-mockup, .features-phone { width: 280px; min-height: 540px; }
+            .portal-frame { width: 240px; height: 480px; }
+            .unsupported-cta-box { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body class={!serverIsSupported ? "unsupported-region" : ""}>
+
+    <Navbar active="pricing" />
+
+    <!-- SECTION 1: HERO -->
+    <section class="hero">
+        <div class="hero-bg-wrapper">
+            <img src="/images/pricing/1.png" alt="Sahyak CRM Pricing Hero Background" class="hero-bg-img">
+            <div class="hero-bg-overlay"></div>
+        </div>
+        <div class="container hero-content reveal reveal-left">
+            <h1>Your team grows.<br>Your CRM <span>scales with you.</span></h1>
+            <p>Choose the capacity you need — users, leads, storage and connected platforms. Transparent pricing for real estate teams.</p>
+            <div class="hero-cta">
+                <a href="#calculator" class="btn btn-primary pricing-supported-only">Configure your plan &rarr;</a>
+                <a href="/contact?topic=pricing" class="btn btn-primary pricing-unsupported-only">Contact sales to purchase &rarr;</a>
+                <a href="/contact" class="btn btn-outline">Start free</a>
+            </div>
+            <div class="trust-badge">
+                <img src="https://i.pravatar.cc/100?img=1" alt="User">
+                <img src="https://i.pravatar.cc/100?img=2" alt="User">
+                <img src="https://i.pravatar.cc/100?img=3" alt="User">
+                <span>Trusted by real estate teams<br>across 15+ countries worldwide</span>
+            </div>
+        </div>
+        <div class="container hero-visual reveal reveal-right">
+            <div class="phone-mockup floating">
+                <div class="phone-screen">
+                    <div>
+                        <div class="phone-header">
+                            <h4>Sahyak CRM</h4>
+                            <span style="color: #16a34a; font-size: 1.1rem;">&#10004;</span>
+                        </div>
+                        <div class="phone-plan">
+                            <h5 id="hero-plan-title">Base Access Included</h5>
+                            <p id="hero-currency-name">Region: {initialPricing?.name} ({initialPricing?.currency})</p>
+                        </div>
+                        
+                        <div class="phone-slider">
+                            <label>Sales Team Users <span id="hero-users-val">5 Users</span></label>
+                            <input type="range" id="hero-users-input" min="0" max="5" value="1">
+                        </div>
+                        <div class="phone-slider">
+                            <label>Active Leads <span id="hero-leads-val">10,000 Leads</span></label>
+                            <input type="range" id="hero-leads-input" min="0" max="6" value="1">
+                        </div>
+                        <div class="phone-slider">
+                            <label>Document Storage <span id="hero-storage-val">20 GB</span></label>
+                            <input type="range" id="hero-storage-input" min="0" max="5" value="1">
+                        </div>
+                    </div>
+
+                    <div class="phone-total">
+                        <!-- Supported State Price -->
+                        <div class="pricing-supported-only">
+                            <p style="font-size: 0.75rem; color: #888;">Monthly Estimate</p>
+                            <h3 id="hero-total-price">{initialPricing?.symbol}{initialPricing?.basePrice + initialPricing?.userTiers[5] + initialPricing?.leadTiers[10000] + initialPricing?.storageTiers[20]}</h3>
+                        </div>
+                        <!-- Unsupported State Direct Contact Notice -->
+                        <div class="pricing-unsupported-only">
+                            <p style="font-size: 0.75rem; color: #888;">Regional License</p>
+                            <h3 style="font-size: 1.1rem; color: #166534;">Custom Quote</h3>
+                        </div>
+                        <a href="/contact?topic=pricing" class="btn btn-primary" style="padding: 10px 18px; font-size: 0.85rem;">Purchase &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: ISOMETRIC -->
+    <section class="isometric-section">
+        <div class="container isometric-grid">
+            <div class="isometric-text reveal reveal-left">
+                <h2>A plan that fits your <span>real estate operation.</span></h2>
+                <p>Start with Base Access and add the exact capacity your business requires. No hidden fees, no per-project billing, and WhatsApp messaging included.</p>
+            </div>
+            <div class="isometric-visual reveal reveal-right">
+                <img src="/images/pricing/2.png" alt="Isometric 3D Diorama" class="iso-img floating">
+                <div class="floating-card fc-1">
+                    <span style="color: var(--green-primary);">&#128101;</span> Users<br><small>Scale your sales team</small>
+                </div>
+                <div class="floating-card fc-2">
+                    <span style="color: var(--green-primary);">&#128200;</span> Active Leads<br><small>Grow without limits</small>
+                </div>
+                <div class="floating-card fc-3">
+                    <span style="color: var(--green-primary);">&#128279;</span> Platforms<br><small>Portals & Ads connected</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: CALCULATOR -->
+    <section class="calculator-section" id="calculator">
+        <div class="container calc-grid">
+            <div class="calc-text reveal reveal-left">
+                <h2>Build your own plan in <span>seconds.</span></h2>
+                <p class="pricing-supported-only">Select your team size and capacity requirements to view your exact monthly or annual investment.</p>
+                <p class="pricing-unsupported-only">Specify your team scale and integration needs below to request a tailored quote for your country.</p>
+
+                <!-- Billing Frequency Switcher -->
+                <div class="billing-toggle-wrapper pricing-supported-only">
+                    <span class="billing-toggle-label active" id="btn-monthly">Monthly</span>
+                    <label class="billing-switch">
+                        <input type="checkbox" id="billing-toggle">
+                        <span class="billing-slider"></span>
+                    </label>
+                    <span class="billing-toggle-label" id="btn-annual">Annual <span class="discount-pill">Save 10%</span></span>
+                </div>
+
+                <p style="color: var(--green-primary); font-weight: 600; font-style: italic;">PAY FOR SCALE — NOT LOCKED FEATURES.</p>
+            </div>
+
+            <div class="calc-visual reveal reveal-right">
+                <div class="calc-controls">
+                    <label>Sales Team Users <span id="c-users-label">5 Users</span></label>
+                    <input type="range" id="c-users" min="0" max="5" value="1" step="1">
+                    
+                    <label>Active Leads <span id="c-leads-label">10,000 Leads</span></label>
+                    <input type="range" id="c-leads" min="0" max="6" value="1" step="1">
+                    
+                    <label>Document Storage <span id="c-storage-label">20 GB</span></label>
+                    <input type="range" id="c-storage" min="0" max="5" value="1" step="1">
+                    
+                    <label>Connected Platforms <span id="c-platforms-label">1 Platform</span></label>
+                    <input type="range" id="c-platforms" min="0" max="4" value="1" step="1">
+                </div>
+
+                <!-- SUPPORTED REGION CALCULATOR SUMMARY -->
+                <div class="calc-summary pricing-supported-only">
+                    <div>
+                        <h4>Your Plan Breakdown</h4>
+                        <div class="calc-line">
+                            <span>Base Access (1 User, 2k Leads, 5GB)</span> 
+                            <span id="c-base-cost">{initialPricing?.symbol}{initialPricing?.basePrice}</span>
+                        </div>
+                        <div class="calc-line">
+                            <span>User Capacity (<span id="c-users-count">5</span>)</span> 
+                            <span id="c-users-cost">+{initialPricing?.symbol}{initialPricing?.userTiers[5]}</span>
+                        </div>
+                        <div class="calc-line">
+                            <span>Lead Capacity (<span id="c-leads-count">10,000</span>)</span> 
+                            <span id="c-leads-cost">+{initialPricing?.symbol}{initialPricing?.leadTiers[10000]}</span>
+                        </div>
+                        <div class="calc-line">
+                            <span>Storage (<span id="c-storage-count">20 GB</span>)</span> 
+                            <span id="c-storage-cost">+{initialPricing?.symbol}{initialPricing?.storageTiers[20]}</span>
+                        </div>
+                        <div class="calc-line">
+                            <span>Platforms (<span id="c-platforms-count">1</span>)</span> 
+                            <span id="c-platforms-cost">+{initialPricing?.symbol}{initialPricing?.integrationTiers[1]}</span>
+                        </div>
+                        <div class="calc-total">
+                            <span id="c-total-label">Total (Monthly)</span> 
+                            <span id="c-total-cost" style="color: #166534;">{initialPricing?.symbol}{initialPricing?.basePrice + initialPricing?.userTiers[5] + initialPricing?.leadTiers[10000] + initialPricing?.storageTiers[20] + initialPricing?.integrationTiers[1]}</span>
+                        </div>
+                        <p class="calc-note" id="calc-billing-note">Billed monthly in {initialPricing?.currency}. Change or cancel anytime.</p>
+                    </div>
+                    <a href="/contact?topic=pricing" class="btn btn-primary" style="margin-top: 20px; width: 100%;">Get started with this plan &rarr;</a>
+                </div>
+
+                <!-- UNSUPPORTED REGION DIRECT CONTACT SUMMARY (NO SPECIFIC PRICES) -->
+                <div class="calc-summary pricing-unsupported-only">
+                    <div>
+                        <h4>Selected Capacity</h4>
+                        <div class="calc-line">
+                            <span>Base Organization & CRM Suite</span> 
+                            <span style="color: #166534; font-weight: 600;">Included</span>
+                        </div>
+                        <div class="calc-line">
+                            <span>Team Users</span> 
+                            <span id="c-unsupp-users" style="font-weight: 600;">5 Users</span>
+                        </div>
+                        <div class="calc-line">
+                            <span>Lead Storage</span> 
+                            <span id="c-unsupp-leads" style="font-weight: 600;">10,000 Leads</span>
+                        </div>
+                        <div class="calc-line">
+                            <span>Cloud Storage</span> 
+                            <span id="c-unsupp-storage" style="font-weight: 600;">20 GB</span>
+                        </div>
+                        <div class="calc-line">
+                            <span>Ad & Portal Platforms</span> 
+                            <span id="c-unsupp-platforms" style="font-weight: 600;">1 Platform</span>
+                        </div>
+                        <div class="calc-total">
+                            <span>Pricing for Your Region</span> 
+                            <span style="color: #166534; font-size: 1.15rem;">Custom Quote</span>
+                        </div>
+                        <p class="calc-note">Direct regional pricing is prepared by our global licensing desk with local currency settlement.</p>
+                    </div>
+                    <a href="/contact?topic=pricing" class="btn btn-primary" style="margin-top: 20px; width: 100%;">Contact us to purchase &rarr;</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: PRICING CARDS -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="pricing-header reveal">
+                <h2>Start free.<br>Then scale <span>on your terms.</span></h2>
+                <p class="pricing-supported-only">Try Sahyak for free or start with Base Access and add the capacity you need as your business grows.</p>
+                <p class="pricing-unsupported-only">We provide flexible enterprise agreements and dedicated regional setups for real estate firms across all international markets.</p>
+            </div>
+
+            <!-- 15 SUPPORTED COUNTRIES VIEW (EXACT FIGURES FROM PDF) -->
+            <div class="pricing-cards pricing-supported-only">
+                <div class="pricing-card reveal reveal-left">
+                    <div>
+                        <h3>Free Starter</h3>
+                        <div class="price" id="card-free-price">{initialPricing?.symbol}0</div>
+                        <p style="color: var(--text-gray); margin-bottom: 20px;">Start free — no credit card required.</p>
+                        <ul>
+                            <li>20 active leads included</li>
+                            <li>1 active user seat</li>
+                            <li>Multi-channel client actions & follow-ups</li>
+                            <li>3 active property listings</li>
+                            <li>Global mobile and desktop access</li>
+                        </ul>
+                    </div>
+                    <a href="/contact?plan=starter" class="btn btn-dark-outline" style="width: 100%;">Start free &rarr;</a>
+                </div>
+                
+                <div class="pricing-card popular reveal reveal-right">
+                    <div class="popular-badge">Most Popular</div>
+                    <div>
+                        <h3>Base Access</h3>
+                        <div class="price" id="card-base-price">{initialPricing?.symbol}{initialPricing?.basePrice} <span>/ month</span></div>
+                        <p style="color: var(--text-gray); margin-bottom: 20px;">The complete CRM foundation to scale your brokerage.</p>
+                        <ul>
+                            <li>1 organization workspace</li>
+                            <li>1 active user seat</li>
+                            <li>2,000 active leads included</li>
+                            <li>5 GB document and media storage</li>
+                            <li>WhatsApp Hub included (no per-message fees)</li>
+                            <li>Unlimited property listings & inventory</li>
+                            <li>Annual billing option with 10% discount</li>
+                        </ul>
+                    </div>
+                    <a href="#calculator" class="btn btn-primary" style="width: 100%;">Configure your plan &rarr;</a>
+                </div>
+            </div>
+
+            <!-- REMAINING COUNTRIES VIEW (PROMPT TO GET IN TOUCH VIA CONTACT PAGE TO PURCHASE) -->
+            <div class="pricing-unsupported-only reveal">
+                <div class="unsupported-cta-box">
+                    <div class="unsupported-badge">International Deployment</div>
+                    <h3>Direct Purchasing for Your Region</h3>
+                    <p>
+                        Sahyak CRM is actively deployed in real estate markets worldwide. For firms in your country, our global licensing desk provides tailored capacity packages, localized invoicing, and dedicated onboarding.
+                    </p>
+
+                    <div class="unsupported-features">
+                        <div class="unsupported-feat-item"><span>&#10003;</span> Custom team user seats</div>
+                        <div class="unsupported-feat-item"><span>&#10003;</span> Scaled lead database capacity</div>
+                        <div class="unsupported-feat-item"><span>&#10003;</span> WhatsApp integration included</div>
+                        <div class="unsupported-feat-item"><span>&#10003;</span> Unlimited property inventory</div>
+                        <div class="unsupported-feat-item"><span>&#10003;</span> Dedicated CRM migration desk</div>
+                        <div class="unsupported-feat-item"><span>&#10003;</span> Priority SLA & enterprise support</div>
+                    </div>
+
+                    <p style="font-weight: 600; color: var(--text-dark); margin-bottom: 24px;">
+                        Ready to activate Sahyak CRM for your team? Get in touch directly via our contact page to discuss your requirements and complete your purchase.
+                    </p>
+
+                    <a href="/contact?topic=pricing" class="btn btn-primary" style="padding: 16px 36px; font-size: 1.05rem;">
+                        Get in touch directly via the contact page to make a purchase &rarr;
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 5: FEATURES -->
+    <section class="features-section">
+        <div class="container features-grid">
+            <div class="features-text reveal reveal-left">
+                <h2>Everything you need to run your <span>real estate business.</span></h2>
+                <p>Base Access includes all core CRM features. Scale users, leads, storage or connected portals seamlessly as your transactions grow.</p>
+                <a href="/features" class="btn btn-primary">See all features &rarr;</a>
+            </div>
+            <div class="features-visual reveal reveal-right">
+                <!-- Ambient Background (Dynamic Action Splash 3.png) -->
+                <div class="features-ambient-wrapper">
+                    <img src="/images/pricing/3.png" alt="Features Dynamic Action Splash" class="features-ambient-img">
+                </div>
+                <div class="features-phone">
+                    <div class="features-screen">
+                        <h4>Sahyak CRM</h4>
+                        <div class="feature-item">
+                            <div class="feature-icon">&#128101;</div>
+                            <div><strong>Leads & Pipeline</strong><br><small style="color: #888;">Stage tracking & alerts</small></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">&#128200;</div>
+                            <div><strong>Site Visits & Follow-ups</strong><br><small style="color: #888;">Automated task schedules</small></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">&#127968;</div>
+                            <div><strong>Inventory & Listings</strong><br><small style="color: #888;">Unlimited property matching</small></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">&#128172;</div>
+                            <div><strong>WhatsApp Hub</strong><br><small style="color: #888;">Direct chat & updates</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: TRANSPARENT -->
+    <section class="transparent-section">
+        <div class="container trans-grid">
+            <div class="trans-text reveal reveal-left">
+                <h2>Transparent pricing. <span>No surprises.</span></h2>
+                <p>Simple billing, annual savings, and complete freedom to adjust capacity as your real estate team scales.</p>
+            </div>
+            <div class="trans-features reveal reveal-right">
+                <div class="trans-item">
+                    <div class="trans-item-icon">&#128197;</div>
+                    <div>
+                        <h4>Monthly or annual billing</h4>
+                        <p>Choose flexible monthly or committed yearly plans.</p>
+                    </div>
+                </div>
+                <div class="trans-item">
+                    <div class="trans-item-icon">&#128176;</div>
+                    <div>
+                        <h4>10% annual discount</h4>
+                        <p>Save 10% on committed baseline capacity.</p>
+                    </div>
+                </div>
+                <div class="trans-item">
+                    <div class="trans-item-icon">&#9881;</div>
+                    <div>
+                        <h4>No setup or migration fees</h4>
+                        <p>CSV import and team onboarding are included.</p>
+                    </div>
+                </div>
+                <div class="trans-item">
+                    <div class="trans-item-icon">&#128260;</div>
+                    <div>
+                        <h4>Adjust capacity anytime</h4>
+                        <p>Scale up or down smoothly with prorated upgrades.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: CTA -->
+    <section class="cta-section">
+        <div class="container cta-grid">
+            <div class="cta-text reveal reveal-left">
+                <h2>Power your real estate business with <span>Sahyak.</span></h2>
+                <p>Start free or configure your plan and discover how effortlessly your team can manage leads and close deals.</p>
+                <div class="hero-cta">
+                    <a href="#calculator" class="btn btn-primary pricing-supported-only">Configure your plan &rarr;</a>
+                    <a href="/contact?topic=pricing" class="btn btn-primary pricing-unsupported-only">Contact sales to purchase &rarr;</a>
+                    <a href="/contact" class="btn btn-outline">Talk to an expert</a>
+                </div>
+            </div>
+            <div class="cta-visual reveal reveal-right">
+                <div class="portal-frame floating">
+                    <div class="portal-notch"></div>
+                    <div class="portal-reflection"></div>
+                    <img src="/images/pricing/4.png" alt="Surrealist Portal into Sahyak CRM" class="portal-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <Footer />
+
+    <!-- JAVASCRIPT FOR PRICING ENGINE & GEOLOCATION -->
+    <script is:inline>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 1. Reveal on scroll
+            const reveals = document.querySelectorAll('.reveal');
+            const revealOnScroll = () => {
+                const windowHeight = window.innerHeight;
+                reveals.forEach(reveal => {
+                    const top = reveal.getBoundingClientRect().top;
+                    if (top < windowHeight - 80) {
+                        reveal.classList.add('active');
+                    }
+                });
+            };
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll();
+
+            // 2. Official 15 Country Pricing Tables from SAHYAK_Global_Pricing_Structure.pdf
+            const COUNTRY_DATA = {
+                US: {
+                    name: 'United States', currency: 'USD', symbol: '$', base: 59, locale: 'en-US',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 99 }, { label: '10 Users', extra: 199 }, { label: '25 Users', extra: 449 }, { label: '50 Users', extra: 799 }, { label: '100 Users', extra: 1399 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 29 }, { label: '25,000', extra: 69 }, { label: '50,000', extra: 129 }, { label: '100,000', extra: 229 }, { label: '250,000', extra: 449 }, { label: '500,000', extra: 799 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 19 }, { label: '50 GB', extra: 39 }, { label: '100 GB', extra: 69 }, { label: '250 GB', extra: 129 }, { label: '500 GB', extra: 219 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 39 }, { label: '3 Platforms', extra: 99 }, { label: '5 Platforms', extra: 149 }, { label: '10 Platforms', extra: 249 } ]
+                },
+                GB: {
+                    name: 'United Kingdom', currency: 'GBP', symbol: '£', base: 49, locale: 'en-GB',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 79 }, { label: '10 Users', extra: 159 }, { label: '25 Users', extra: 349 }, { label: '50 Users', extra: 599 }, { label: '100 Users', extra: 999 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 19 }, { label: '25,000', extra: 49 }, { label: '50,000', extra: 89 }, { label: '100,000', extra: 159 }, { label: '250,000', extra: 299 }, { label: '500,000', extra: 499 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 15 }, { label: '50 GB', extra: 35 }, { label: '100 GB', extra: 59 }, { label: '250 GB', extra: 109 }, { label: '500 GB', extra: 189 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 29 }, { label: '3 Platforms', extra: 69 }, { label: '5 Platforms', extra: 109 }, { label: '10 Platforms', extra: 179 } ]
+                },
+                AU: {
+                    name: 'Australia', currency: 'AUD', symbol: 'A$', base: 79, locale: 'en-AU',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 129 }, { label: '10 Users', extra: 249 }, { label: '25 Users', extra: 549 }, { label: '50 Users', extra: 949 }, { label: '100 Users', extra: 1649 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 29 }, { label: '25,000', extra: 69 }, { label: '50,000', extra: 129 }, { label: '100,000', extra: 229 }, { label: '250,000', extra: 449 }, { label: '500,000', extra: 749 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 19 }, { label: '50 GB', extra: 39 }, { label: '100 GB', extra: 69 }, { label: '250 GB', extra: 129 }, { label: '500 GB', extra: 219 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 39 }, { label: '3 Platforms', extra: 99 }, { label: '5 Platforms', extra: 149 }, { label: '10 Platforms', extra: 249 } ]
+                },
+                IN: {
+                    name: 'India', currency: 'INR', symbol: '₹', base: 499, locale: 'en-IN',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 899 }, { label: '10 Users', extra: 1799 }, { label: '25 Users', extra: 3999 }, { label: '50 Users', extra: 6999 }, { label: '100 Users', extra: 11999 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 199 }, { label: '25,000', extra: 499 }, { label: '50,000', extra: 999 }, { label: '100,000', extra: 1799 }, { label: '250,000', extra: 3499 }, { label: '500,000', extra: 5999 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 199 }, { label: '50 GB', extra: 499 }, { label: '100 GB', extra: 899 }, { label: '250 GB', extra: 1799 }, { label: '500 GB', extra: 2999 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 399 }, { label: '3 Platforms', extra: 999 }, { label: '5 Platforms', extra: 1499 }, { label: '10 Platforms', extra: 2499 } ]
+                },
+                AE: {
+                    name: 'United Arab Emirates', currency: 'AED', symbol: 'AED ', base: 249, locale: 'en-AE',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 399 }, { label: '10 Users', extra: 749 }, { label: '25 Users', extra: 1599 }, { label: '50 Users', extra: 2799 }, { label: '100 Users', extra: 4999 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 79 }, { label: '25,000', extra: 179 }, { label: '50,000', extra: 349 }, { label: '100,000', extra: 599 }, { label: '250,000', extra: 1199 }, { label: '500,000', extra: 1999 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 49 }, { label: '50 GB', extra: 99 }, { label: '100 GB', extra: 179 }, { label: '250 GB', extra: 349 }, { label: '500 GB', extra: 599 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 99 }, { label: '3 Platforms', extra: 249 }, { label: '5 Platforms', extra: 399 }, { label: '10 Platforms', extra: 699 } ]
+                },
+                DE: {
+                    name: 'Germany', currency: 'EUR', symbol: '€', base: 69, locale: 'de-DE',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 109 }, { label: '10 Users', extra: 219 }, { label: '25 Users', extra: 449 }, { label: '50 Users', extra: 799 }, { label: '100 Users', extra: 1399 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 25 }, { label: '25,000', extra: 59 }, { label: '50,000', extra: 109 }, { label: '100,000', extra: 199 }, { label: '250,000', extra: 399 }, { label: '500,000', extra: 699 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 19 }, { label: '50 GB', extra: 39 }, { label: '100 GB', extra: 69 }, { label: '250 GB', extra: 129 }, { label: '500 GB', extra: 219 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 39 }, { label: '3 Platforms', extra: 99 }, { label: '5 Platforms', extra: 149 }, { label: '10 Platforms', extra: 249 } ]
+                },
+                FR: {
+                    name: 'France', currency: 'EUR', symbol: '€', base: 49, locale: 'fr-FR',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 79 }, { label: '10 Users', extra: 149 }, { label: '25 Users', extra: 329 }, { label: '50 Users', extra: 579 }, { label: '100 Users', extra: 999 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 19 }, { label: '25,000', extra: 49 }, { label: '50,000', extra: 89 }, { label: '100,000', extra: 159 }, { label: '250,000', extra: 299 }, { label: '500,000', extra: 499 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 15 }, { label: '50 GB', extra: 35 }, { label: '100 GB', extra: 59 }, { label: '250 GB', extra: 109 }, { label: '500 GB', extra: 189 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 29 }, { label: '3 Platforms', extra: 69 }, { label: '5 Platforms', extra: 109 }, { label: '10 Platforms', extra: 179 } ]
+                },
+                ES: {
+                    name: 'Spain', currency: 'EUR', symbol: '€', base: 39, locale: 'es-ES',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 59 }, { label: '10 Users', extra: 119 }, { label: '25 Users', extra: 249 }, { label: '50 Users', extra: 449 }, { label: '100 Users', extra: 799 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 15 }, { label: '25,000', extra: 35 }, { label: '50,000', extra: 69 }, { label: '100,000', extra: 119 }, { label: '250,000', extra: 229 }, { label: '500,000', extra: 399 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 12 }, { label: '50 GB', extra: 29 }, { label: '100 GB', extra: 49 }, { label: '250 GB', extra: 89 }, { label: '500 GB', extra: 159 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 19 }, { label: '3 Platforms', extra: 49 }, { label: '5 Platforms', extra: 79 }, { label: '10 Platforms', extra: 129 } ]
+                },
+                CA: {
+                    name: 'Canada', currency: 'CAD', symbol: 'C$', base: 79, locale: 'en-CA',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 129 }, { label: '10 Users', extra: 249 }, { label: '25 Users', extra: 549 }, { label: '50 Users', extra: 949 }, { label: '100 Users', extra: 1649 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 29 }, { label: '25,000', extra: 69 }, { label: '50,000', extra: 129 }, { label: '100,000', extra: 229 }, { label: '250,000', extra: 449 }, { label: '500,000', extra: 799 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 19 }, { label: '50 GB', extra: 39 }, { label: '100 GB', extra: 69 }, { label: '250 GB', extra: 129 }, { label: '500 GB', extra: 219 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 39 }, { label: '3 Platforms', extra: 99 }, { label: '5 Platforms', extra: 149 }, { label: '10 Platforms', extra: 249 } ]
+                },
+                MX: {
+                    name: 'Mexico', currency: 'MXN', symbol: 'MX$', base: 599, locale: 'es-MX',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 899 }, { label: '10 Users', extra: 1699 }, { label: '25 Users', extra: 3499 }, { label: '50 Users', extra: 5999 }, { label: '100 Users', extra: 10499 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 149 }, { label: '25,000', extra: 349 }, { label: '50,000', extra: 699 }, { label: '100,000', extra: 1299 }, { label: '250,000', extra: 2499 }, { label: '500,000', extra: 4499 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 149 }, { label: '50 GB', extra: 349 }, { label: '100 GB', extra: 599 }, { label: '250 GB', extra: 1099 }, { label: '500 GB', extra: 1899 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 299 }, { label: '3 Platforms', extra: 699 }, { label: '5 Platforms', extra: 999 }, { label: '10 Platforms', extra: 1699 } ]
+                },
+                BR: {
+                    name: 'Brazil', currency: 'BRL', symbol: 'R$', base: 199, locale: 'pt-BR',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 299 }, { label: '10 Users', extra: 599 }, { label: '25 Users', extra: 1299 }, { label: '50 Users', extra: 2199 }, { label: '100 Users', extra: 3999 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 49 }, { label: '25,000', extra: 119 }, { label: '50,000', extra: 229 }, { label: '100,000', extra: 399 }, { label: '250,000', extra: 799 }, { label: '500,000', extra: 1399 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 39 }, { label: '50 GB', extra: 89 }, { label: '100 GB', extra: 159 }, { label: '250 GB', extra: 299 }, { label: '500 GB', extra: 499 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 79 }, { label: '3 Platforms', extra: 199 }, { label: '5 Platforms', extra: 299 }, { label: '10 Platforms', extra: 499 } ]
+                },
+                ZA: {
+                    name: 'South Africa', currency: 'ZAR', symbol: 'R', base: 699, locale: 'en-ZA',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 999 }, { label: '10 Users', extra: 1999 }, { label: '25 Users', extra: 4499 }, { label: '50 Users', extra: 7999 }, { label: '100 Users', extra: 13999 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 199 }, { label: '25,000', extra: 499 }, { label: '50,000', extra: 899 }, { label: '100,000', extra: 1599 }, { label: '250,000', extra: 3199 }, { label: '500,000', extra: 5499 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 199 }, { label: '50 GB', extra: 399 }, { label: '100 GB', extra: 699 }, { label: '250 GB', extra: 1299 }, { label: '500 GB', extra: 2199 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 399 }, { label: '3 Platforms', extra: 899 }, { label: '5 Platforms', extra: 1299 }, { label: '10 Platforms', extra: 2199 } ]
+                },
+                SA: {
+                    name: 'Saudi Arabia', currency: 'SAR', symbol: 'SAR ', base: 249, locale: 'ar-SA',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 399 }, { label: '10 Users', extra: 799 }, { label: '25 Users', extra: 1799 }, { label: '50 Users', extra: 3099 }, { label: '100 Users', extra: 5499 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 79 }, { label: '25,000', extra: 179 }, { label: '50,000', extra: 349 }, { label: '100,000', extra: 599 }, { label: '250,000', extra: 1199 }, { label: '500,000', extra: 1999 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 49 }, { label: '50 GB', extra: 99 }, { label: '100 GB', extra: 179 }, { label: '250 GB', extra: 349 }, { label: '500 GB', extra: 599 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 99 }, { label: '3 Platforms', extra: 249 }, { label: '5 Platforms', extra: 399 }, { label: '10 Platforms', extra: 699 } ]
+                },
+                SG: {
+                    name: 'Singapore', currency: 'SGD', symbol: 'S$', base: 79, locale: 'en-SG',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 129 }, { label: '10 Users', extra: 249 }, { label: '25 Users', extra: 549 }, { label: '50 Users', extra: 949 }, { label: '100 Users', extra: 1699 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 29 }, { label: '25,000', extra: 69 }, { label: '50,000', extra: 129 }, { label: '100,000', extra: 229 }, { label: '250,000', extra: 449 }, { label: '500,000', extra: 799 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 19 }, { label: '50 GB', extra: 39 }, { label: '100 GB', extra: 69 }, { label: '250 GB', extra: 129 }, { label: '500 GB', extra: 219 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 39 }, { label: '3 Platforms', extra: 99 }, { label: '5 Platforms', extra: 149 }, { label: '10 Platforms', extra: 249 } ]
+                },
+                JP: {
+                    name: 'Japan', currency: 'JPY', symbol: '¥', base: 9800, locale: 'ja-JP',
+                    users: [ { label: '1 User (Inc)', extra: 0 }, { label: '5 Users', extra: 14800 }, { label: '10 Users', extra: 29800 }, { label: '25 Users', extra: 64800 }, { label: '50 Users', extra: 114800 }, { label: '100 Users', extra: 199800 } ],
+                    leads: [ { label: '2,000 (Inc)', extra: 0 }, { label: '10,000', extra: 2500 }, { label: '25,000', extra: 5900 }, { label: '50,000', extra: 10900 }, { label: '100,000', extra: 19900 }, { label: '250,000', extra: 39900 }, { label: '500,000', extra: 69900 } ],
+                    storage: [ { label: '5 GB (Inc)', extra: 0 }, { label: '20 GB', extra: 1900 }, { label: '50 GB', extra: 3900 }, { label: '100 GB', extra: 6900 }, { label: '250 GB', extra: 12900 }, { label: '500 GB', extra: 21900 } ],
+                    platforms: [ { label: 'CSV (Inc)', extra: 0 }, { label: '1 Platform', extra: 3900 }, { label: '3 Platforms', extra: 9900 }, { label: '5 Platforms', extra: 14900 }, { label: '10 Platforms', extra: 24900 } ]
+                }
+            };
+
+            // 3. Geolocation & Country Resolution
+            let currentCountry = 'IN';
+            let isSupported = true;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const countryParam = urlParams.get('country');
+
+            // Quick client timezone detection fallback
+            let clientTz = '';
+            try {
+                clientTz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+            } catch(e) {}
+
+            try {
+                let geoApiUrl = '/api/geo';
+                const queryParts = [];
+                if (countryParam) queryParts.push('country=' + encodeURIComponent(countryParam));
+                if (clientTz) queryParts.push('tz=' + encodeURIComponent(clientTz));
+                if (queryParts.length > 0) geoApiUrl += '?' + queryParts.join('&');
+
+                const res = await fetch(geoApiUrl);
+                if (res.ok) {
+                    const geoData = await res.json();
+                    if (geoData.isSupported && geoData.country && COUNTRY_DATA[geoData.country]) {
+                        currentCountry = geoData.country;
+                        isSupported = true;
+                    } else if (geoData.isSupported === false) {
+                        isSupported = false;
+                        currentCountry = geoData.country || 'OTHER';
+                    }
+                }
+            } catch(err) {
+                console.warn('Geo detection fallback:', err);
+                if (countryParam && !COUNTRY_DATA[countryParam.toUpperCase()]) {
+                    isSupported = false;
+                }
+            }
+
+            // Apply body class based on support status
+            if (isSupported) {
+                document.body.classList.remove('unsupported-region');
+            } else {
+                document.body.classList.add('unsupported-region');
+            }
+
+            // 4. Calculator State and Event Listeners
+            const cUsers = document.getElementById('c-users');
+            const cLeads = document.getElementById('c-leads');
+            const cStorage = document.getElementById('c-storage');
+            const cPlatforms = document.getElementById('c-platforms');
+            const billingToggle = document.getElementById('billing-toggle');
+            const btnMonthly = document.getElementById('btn-monthly');
+            const btnAnnual = document.getElementById('btn-annual');
+
+            let isAnnual = false;
+
+            if (billingToggle) {
+                billingToggle.addEventListener('change', () => {
+                    isAnnual = billingToggle.checked;
+                    if (btnMonthly && btnAnnual) {
+                        if (isAnnual) {
+                            btnAnnual.classList.add('active');
+                            btnMonthly.classList.remove('active');
+                        } else {
+                            btnMonthly.classList.add('active');
+                            btnAnnual.classList.remove('active');
+                        }
+                    }
+                    renderPricing();
+                });
+            }
+
+            if (btnMonthly) {
+                btnMonthly.addEventListener('click', () => {
+                    if (billingToggle) {
+                        billingToggle.checked = false;
+                        isAnnual = false;
+                        btnMonthly.classList.add('active');
+                        btnAnnual.classList.remove('active');
+                        renderPricing();
+                    }
+                });
+            }
+
+            if (btnAnnual) {
+                btnAnnual.addEventListener('click', () => {
+                    if (billingToggle) {
+                        billingToggle.checked = true;
+                        isAnnual = true;
+                        btnAnnual.classList.add('active');
+                        btnMonthly.classList.remove('active');
+                        renderPricing();
+                    }
+                });
+            }
+
+            function renderPricing() {
+                if (!isSupported) {
+                    // Update Unsupported Summary with user's selected capacity (WITHOUT NUMERIC PRICES)
+                    const uIdx = parseInt(cUsers?.value || '1', 10);
+                    const lIdx = parseInt(cLeads?.value || '1', 10);
+                    const sIdx = parseInt(cStorage?.value || '1', 10);
+                    const pIdx = parseInt(cPlatforms?.value || '1', 10);
+
+                    const userLabels = ['1 User', '5 Users', '10 Users', '25 Users', '50 Users', '100 Users'];
+                    const leadLabels = ['2,000 Leads', '10,000 Leads', '25,000 Leads', '50,000 Leads', '100,000 Leads', '250,000 Leads', '500,000 Leads'];
+                    const storageLabels = ['5 GB', '20 GB', '50 GB', '100 GB', '250 GB', '500 GB'];
+                    const platformLabels = ['Manual / CSV', '1 Platform', '3 Platforms', '5 Platforms', '10 Platforms'];
+
+                    const uText = userLabels[uIdx] || '5 Users';
+                    const lText = leadLabels[lIdx] || '10,000 Leads';
+                    const sText = storageLabels[sIdx] || '20 GB';
+                    const pText = platformLabels[pIdx] || '1 Platform';
+
+                    if (document.getElementById('c-users-label')) document.getElementById('c-users-label').textContent = uText;
+                    if (document.getElementById('c-leads-label')) document.getElementById('c-leads-label').textContent = lText;
+                    if (document.getElementById('c-storage-label')) document.getElementById('c-storage-label').textContent = sText;
+                    if (document.getElementById('c-platforms-label')) document.getElementById('c-platforms-label').textContent = pText;
+
+                    if (document.getElementById('c-unsupp-users')) document.getElementById('c-unsupp-users').textContent = uText;
+                    if (document.getElementById('c-unsupp-leads')) document.getElementById('c-unsupp-leads').textContent = lText;
+                    if (document.getElementById('c-unsupp-storage')) document.getElementById('c-unsupp-storage').textContent = sText;
+                    if (document.getElementById('c-unsupp-platforms')) document.getElementById('c-unsupp-platforms').textContent = pText;
+
+                    const heroPlan = document.getElementById('hero-currency-name');
+                    if (heroPlan) heroPlan.textContent = 'Regional Enterprise Deployment';
+                    return;
+                }
+
+                // Supported 15 Countries Calculation
+                const c = COUNTRY_DATA[currentCountry] || COUNTRY_DATA['IN'];
+                const sym = c.symbol;
+                const loc = c.locale;
+
+                const uIdx = parseInt(cUsers?.value || '1', 10);
+                const lIdx = parseInt(cLeads?.value || '1', 10);
+                const sIdx = parseInt(cStorage?.value || '1', 10);
+                const pIdx = parseInt(cPlatforms?.value || '1', 10);
+
+                const uTier = c.users[uIdx] || c.users[1];
+                const lTier = c.leads[lIdx] || c.leads[1];
+                const sTier = c.storage[sIdx] || c.storage[1];
+                const pTier = c.platforms[pIdx] || c.platforms[1];
+
+                // Labels
+                if (document.getElementById('c-users-label')) document.getElementById('c-users-label').textContent = uTier.label;
+                if (document.getElementById('c-leads-label')) document.getElementById('c-leads-label').textContent = lTier.label;
+                if (document.getElementById('c-storage-label')) document.getElementById('c-storage-label').textContent = sTier.label;
+                if (document.getElementById('c-platforms-label')) document.getElementById('c-platforms-label').textContent = pTier.label;
+
+                // Base + Highest selected tiers inside each capacity module (Section 1 & 4 of PDF)
+                const baseCost = c.base;
+                const userCost = uTier.extra;
+                const leadCost = lTier.extra;
+                const storageCost = sTier.extra;
+                const platformCost = pTier.extra;
+
+                const monthlySubtotal = baseCost + userCost + leadCost + storageCost + platformCost;
+                
+                // 10% discount on committed annual billing
+                const finalMonthlyRate = isAnnual ? Math.round(monthlySubtotal * 0.90) : monthlySubtotal;
+
+                // Update calculator breakdown
+                if (document.getElementById('c-base-cost')) document.getElementById('c-base-cost').textContent = sym + baseCost.toLocaleString(loc);
+                if (document.getElementById('c-users-count')) document.getElementById('c-users-count').textContent = uTier.label;
+                if (document.getElementById('c-users-cost')) document.getElementById('c-users-cost').textContent = (userCost > 0 ? '+' : '') + sym + userCost.toLocaleString(loc);
+                if (document.getElementById('c-leads-count')) document.getElementById('c-leads-count').textContent = lTier.label;
+                if (document.getElementById('c-leads-cost')) document.getElementById('c-leads-cost').textContent = (leadCost > 0 ? '+' : '') + sym + leadCost.toLocaleString(loc);
+                if (document.getElementById('c-storage-count')) document.getElementById('c-storage-count').textContent = sTier.label;
+                if (document.getElementById('c-storage-cost')) document.getElementById('c-storage-cost').textContent = (storageCost > 0 ? '+' : '') + sym + storageCost.toLocaleString(loc);
+                if (document.getElementById('c-platforms-count')) document.getElementById('c-platforms-count').textContent = pTier.label;
+                if (document.getElementById('c-platforms-cost')) document.getElementById('c-platforms-cost').textContent = (platformCost > 0 ? '+' : '') + sym + platformCost.toLocaleString(loc);
+
+                if (document.getElementById('c-total-label')) {
+                    document.getElementById('c-total-label').textContent = isAnnual ? 'Total (Annual / mo equivalent)' : 'Total (Monthly)';
+                }
+                if (document.getElementById('c-total-cost')) {
+                    document.getElementById('c-total-cost').textContent = sym + finalMonthlyRate.toLocaleString(loc);
+                }
+                if (document.getElementById('calc-billing-note')) {
+                    document.getElementById('calc-billing-note').textContent = isAnnual 
+                        ? `Billed annually (${sym}${Math.round(finalMonthlyRate * 12).toLocaleString(loc)}/year) with 10% discount in ${c.currency}.`
+                        : `Billed monthly in ${c.currency}. No lock-in, change or cancel anytime.`;
+                }
+
+                // Update Cards and Mockup
+                if (document.getElementById('card-free-price')) document.getElementById('card-free-price').textContent = sym + '0';
+                if (document.getElementById('card-base-price')) document.getElementById('card-base-price').innerHTML = `${sym}${baseCost.toLocaleString(loc)} <span>/ month</span>`;
+                
+                if (document.getElementById('hero-currency-name')) {
+                    document.getElementById('hero-currency-name').textContent = `Region: ${c.name} (${c.currency} ${sym.trim()})`;
+                }
+                if (document.getElementById('hero-total-price')) {
+                    document.getElementById('hero-total-price').textContent = sym + finalMonthlyRate.toLocaleString(loc);
+                }
+                if (document.getElementById('hero-users-val')) document.getElementById('hero-users-val').textContent = uTier.label;
+                if (document.getElementById('hero-leads-val')) document.getElementById('hero-leads-val').textContent = lTier.label;
+                if (document.getElementById('hero-storage-val')) document.getElementById('hero-storage-val').textContent = sTier.label;
+            }
+
+            [cUsers, cLeads, cStorage, cPlatforms].forEach(input => {
+                if (input) input.addEventListener('input', renderPricing);
+            });
+
+            // Synchronize hero sliders with main calculator
+            const hUsers = document.getElementById('hero-users-input');
+            const hLeads = document.getElementById('hero-leads-input');
+            const hStorage = document.getElementById('hero-storage-input');
+
+            if (hUsers && cUsers) {
+                hUsers.addEventListener('input', () => { cUsers.value = hUsers.value; renderPricing(); });
+                cUsers.addEventListener('input', () => { hUsers.value = cUsers.value; });
+            }
+            if (hLeads && cLeads) {
+                hLeads.addEventListener('input', () => { cLeads.value = hLeads.value; renderPricing(); });
+                cLeads.addEventListener('input', () => { hLeads.value = cLeads.value; });
+            }
+            if (hStorage && cStorage) {
+                hStorage.addEventListener('input', () => { cStorage.value = hStorage.value; renderPricing(); });
+                cStorage.addEventListener('input', () => { hStorage.value = cStorage.value; });
+            }
+
+            renderPricing();
+        });
+    </script>
+</body>
+</html>

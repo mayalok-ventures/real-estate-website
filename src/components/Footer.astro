@@ -1,0 +1,334 @@
+---
+import AnalyticsTracker from './AnalyticsTracker.astro';
+---
+
+<footer class="sahyak-site-footer">
+  <div class="sahyak-footer-container">
+    <div class="sahyak-footer-grid">
+      <!-- Col 1: Brand Info -->
+      <div class="sahyak-footer-col brand-col">
+        <a href="/" class="sahyak-footer-logo" aria-label="Sahyak CRM Home">
+          <img src="/images/sahyak-logo.png" alt="Sahyak CRM" class="sahyak-footer-logo-img" />
+          <span class="sahyak-footer-logo-text">Sahyak <span class="crm-badge">CRM</span></span>
+        </a>
+        <p class="sahyak-footer-desc">
+          The next-generation Real Estate CRM built for modern brokerages, real estate agencies, and agents across 15+ countries worldwide. Multi-channel lead tracking, smart deal pipelines, and automated follow-ups.
+        </p>
+        <div class="sahyak-footer-trust">
+          <span class="trust-dot"></span>
+          <span>Trusted by 10,000+ real estate professionals worldwide</span>
+        </div>
+      </div>
+
+      <!-- Col 2: Product -->
+      <div class="sahyak-footer-col">
+        <h4 class="sahyak-footer-heading">Platform</h4>
+        <ul class="sahyak-footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/features">All Features</a></li>
+          <li><a href="/pricing">Pricing & Plans</a></li>
+          <li><a href="/security">Enterprise Security</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Resources -->
+      <div class="sahyak-footer-col">
+        <h4 class="sahyak-footer-heading">Resources</h4>
+        <ul class="sahyak-footer-links">
+          <li><a href="/resources#quick-start">Getting Started Guide</a></li>
+          <li><a href="/resources#video-tutorials">Video Tutorials</a></li>
+          <li><a href="/resources#guides">Best Practices</a></li>
+          <li><a href="/resources#templates">Sales Templates</a></li>
+          <li><a href="/resources#help-articles">Knowledge Base</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Company & Global Contact -->
+      <div class="sahyak-footer-col">
+        <h4 class="sahyak-footer-heading">Global Support</h4>
+        <ul class="sahyak-footer-links">
+          <li><a href="/about">About Sahyak CRM</a></li>
+          <li><a href="/contact">Contact Global Team</a></li>
+          <li><a href="mailto:support@sahyak.com">support@sahyak.com</a></li>
+          <li><a href="tel:+918796475107">+91 87964 75107</a></li>
+          <li><a href="/contact">Book an Enterprise Demo &rarr;</a></li>
+          <li class="location-text">Global Data Centers: US, EU, APAC & MEA</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 15 Global Regions Band -->
+    <div class="global-countries-band">
+      <span class="countries-tag">Global Availability:</span>
+      <div class="countries-list">
+        <span>🇺🇸 United States</span>
+        <span class="sep">&bull;</span>
+        <span>🇬🇧 United Kingdom</span>
+        <span class="sep">&bull;</span>
+        <span>🇦🇺 Australia</span>
+        <span class="sep">&bull;</span>
+        <span>🇮🇳 India</span>
+        <span class="sep">&bull;</span>
+        <span>🇦🇪 UAE</span>
+        <span class="sep">&bull;</span>
+        <span>🇩🇪 Germany</span>
+        <span class="sep">&bull;</span>
+        <span>🇫🇷 France</span>
+        <span class="sep">&bull;</span>
+        <span>🇪🇸 Spain</span>
+        <span class="sep">&bull;</span>
+        <span>🇨🇦 Canada</span>
+        <span class="sep">&bull;</span>
+        <span>🇲🇽 Mexico</span>
+        <span class="sep">&bull;</span>
+        <span>🇧🇷 Brazil</span>
+        <span class="sep">&bull;</span>
+        <span>🇿🇦 South Africa</span>
+        <span class="sep">&bull;</span>
+        <span>🇸🇦 Saudi Arabia</span>
+        <span class="sep">&bull;</span>
+        <span>🇸🇬 Singapore</span>
+        <span class="sep">&bull;</span>
+        <span>🇯🇵 Japan</span>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="sahyak-footer-bottom">
+      <p class="copyright-text">
+        &copy; 2026 Sahyak CRM (<a href="https://sahyak.com" style="color: #4ADE80; text-decoration: none;">sahyak.com</a>). All rights reserved. Built for high-performance real estate teams.
+      </p>
+      <div class="footer-bottom-links">
+        <a href="/security">Privacy & GDPR</a>
+        <span>&bull;</span>
+        <a href="/pricing">Terms of Service</a>
+        <span>&bull;</span>
+        <a href="/contact">Contact Support</a>
+      </div>
+    </div>
+  </div>
+  <AnalyticsTracker />
+</footer>
+
+<style>
+  .sahyak-site-footer {
+    background-color: #0A1C16;
+    color: #F3F4F6;
+    border-top: 1px solid rgba(74, 222, 128, 0.15);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    padding-top: 4.5rem;
+    padding-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sahyak-footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .sahyak-footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.2fr;
+    gap: 3.5rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (max-width: 1024px) {
+    .sahyak-footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .sahyak-footer-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .sahyak-footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: #F3F4F6;
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  .sahyak-footer-logo-img {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 6px;
+    display: block;
+  }
+
+  .sahyak-footer-logo-text {
+    color: #F3F4F6;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .crm-badge {
+    font-size: 0.72rem;
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ADE80;
+    padding: 0.12rem 0.4rem;
+    border-radius: 4px;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    font-weight: 700;
+  }
+
+  .sahyak-footer-desc {
+    color: #9CA3AF;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    max-width: 360px;
+    margin-bottom: 1.5rem;
+  }
+
+  .sahyak-footer-trust {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 9999px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.78rem;
+    color: #D1D5DB;
+  }
+
+  .trust-dot {
+    width: 7px;
+    height: 7px;
+    background-color: #4ADE80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #4ADE80;
+  }
+
+  .sahyak-footer-heading {
+    color: #FFFFFF;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+  }
+
+  .sahyak-footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .sahyak-footer-links a {
+    color: #9CA3AF;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+  }
+
+  .sahyak-footer-links a:hover {
+    color: #4ADE80;
+    transform: translateX(2px);
+  }
+
+  .location-text {
+    font-size: 0.82rem;
+    color: #6B7280;
+    margin-top: 0.4rem;
+  }
+
+  /* 15 Countries Band */
+  .global-countries-band {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  @media (min-width: 768px) {
+    .global-countries-band {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  .countries-tag {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #4ADE80;
+    white-space: nowrap;
+  }
+
+  .countries-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #9CA3AF;
+  }
+
+  .countries-list .sep {
+    color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Bottom Bar */
+  .sahyak-footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .copyright-text {
+    color: #9CA3AF;
+    font-size: 0.85rem;
+  }
+
+  .footer-bottom-links {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .footer-bottom-links a {
+    color: #9CA3AF;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-bottom-links a:hover {
+    color: #4ADE80;
+  }
+
+  .footer-bottom-links span {
+    color: #4B5563;
+  }
+</style>

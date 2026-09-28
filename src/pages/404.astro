@@ -1,0 +1,32 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+
+const seoTitle = "404 - Page Not Found | Sahyak CRM";
+const seoDesc = "The real estate page or resource you are looking for has been moved or does not exist.";
+---
+
+<Layout title={seoTitle} description={seoDesc}>
+  <section class="section section-dark" style="min-height: 70vh; display: flex; align-items: center; text-align: center;">
+    <div class="container" style="max-width: 600px; margin: 0 auto;">
+      <div class="badge-pill" style="margin: 0 auto 1.5rem;">
+        <span class="badge-dot"></span> Error 404
+      </div>
+      <h1 class="hero-title" style="font-size: 3.5rem; margin-bottom: 1rem;">
+        Property Not Found
+      </h1>
+      <p class="sub-lead" style="margin: 0 auto 2.5rem; text-align: center;">
+        The page you are looking for may have been moved, updated, or does not exist. Let's get you back on track to closing deals.
+      </p>
+      <div class="btn-group" style="justify-content: center;">
+        <a href="/" class="btn btn-primary">
+          Return to Homepage &rarr;
+        </a>
+        <a href="/features" class="btn btn-outline">
+          Explore Features
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahayak - Real Estate CRM</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playfair Display (Headings), Inter (Body), Caveat (Handwritten notes) -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkGreen: '#0A1C16', // Hero background
+                        lightBg: '#F4F6F4',   // Light section background
+                        brandGreen: '#4ADE80', // Accent green
+                        textDark: '#111827',   // Dark text
+                        textLight: '#F3F4F6'   // Light text
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        handwriting: ['Caveat', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for specific overlapping effects */
+        .hero-bg-sketch {
+            background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            mix-blend-mode: luminosity;
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #4ADE80, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-textDark bg-lightBg overflow-x-hidden">
+
+    <!-- ================= SECTION 1: HERO (DARK) ================= -->
+    <section class="relative bg-darkGreen text-white min-h-screen flex items-center py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+        <!-- Background Sketch Overlay -->
+        <div class="absolute inset-0 hero-bg-sketch z-0"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+            <!-- Left Content -->
+            <div class="space-y-6">
+                <!-- Logo -->
+                <div class="flex items-center gap-2 mb-10">
+                    <div class="w-8 h-8 bg-brandGreen rounded flex items-center justify-center text-darkGreen font-bold text-xl">S</div>
+                    <span class="text-2xl font-bold tracking-tight">Sahayak</span>
+                </div>
+
+                <div class="flex items-center gap-2 text-brandGreen text-sm font-semibold tracking-wider uppercase">
+                    <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+                    Built for Real Estate Teams
+                </div>
+
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-serif leading-tight">
+                    The Real Estate <br> CRM Built <br> for <span class="text-brandGreen italic">Real People.</span>
+                </h1>
+
+                <p class="text-gray-300 text-lg max-w-lg leading-relaxed">
+                    Capture leads, follow up, share property details, coordinate site visits and close more deals — all from your mobile, with Sahayak.
+                </p>
+
+                <div class="flex flex-wrap items-center gap-4 pt-4">
+                    <button class="bg-brandGreen text-darkGreen px-8 py-3 rounded-full font-semibold hover:bg-green-400 transition flex items-center gap-2">
+                        Start free <span>→</span>
+                    </button>
+                    <button class="border border-gray-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-800 transition flex items-center gap-2">
+                        <span class="text-brandGreen">▶</span> Watch demo
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-4 pt-8">
+                    <div class="flex -space-x-3">
+                        <img src="https://i.pravatar.cc/100?img=1" alt="User" class="w-10 h-10 rounded-full border-2 border-darkGreen">
+                        <img src="https://i.pravatar.cc/100?img=2" alt="User" class="w-10 h-10 rounded-full border-2 border-darkGreen">
+                        <img src="https://i.pravatar.cc/100?img=3" alt="User" class="w-10 h-10 rounded-full border-2 border-darkGreen">
+                    </div>
+                    <p class="text-sm text-gray-400">Trusted by real estate teams<br>across India and beyond</p>
+                </div>
+            </div>
+
+            <!-- Right Content (Phone Mockup) -->
+            <div class="relative flex justify-center lg:justify-end">
+                <!-- Handwritten Notes -->
+                <div class="absolute -top-10 right-10 text-brandGreen font-handwriting text-2xl rotate-12 hidden md:block">
+                    LEADS <br> TO SITE VISITS <br> TO CLOSED <br> DEALS
+                </div>
+                <div class="absolute bottom-20 right-0 text-white font-handwriting text-2xl -rotate-12 hidden md:block">
+                    A SMARTER <br> WAY <br> TO SELL <br> REAL ESTATE
+                </div>
+
+                <!-- AI IMAGE PROMPT FOR HERO PHONE: 
+                     "A high-quality 3D render of a hand holding a modern smartphone displaying a real estate CRM dashboard app interface. The app has a dark theme with bright green accents, showing lead lists, statistics (24 new leads, 8 site visits), and a clean UI. The background is a dark moody architectural blueprint sketch. Cinematic lighting, photorealistic, 8k resolution." 
+                -->
+                <div class="relative w-[300px] md:w-[350px] h-[700px] bg-gray-900 rounded-[3rem] border-8 border-gray-800 shadow-2xl overflow-hidden">
+                    <!-- Placeholder for the generated image -->
+                    <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop" alt="App UI" class="w-full h-full object-cover opacity-80">
+                    <div class="absolute inset-0 flex items-center justify-center text-center p-4">
+                        <p class="text-white text-sm bg-black/50 p-2 rounded">Replace with AI Generated Phone Mockup Image</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SECTION 2: THE CHAOS (LIGHT) ================= -->
+    <section class="py-24 px-6 md:px-12 lg:px-20 bg-lightBg">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Text -->
+            <div class="space-y-6">
+                <div class="flex items-center gap-2 text-gray-500 text-sm font-semibold tracking-wider uppercase">
+                    <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+                    The Chaos We Replace
+                </div>
+                <h2 class="text-4xl md:text-5xl font-serif leading-tight text-darkGreen">
+                    Too many leads. <br> Too many tools. <br> <span class="text-brandGreen italic">Too much to manage.</span>
+                </h2>
+                <p class="text-gray-600 text-lg max-w-md">
+                    Property inquiries come from everywhere. Follow-ups get missed. Site visits are hard to coordinate. Inventory updates create confusion. Your sales team deserves better.
+                </p>
+            </div>
+
+            <!-- Right Images Collage -->
+            <div class="relative h-[500px] w-full">
+                <!-- AI IMAGE PROMPT FOR STRESSED MAN: 
+                     "A cinematic photo of a stressed Indian real estate agent sitting at a desk, looking at his laptop with a worried expression. Multiple floating digital notification cards (Instagram new lead, property portal inquiry, CSV export) surround his head in a chaotic manner. Warm office lighting, depth of field, high resolution." 
+                -->
+                <img src="https://images.unsplash.com/photo-1587560699334-cc4ff634909a?q=80&w=1000&auto=format&fit=crop" alt="Stressed agent" class="absolute right-0 top-10 w-3/4 h-4/5 object-cover rounded-2xl shadow-xl z-10">
+                
+                <!-- Floating UI Cards (CSS built) -->
+                <div class="absolute top-0 left-0 bg-white p-4 rounded-xl shadow-lg z-20 w-48 border border-gray-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center text-pink-500 text-xs">IG</div>
+                        <span class="text-xs font-bold">New Lead</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500">From Meta Ads</p>
+                    <p class="text-xs font-semibold mt-1">+91 98765 43210</p>
+                </div>
+
+                <div class="absolute bottom-20 left-10 bg-white p-4 rounded-xl shadow-lg z-20 w-48 border border-gray-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-500 text-xs">🏠</div>
+                        <span class="text-xs font-bold">Property Portal</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500">99acres Inquiry</p>
+                    <p class="text-xs font-semibold mt-1">2BHK in Andheri</p>
+                </div>
+
+                <!-- Handwritten Note -->
+                <div class="absolute -bottom-5 right-10 font-handwriting text-2xl text-darkGreen rotate-[-5deg] bg-yellow-100 p-2 shadow-sm z-30">
+                    DIFFERENT <br> SOURCES <br> SAME <br> PROBLEM
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SECTION 3: FEATURES OVERVIEW (LIGHT) ================= -->
+    <section class="py-24 px-6 md:px-12 lg:px-20 bg-lightBg border-t border-gray-200">
+        <div class="max-w-7xl mx-auto space-y-16">
+            <!-- Top Text -->
+            <div class="space-y-6 max-w-2xl">
+                <div class="flex items-center gap-2 text-gray-500 text-sm font-semibold tracking-wider uppercase">
+                    <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+                    A CRM That Actually Fits Your Work
+                </div>
+                <h2 class="text-4xl md:text-5xl font-serif leading-tight text-darkGreen">
+                    Everything you need <br> to sell, <span class="text-brandGreen italic">in one place.</span>
+                </h2>
+                <p class="text-gray-600 text-lg">
+                    From lead capture to deal closure, Sahayak brings your entire real estate sales process into a single, easy-to-use mobile CRM.
+                </p>
+            </div>
+
+            <!-- Icons Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <!-- Feature 1 -->
+                <div class="bg-darkGreen text-white p-6 rounded-xl flex flex-col items-center text-center gap-3 hover:-translate-y-1 transition duration-300">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brandGreen text-xl">📥</div>
+                    <span class="text-sm font-medium">Capture Leads</span>
+                </div>
+                <!-- Feature 2 -->
+                <div class="bg-darkGreen text-white p-6 rounded-xl flex flex-col items-center text-center gap-3 hover:-translate-y-1 transition duration-300">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brandGreen text-xl">🔄</div>
+                    <span class="text-sm font-medium">Manage Follow-ups</span>
+                </div>
+                <!-- Feature 3 -->
+                <div class="bg-darkGreen text-white p-6 rounded-xl flex flex-col items-center text-center gap-3 hover:-translate-y-1 transition duration-300">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brandGreen text-xl">🏢</div>
+                    <span class="text-sm font-medium">Share Properties</span>
+                </div>
+                <!-- Feature 4 -->
+                <div class="bg-darkGreen text-white p-6 rounded-xl flex flex-col items-center text-center gap-3 hover:-translate-y-1 transition duration-300">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brandGreen text-xl">📍</div>
+                    <span class="text-sm font-medium">Coordinate Site Visits</span>
+                </div>
+                <!-- Feature 5 -->
+                <div class="bg-darkGreen text-white p-6 rounded-xl flex flex-col items-center text-center gap-3 hover:-translate-y-1 transition duration-300">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brandGreen text-xl">📦</div>
+                    <span class="text-sm font-medium">Track Inventory</span>
+                </div>
+                <!-- Feature 6 -->
+                <div class="bg-darkGreen text-white p-6 rounded-xl flex flex-col items-center text-center gap-3 hover:-translate-y-1 transition duration-300">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brandGreen text-xl">🤝</div>
+                    <span class="text-sm font-medium">Close More Deals</span>
+                </div>
+            </div>
+
+            <!-- Bottom Image Area -->
+            <div class="relative mt-16 rounded-3xl overflow-hidden bg-darkGreen h-[400px] flex items-center">
+                <!-- AI IMAGE PROMPT FOR SUIT MAN: 
+                     "A professional shot of a young Indian businessman in a dark suit looking confidently at his smartphone. He is standing in a modern urban environment. The background is a blend of real cityscape and architectural line drawings. Sunlight, sharp focus on the phone and face, cinematic lighting." 
+                -->
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop" alt="Business man" class="absolute right-0 h-full w-1/2 object-cover object-left">
+                
+                <div class="relative z-10 p-12 max-w-lg">
+                    <h3 class="text-3xl font-serif text-white mb-4">Built for on-the-go teams</h3>
+                    <p class="text-gray-300">Access your entire CRM from your pocket. Update leads, schedule visits, and close deals right from the site.</p>
+                </div>
+                
+                <!-- Handwritten Note -->
+                <div class="absolute top-10 right-10 text-brandGreen font-handwriting text-2xl rotate-12 hidden md:block">
+                    BUILT <br> FOR <br> ON-THE-GO <br> TEAMS
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SECTION 4: POWERFUL FEATURES (LIGHT) ================= -->
+    <section class="py-24 px-6 md:px-12 lg:px-20 bg-lightBg">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Text -->
+            <div class="space-y-6">
+                <div class="flex items-center gap-2 text-gray-500 text-sm font-semibold tracking-wider uppercase">
+                    <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+                    Designed for how real estate teams work
+                </div>
+                <h2 class="text-4xl md:text-5xl font-serif leading-tight text-darkGreen">
+                    Powerful features. <br> <span class="text-brandGreen italic">Real impact.</span>
+                </h2>
+                <p class="text-gray-600 text-lg max-w-md">
+                    Lead management, WhatsApp engagement, field operations, site visit coordination and inventory control — all built for the realities of real estate sales.
+                </p>
+                <button class="bg-darkGreen text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-800 transition flex items-center gap-2 mt-4">
+                    Explore all features <span>→</span>
+                </button>
+            </div>
+
+            <!-- Right Image (Isometric Illustration) -->
+            <div class="relative w-full h-[500px] flex items-center justify-center">
+                <!-- AI IMAGE PROMPT FOR ISOMETRIC ILLUSTRATION: 
+                     "A 3D isometric illustration of a real estate CRM software ecosystem. A central smartphone showing a map interface, surrounded by floating UI cards representing 'Lead Capture', 'WhatsApp Engagement', 'Field Operations', and 'Site Visits'. The base is a green stylized map with tiny trees and buildings. Clean, modern UI/UX style, bright green and white color palette, highly detailed, 8k render." 
+                -->
+                <!-- Placeholder for Isometric Image -->
+                <div class="w-full h-full bg-gray-200 rounded-3xl flex items-center justify-center border-4 border-dashed border-gray-400">
+                    <p class="text-gray-500 text-center px-4">Replace with AI Generated Isometric 3D Illustration<br>(See prompt in code)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SECTION 5: CTA & STATS (LIGHT) ================= -->
+    <section class="py-24 px-6 md:px-12 lg:px-20 bg-lightBg">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Image -->
+            <div class="relative h-[600px] rounded-3xl overflow-hidden">
+                <!-- AI IMAGE PROMPT FOR LOOKING UP MAN: 
+                     "A confident Indian businessman looking upwards and to the side, wearing sunglasses and a formal suit. Low angle shot against a modern building. A bold dark green geometric shape overlaps the image. Cinematic, empowering mood, high contrast, professional photography." 
+                -->
+                <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000&auto=format&fit=crop" alt="Confident man" class="w-full h-full object-cover">
+                <!-- Green Overlay Shape -->
+                <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-darkGreen to-transparent"></div>
+                
+                <!-- Handwritten Note -->
+                <div class="absolute top-10 left-10 text-brandGreen font-handwriting text-3xl rotate-[-10deg]">
+                    MORE <br> FOLLOW-UPS <br> MORE SITE VISITS <br> MORE CLOSINGS
+                </div>
+            </div>
+
+            <!-- Right Text & Stats -->
+            <div class="space-y-8">
+                <div class="flex items-center gap-2 text-gray-500 text-sm font-semibold tracking-wider uppercase">
+                    <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+                    Start at your own pace
+                </div>
+                <h2 class="text-4xl md:text-5xl font-serif leading-tight text-darkGreen">
+                    Get started for free. <br> <span class="text-brandGreen italic">No credit card required.</span>
+                </h2>
+                <p class="text-gray-600 text-lg">
+                    Try Sahayak with 20 leads, 1 user seat and essential features. Upgrade anytime as your team grows.
+                </p>
+                
+                <div class="flex flex-wrap items-center gap-4">
+                    <button class="bg-brandGreen text-darkGreen px-8 py-3 rounded-full font-semibold hover:bg-green-400 transition flex items-center gap-2">
+                        Start free now <span>→</span>
+                    </button>
+                    <button class="border border-gray-400 text-darkGreen px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition">
+                        View pricing
+                    </button>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-gray-300">
+                    <div>
+                        <div class="text-3xl font-bold text-darkGreen">20</div>
+                        <div class="text-sm text-gray-500">Leads</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-darkGreen">1</div>
+                        <div class="text-sm text-gray-500">User seat</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-darkGreen">10</div>
+                        <div class="text-sm text-gray-500">WhatsApp actions</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-darkGreen">3</div>
+                        <div class="text-sm text-gray-500">Property listings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SECTION 6: FOOTER / ABOUT (DARK) ================= -->
+    <section class="relative bg-darkGreen text-white py-24 px-6 md:px-12 lg:px-20 overflow-hidden">
+        <!-- AI IMAGE PROMPT FOR FOOTER BACKGROUND: 
+             "A futuristic, dark, cinematic cityscape of a modern Indian metropolis at dusk. The buildings are overlaid with subtle digital wireframe/blueprint elements. Deep green and black color grading. Futuristic and professional real estate theme, wide angle." 
+        -->
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0 opacity-30">
+            <img src="https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=2070&auto=format&fit=crop" alt="Cityscape" class="w-full h-full object-cover">
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Text -->
+            <div class="space-y-6">
+                <div class="flex items-center gap-2 text-brandGreen text-sm font-semibold tracking-wider uppercase">
+                    <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+                    Built for a bigger tomorrow
+                </div>
+                <h2 class="text-4xl md:text-5xl font-serif leading-tight">
+                    Real estate moves fast. <br> <span class="text-brandGreen italic">So do we.</span>
+                </h2>
+                <p class="text-gray-300 text-lg max-w-md">
+                    We're building the most practical, mobile-first CRM for real estate teams — with powerful features, a simple experience and a deep understanding of your world.
+                </p>
+                <button class="bg-brandGreen text-darkGreen px-8 py-3 rounded-full font-semibold hover:bg-green-400 transition flex items-center gap-2 mt-4">
+                    Be part of the journey <span>→</span>
+                </button>
+            </div>
+
+            <!-- Right Side (Empty for balance or small graphic) -->
+            <div class="relative h-[300px] hidden lg:flex items-center justify-end">
+                <!-- Handwritten Note -->
+                <div class="text-brandGreen font-handwriting text-3xl rotate-[-5deg] text-right">
+                    SAME <br> GOAL <br> A STRONGER <br> REAL ESTATE <br> TOMORROW
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

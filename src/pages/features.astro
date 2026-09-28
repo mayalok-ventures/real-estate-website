@@ -1,0 +1,444 @@
+---
+export const prerender = true;
+
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+const seoTitle = "Sahyak CRM - Real Estate Features & Sales Pipeline";
+const seoDesc = "From lead capture to transaction closure, Sahyak CRM gives you all the tools to manage sales pipelines, automated follow-ups, client visits, property inventory and teams across 15+ countries.";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{seoTitle}</title>
+    <meta name="description" content={seoDesc} />
+    <link rel="canonical" href="https://sahyak.com/features" />
+    <script is:inline src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style is:global>
+        :root {
+            --bg-dark: #0a1f15;
+            --bg-cream: #f4f4f0;
+            --accent-green: #a3e635;
+            --text-dark: #1a1a1a;
+            --text-light: #e0e0e0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+        
+        /* Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        @keyframes float-reverse {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(15px) rotate(-2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .floating-card {
+            animation: float 6s ease-in-out infinite;
+        }
+        .floating-card-reverse {
+            animation: float-reverse 7s ease-in-out infinite;
+        }
+
+        /* Phone Mockup */
+        .phone-mockup {
+            border: 12px solid #222;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 25px;
+            background: #222;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 10;
+        }
+        
+        /* Editorial Collage Effects */
+        .collage-img {
+            filter: grayscale(100%) contrast(1.2) sepia(20%) hue-rotate(90deg);
+            transition: all 0.5s ease;
+        }
+        .collage-img:hover {
+            filter: grayscale(0%) contrast(1) sepia(0%) hue-rotate(0deg);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-green); border-radius: 4px; }
+
+        /* Button Hover */
+        .btn-primary {
+            background-color: var(--accent-green);
+            color: #000;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #86c02e;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(163, 230, 53, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Global Navigation -->
+    <Navbar active="features" />
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 pb-10 px-4 md:px-10 overflow-hidden">
+        <!-- Background Image (Low-Angle Hero Shot) -->
+        <div class="absolute inset-0 z-0 opacity-40">
+            <img src="/images/features/1.png" class="w-full h-full object-cover collage-img" alt="City Skyline">
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <!-- Left Content -->
+            <div class="fade-up">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="w-8 h-8 bg-[var(--accent-green)] rounded-md flex items-center justify-center text-black font-bold">S</div>
+                    <span class="text-xl font-bold tracking-wider">Sahyak</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                    Everything your real estate team needs, <span class="text-[var(--accent-green)] italic">in one place.</span>
+                </h1>
+                <p class="text-lg text-gray-300 mb-8 max-w-lg">
+                    From lead capture to deal closure, Sahyak CRM gives you all the tools to manage your sales, follow-ups, site visits, inventory and team — right from your mobile.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#lead-management" class="btn-primary px-6 py-3 rounded-full font-semibold flex items-center gap-2">
+                        Explore all features <span>&rarr;</span>
+                    </a>
+                    <a href="/contact" class="border border-gray-500 hover:border-white text-white px-6 py-3 rounded-full font-semibold transition-all">
+                        Start free
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Content (POV / First-Person Perspective) -->
+            <div class="relative flex justify-center fade-up" style="transition-delay: 200ms;">
+                <!-- Hand holding phone (Placeholder) -->
+                <div class="absolute -bottom-20 -right-10 w-64 h-96 bg-gray-800 rounded-3xl transform rotate-12 opacity-50 blur-sm"></div>
+                
+                <!-- Phone Mockup -->
+                <div class="phone-mockup w-72 md:w-80 h-[600px] bg-white z-10">
+                    <div class="phone-notch"></div>
+                    <!-- Screen Content -->
+                    <div class="bg-[var(--bg-cream)] text-black h-full p-4 pt-12 overflow-y-auto">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold text-lg">Good morning,</h3>
+                            <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
+                        </div>
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            <div class="bg-white p-3 rounded-xl shadow-sm">
+                                <p class="text-xs text-gray-500">New Leads</p>
+                                <p class="text-2xl font-bold">24</p>
+                                <p class="text-xs text-green-500">+12%</p>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl shadow-sm">
+                                <p class="text-xs text-gray-500">Site Visits</p>
+                                <p class="text-2xl font-bold">8</p>
+                                <p class="text-xs text-green-500">+4%</p>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl shadow-sm">
+                                <p class="text-xs text-gray-500">Follow Ups</p>
+                                <p class="text-2xl font-bold">18</p>
+                                <p class="text-xs text-green-500">+8%</p>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl shadow-sm">
+                                <p class="text-xs text-gray-500">Deals</p>
+                                <p class="text-2xl font-bold">5</p>
+                                <p class="text-xs text-green-500">+2%</p>
+                            </div>
+                        </div>
+                        <!-- Tasks -->
+                        <h4 class="font-semibold mb-3">Today's Tasks</h4>
+                        <div class="space-y-3">
+                            <div class="bg-white p-3 rounded-xl shadow-sm flex items-center gap-3">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                <div>
+                                    <p class="text-sm font-medium">Call Rohan Mehra</p>
+                                    <p class="text-xs text-gray-500">Site visit tomorrow</p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl shadow-sm flex items-center gap-3">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <div>
+                                    <p class="text-sm font-medium">Follow up with Priya</p>
+                                    <p class="text-xs text-gray-500">Shared brochure</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature 1: Lead Management (Editorial Magazine Collage) -->
+    <section id="lead-management" class="bg-[var(--bg-cream)] text-[var(--text-dark)] py-20 px-4 md:px-10 overflow-hidden">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Text -->
+            <div class="fade-up">
+                <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">01 Lead Management</span>
+                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                    Capture every opportunity. <br><span class="text-[var(--accent-green)] italic">Never miss a follow-up.</span>
+                </h2>
+                <p class="text-gray-600 mb-8 text-lg">
+                    Collect leads from multiple sources, organize them in one place and stay on top of follow-ups with reminders, notes and smart filters.
+                </p>
+                <a href="/contact" class="inline-flex bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition-all items-center gap-2">
+                    Explore lead management <span>&rarr;</span>
+                </a>
+            </div>
+            
+            <!-- Right Collage / Floating Elements -->
+            <div class="relative h-[500px] fade-up" style="transition-delay: 200ms;">
+                <!-- Background Image -->
+                <img src="/images/features/2.png" class="absolute inset-0 w-full h-full object-cover rounded-2xl collage-img" alt="Real Estate">
+                
+                <!-- Floating Cards -->
+                <div class="absolute top-10 -left-6 md:-left-12 bg-white p-4 rounded-xl shadow-xl floating-card z-10 w-48">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center text-pink-500">IG</div>
+                        <p class="text-xs font-bold">Website Inquiry</p>
+                    </div>
+                    <p class="text-xs text-gray-500">2 min ago</p>
+                </div>
+                
+                <div class="absolute bottom-20 -right-4 md:-right-12 bg-white p-4 rounded-xl shadow-xl floating-card-reverse z-10 w-48">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600">WA</div>
+                        <p class="text-xs font-bold">WhatsApp</p>
+                    </div>
+                    <p class="text-xs text-gray-500">Incoming Lead</p>
+                </div>
+                
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[var(--accent-green)] p-4 rounded-xl shadow-xl floating-card z-20 w-56">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center text-[var(--accent-green)]">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-black">Smart Follow-ups</p>
+                            <p class="text-xs text-black/80">Auto reminders</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature 2: Property & Inventory (Isometric 3D Diorama) -->
+    <section class="bg-[var(--bg-dark)] py-20 px-4 md:px-10 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Text -->
+            <div class="fade-up">
+                <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">02 Property & Inventory</span>
+                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                    Show the right properties to the <span class="text-[var(--accent-green)] italic">right buyers.</span>
+                </h2>
+                <p class="text-gray-400 mb-8 text-lg">
+                    Manage your projects, towers, units and inventory with rich details, images and availability — and share with buyers in seconds.
+                </p>
+                <a href="/contact" class="btn-primary inline-flex px-6 py-3 rounded-full font-semibold items-center gap-2">
+                    Explore inventory features <span>&rarr;</span>
+                </a>
+            </div>
+            
+            <!-- Right Visual (Isometric 3D Diorama) -->
+            <div class="relative flex justify-center items-center fade-up" style="transition-delay: 200ms;">
+                <!-- Background Glow -->
+                <div class="absolute inset-0 bg-[var(--accent-green)] opacity-20 blur-[100px] rounded-full pointer-events-none"></div>
+                <img src="/images/features/3.png" alt="Show the right properties to the right buyers" class="w-full h-auto max-h-[550px] object-contain drop-shadow-2xl rounded-2xl relative z-10 transition-transform duration-500 hover:scale-[1.02]">
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature 3: Site Visits (Minimalist Negative Space) -->
+    <section class="bg-[var(--bg-cream)] text-[var(--text-dark)] py-20 px-4 md:px-10 overflow-hidden">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Text -->
+            <div class="fade-up">
+                <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">03 Site Visits & Field Operations</span>
+                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                    Plan. Coordinate. <br><span class="text-[var(--accent-green)] italic">Close more deals.</span>
+                </h2>
+                <p class="text-gray-600 mb-8 text-lg">
+                    Schedule site visits, assign to your team, track updates on the go and keep buyers engaged through every step.
+                </p>
+                <a href="/contact" class="inline-flex bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition-all items-center gap-2">
+                    Explore site visit tools <span>&rarr;</span>
+                </a>
+            </div>
+            
+            <!-- Right Visual -->
+            <div class="relative h-[500px] fade-up" style="transition-delay: 200ms;">
+                <img src="/images/features/4.png" class="absolute inset-0 w-full h-full object-cover rounded-2xl collage-img" alt="Field Operations">
+                
+                <!-- Floating Cards -->
+                <div class="absolute top-10 left-10 bg-white p-4 rounded-xl shadow-xl floating-card z-10 w-56">
+                    <p class="text-sm font-bold mb-2">Site Visit Scheduled</p>
+                    <p class="text-xs text-gray-500 mb-2">Sat, 28 Apr • 11:00 AM</p>
+                    <div class="space-y-1">
+                        <p class="text-xs flex items-center gap-2"><span class="text-green-500">✓</span> Assign to team</p>
+                        <p class="text-xs flex items-center gap-2"><span class="text-green-500">✓</span> Add meeting notes</p>
+                        <p class="text-xs flex items-center gap-2"><span class="text-green-500">✓</span> Share brochure</p>
+                    </div>
+                </div>
+                
+                <div class="absolute bottom-10 right-10 bg-[var(--accent-green)] p-4 rounded-xl shadow-xl floating-card-reverse z-20 w-48">
+                    <p class="text-sm font-bold text-black">Role-based access</p>
+                    <p class="text-xs text-black/70">Right data for the right people</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature 4: Team Collaboration (High-Contrast Duotone Neo-Noir) -->
+    <section class="bg-[var(--bg-dark)] py-20 px-4 md:px-10 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Text -->
+            <div class="fade-up">
+                <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">04 Team Collaboration</span>
+                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                    A stronger team. <br><span class="text-[var(--accent-green)] italic">Better results.</span>
+                </h2>
+                <p class="text-gray-400 mb-8 text-lg">
+                    Manage your sales team, set roles and permissions, track performance and keep everyone aligned — in real time.
+                </p>
+                <a href="/contact" class="btn-primary inline-flex px-6 py-3 rounded-full font-semibold items-center gap-2">
+                    Explore team features <span>&rarr;</span>
+                </a>
+            </div>
+            
+            <!-- Right Visual -->
+            <div class="relative fade-up" style="transition-delay: 200ms;">
+                <div class="relative rounded-2xl overflow-hidden">
+                    <img src="/images/features/5.png" class="w-full h-[500px] object-cover" alt="Team">
+                    <div class="absolute inset-0 bg-[var(--bg-dark)] mix-blend-multiply opacity-70"></div>
+                    <div class="absolute inset-0 bg-[var(--accent-green)] mix-blend-overlay opacity-30"></div>
+                </div>
+                
+                <!-- Floating UI Elements -->
+                <div class="absolute top-10 left-10 bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-xl z-10">
+                    <p class="text-sm font-bold text-white">Team Leads</p>
+                    <p class="text-xs text-gray-300">Oversee performance</p>
+                </div>
+                <div class="absolute top-10 right-10 bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-xl z-10">
+                    <p class="text-sm font-bold text-white">Telecallers</p>
+                    <p class="text-xs text-gray-300">Manage follow-ups</p>
+                </div>
+                <div class="absolute bottom-10 left-10 bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-xl z-10">
+                    <p class="text-sm font-bold text-white">Sales Managers</p>
+                    <p class="text-xs text-gray-300">Track deals & reports</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature 5: WhatsApp & Communication (Split-Screen Contrast) -->
+    <section class="bg-[var(--bg-cream)] text-[var(--text-dark)] py-20 px-4 md:px-10 overflow-hidden">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Text -->
+            <div class="fade-up">
+                <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">05 WhatsApp & Communication</span>
+                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                    Engage buyers <br><span class="text-[var(--accent-green)] italic">where they are.</span>
+                </h2>
+                <p class="text-gray-600 mb-8 text-lg">
+                    Connect with buyers on WhatsApp, use verified templates, send bulk messages and keep conversations organized.
+                </p>
+                <a href="/contact" class="inline-flex bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition-all items-center gap-2">
+                    Explore communication tools <span>&rarr;</span>
+                </a>
+            </div>
+            
+            <!-- Right Visual (WhatsApp & Communication Hub) -->
+            <div class="relative flex justify-center items-center fade-up" style="transition-delay: 200ms;">
+                <div class="absolute inset-0 bg-[#25D366] opacity-15 blur-[100px] rounded-full pointer-events-none"></div>
+                <img src="/images/features/6.png" alt="Engage buyers where they are on WhatsApp" class="w-full h-auto max-h-[550px] object-contain drop-shadow-2xl rounded-2xl relative z-10 transition-transform duration-500 hover:scale-[1.02]">
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature 6: Analytics & Reports (Dynamic Action Splash) -->
+    <section class="bg-[var(--bg-dark)] py-20 px-4 md:px-10 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Text -->
+            <div class="fade-up">
+                <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">06 Analytics & Reports</span>
+                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                    Clear insights. <br><span class="text-[var(--accent-green)] italic">Smarter decisions.</span>
+                </h2>
+                <p class="text-gray-400 mb-8 text-lg">
+                    Get real-time insights on leads, follow-ups, site visits, team performance and deal progress to make better decisions, every day.
+                </p>
+                <a href="/contact" class="btn-primary inline-flex px-6 py-3 rounded-full font-semibold items-center gap-2">
+                    Explore analytics <span>&rarr;</span>
+                </a>
+            </div>
+            
+            <!-- Right Visual (Isometric 3D Analytics Dashboard) -->
+            <div class="relative flex justify-center items-center fade-up" style="transition-delay: 200ms;">
+                <!-- Background Glow -->
+                <div class="absolute inset-0 bg-[var(--accent-green)] opacity-20 blur-[100px] rounded-full pointer-events-none"></div>
+                <img src="/images/features/7.png" alt="Clear insights and smarter decisions with real-time analytics" class="w-full h-auto max-h-[550px] object-contain drop-shadow-2xl rounded-2xl relative z-10 transition-transform duration-500 hover:scale-[1.02]">
+            </div>
+        </div>
+    </section>
+
+    <!-- Universal Footer -->
+    <Footer />
+
+    <!-- JavaScript for Scroll Animations -->
+    <script is:inline>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            document.querySelectorAll('.fade-up').forEach((el) => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

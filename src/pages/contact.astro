@@ -1,0 +1,1163 @@
+---
+export const prerender = true;
+
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+const seoTitle = "Sahyak CRM - Contact Global Sales & Support";
+const seoDesc = "Have a question, need an enterprise demo or want to see how Sahyak CRM scales across 15+ countries? Contact our global team today.";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{seoTitle}</title>
+    <meta name="description" content={seoDesc} />
+    <link rel="canonical" href="https://sahyak.com/contact" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <style is:global>
+        :root {
+            --bg-dark: #0A1C16;
+            --bg-cream: #F4F6F4;
+            --accent-green: #4ADE80;
+            --accent-green-dark: #22c55e;
+            --text-dark: #111827;
+            --text-light: #ffffff;
+            --text-gray: #666666;
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'DM Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* --- Utility Classes --- */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-green);
+            color: var(--text-dark);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-green-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--text-light);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--text-light);
+            color: var(--text-dark);
+        }
+
+        .btn-dark-outline {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--text-dark);
+        }
+
+        .btn-dark-outline:hover {
+            background-color: var(--text-dark);
+            color: var(--text-light);
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .section-title span {
+            color: var(--accent-green);
+            font-style: italic;
+        }
+
+        /* --- Animations --- */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .floating-element {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* --- Header / Hero --- */
+        .hero {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        @media (min-width: 992px) {
+            .hero-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .hero-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text h1 span {
+            color: var(--accent-green);
+            font-style: italic;
+        }
+
+        .hero-text p {
+            color: #ccc;
+            margin-bottom: 2rem;
+            max-width: 400px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-trust {
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .hero-trust img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-green);
+        }
+
+        .hero-visuals {
+            position: relative;
+            height: 400px;
+            display: none;
+        }
+
+        @media (min-width: 992px) {
+            .hero-visuals {
+                display: block;
+            }
+        }
+
+        /* Editorial Magazine Collage Effect */
+        .collage-img-1 {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 70%;
+            height: 80%;
+            object-fit: cover;
+            border-radius: 10px;
+            filter: grayscale(100%) contrast(1.2);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);
+        }
+
+        .collage-img-2 {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50%;
+            height: 60%;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 4px solid var(--bg-dark);
+            z-index: 2;
+        }
+
+        .floating-arrow {
+            position: absolute;
+            top: 20%;
+            right: 10%;
+            width: 80px;
+            height: 80px;
+            z-index: 3;
+        }
+
+        .hero-note {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            padding: 1.5rem;
+            border-radius: 10px;
+            transform: rotate(-3deg);
+            width: 200px;
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 4;
+        }
+
+        /* --- Contact Form Section --- */
+        .contact-form-section {
+            padding: 5rem 0;
+            background-color: var(--bg-cream);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        @media (min-width: 992px) {
+            .form-grid {
+                grid-template-columns: 1fr 1.2fr;
+            }
+        }
+
+        .form-info ul {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .form-info ul li {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-info ul li svg {
+            width: 24px;
+            height: 24px;
+            color: var(--accent-green);
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .form-info ul li div h4 {
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .form-info ul li div p {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        .form-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-bg-visual {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 48%;
+            height: 100%;
+            max-width: 580px;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+            display: none;
+        }
+
+        @media (min-width: 992px) {
+            .form-bg-visual {
+                display: block;
+            }
+        }
+
+        .form-bg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            opacity: 0.28;
+            filter: contrast(1.1);
+            mask-image: linear-gradient(to left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+            background-color: #fcfcfc;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            background-color: white;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent-green-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .form-submit:hover {
+            background-color: #22c55e;
+        }
+
+        .form-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            margin-top: 1rem;
+        }
+
+        .form-feedback {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .form-feedback.success {
+            display: block;
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+        }
+        .form-feedback.error {
+            display: block;
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+
+        /* --- Direct Contact (Dark Section) --- */
+        .direct-contact {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        .direct-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        @media (min-width: 992px) {
+            .direct-grid {
+                grid-template-columns: 1fr 1.5fr;
+            }
+        }
+
+        .direct-text h2 {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .direct-text h2 span {
+            color: var(--accent-green);
+            font-style: italic;
+        }
+
+        .direct-text p {
+            color: #aaa;
+            margin-bottom: 2rem;
+        }
+
+        .direct-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 576px) {
+            .direct-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+            border-color: var(--accent-green);
+        }
+
+        .contact-card svg {
+            width: 32px;
+            height: 32px;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .contact-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-card p {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card a {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* --- Location Section --- */
+        .location-section {
+            padding: 5rem 0;
+            background-color: var(--bg-cream);
+        }
+
+        .location-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        @media (min-width: 992px) {
+            .location-grid {
+                grid-template-columns: 1fr 1.2fr;
+            }
+        }
+
+        .location-map {
+            border-radius: 20px;
+            overflow: hidden;
+            height: 400px;
+            background: #e0e0e0;
+            position: relative;
+        }
+
+        .location-map img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .location-info-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .info-card svg {
+            width: 24px;
+            height: 24px;
+            color: var(--accent-green);
+            flex-shrink: 0;
+        }
+
+        .info-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-card p {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        /* --- FAQ Section --- */
+        .faq-section {
+            padding: 5rem 0;
+            background-color: var(--bg-cream);
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        @media (min-width: 992px) {
+            .faq-grid {
+                grid-template-columns: 1fr 1.5fr;
+            }
+        }
+
+        .phone-mockup {
+            position: relative;
+            width: 280px;
+            height: 550px;
+            background: #111;
+            border-radius: 40px;
+            border: 8px solid #333;
+            margin: 0 auto;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+
+        .phone-mockup img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 25px;
+            background: #111;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 2;
+        }
+
+        .faq-accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: #f9f9f9;
+        }
+
+        .faq-question span {
+            font-size: 1.5rem;
+            color: var(--accent-green);
+            transition: transform 0.3s ease;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1.5rem;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            padding-bottom: 1.5rem;
+        }
+
+        .faq-item.active .faq-question span {
+            transform: rotate(45deg);
+        }
+
+        /* --- Footer / CTA --- */
+        .footer-cta {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 5rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-cta h2 {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-cta h2 span {
+            color: var(--accent-green);
+            font-style: italic;
+        }
+
+        .footer-cta p {
+            color: #aaa;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .footer-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center bottom;
+            opacity: 0.25;
+            mask-image: linear-gradient(to top, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to top, black 40%, transparent 100%);
+            pointer-events: none;
+        }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 768px) {
+            .section-title { font-size: 2rem; }
+            .hero-text h1 { font-size: 2.2rem; }
+            .hero-note { display: none; }
+            .form-container { padding: 1.5rem; }
+        }
+    </style>
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      "name": "Contact Sahyak CRM",
+      "description": seoDesc,
+      "url": "https://sahyak.com/contact",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Sahyak CRM",
+        "url": "https://sahyak.com",
+        "email": "support@sahyak.com",
+        "telephone": "+91 87964 75107",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+91 87964 75107",
+          "contactType": "Customer Support",
+          "email": "support@sahyak.com"
+        }
+      }
+    })} />
+</head>
+<body>
+
+    <!-- Global Navigation -->
+    <Navbar active="contact" />
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <div class="container hero-grid">
+            <div class="hero-text reveal">
+                <div class="section-tag">Contact Us</div>
+                <h1>Let's build a stronger <span>real estate</span> tomorrow.</h1>
+                <p>Have a question, need a demo or want to know more about Sahyak? We're here to help you and your team grow with a smarter, simpler CRM.</p>
+                <div class="hero-buttons">
+                    <a href="#contact-form" class="btn btn-primary">Talk to our team &rarr;</a>
+                    <a href="/pricing" class="btn btn-outline">Start free</a>
+                </div>
+                <div class="hero-trust">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" alt="User">
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop" alt="User" style="margin-left:-15px;">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="User" style="margin-left:-15px;">
+                    <span>Trusted by real estate teams across 15+ countries worldwide</span>
+                </div>
+            </div>
+            
+            <div class="hero-visuals reveal">
+                <!-- POV / First-Person Perspective & Editorial Magazine Collage -->
+                <img src="/images/contact/1.png" alt="Man on phone" class="collage-img-1">
+                <img src="/images/contact/2.png" alt="Secondary collage visual" class="collage-img-2">
+                
+                <!-- Floating Element -->
+                <svg class="floating-arrow floating-element" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 80 C 40 80, 80 60, 80 20" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M70 30 L 80 20 L 90 30" stroke="#00e676" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+
+                <div class="hero-note floating-element" style="animation-delay: 2s;">
+                    WE'RE HERE FOR REAL ESTATE TEAMS
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTACT FORM SECTION -->
+    <section class="contact-form-section" id="contact-form">
+        <!-- Subtle Background Visual (Professional woman) -->
+        <div class="form-bg-visual">
+            <img src="/images/contact/3.png" alt="Professional real estate advisor" class="form-bg-img">
+        </div>
+        <div class="container form-grid">
+            <div class="form-info reveal">
+                <div class="section-tag">Get In Touch</div>
+                <h2 class="section-title">Send us a <span>message.</span></h2>
+                <p>Fill out the form and our team will get back to you as soon as possible.</p>
+                
+                <ul>
+                    <li>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <div>
+                            <h4>Product questions</h4>
+                            <p>Features, pricing, integrations</p>
+                        </div>
+                    </li>
+                    <li>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        <div>
+                            <h4>Request a demo</h4>
+                            <p>See Sahyak in action</p>
+                        </div>
+                    </li>
+                    <li>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <div>
+                            <h4>Partnership opportunities</h4>
+                            <p>Explore collaboration</p>
+                        </div>
+                    </li>
+                    <li>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <div>
+                            <h4>Support & other queries</h4>
+                            <p>We're here to help</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="form-container reveal">
+                <div id="contact-feedback" class="form-feedback"></div>
+
+                <form id="contact-form-el">
+                    <!-- Honeypot protection against spam bots -->
+                    <input type="text" name="website_url" style="display:none;" tabindex="-1" autocomplete="off" />
+
+                    <div class="form-group">
+                        <label for="f-name">Full Name *</label>
+                        <input id="f-name" name="name" type="text" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="f-email">Work Email *</label>
+                        <input id="f-email" name="email" type="email" placeholder="you@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="f-phone">Phone Number *</label>
+                        <input id="f-phone" name="phone" type="tel" placeholder="+91 98765 43210" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="f-company">Company / Business Name</label>
+                        <input id="f-company" name="company" type="text" placeholder="Your company name">
+                    </div>
+                    <div class="form-group">
+                        <label for="f-inquiry">How can we help? *</label>
+                        <select id="f-inquiry" name="inquiry_type" required>
+                            <option value="" disabled selected>Select an option</option>
+                            <option value="demo">Request a Demo</option>
+                            <option value="pricing">Pricing Inquiry</option>
+                            <option value="support">Technical Support</option>
+                            <option value="partnership">Partnership</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="f-msg">Message (Optional)</label>
+                        <textarea id="f-msg" name="message" placeholder="Tell us a bit more..."></textarea>
+                    </div>
+                    <button type="submit" id="f-submit-btn" class="form-submit">Send message &rarr;</button>
+                    <p class="form-note">We usually respond within 1 business day.</p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- DIRECT CONTACT (DARK SECTION) -->
+    <section class="direct-contact">
+        <div class="container direct-grid">
+            <div class="direct-text reveal">
+                <div class="section-tag">Other Ways To Reach Us</div>
+                <h2>Prefer a direct <span>conversation?</span></h2>
+                <p>Choose the channel that works best for you. Our team is available during business hours.</p>
+                
+                <!-- Split-Screen Contrast / High-Contrast Duotone Visual -->
+                <div style="margin-top: 2rem; border-radius: 12px; overflow: hidden; height: 200px; aspect-ratio: 2 / 1; position: relative;">
+                    <img src="/images/contact/4.png" alt="Man looking down" style="width:100%; height:100%; object-fit:cover; object-position:center; filter: grayscale(100%) contrast(1.25); opacity: 0.75;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; letter-spacing: 1px; text-shadow: 0 2px 12px rgba(0,0,0,0.9); white-space: nowrap;">
+                        SAME PEOPLE<br>REAL ANSWERS
+                    </div>
+                </div>
+            </div>
+
+            <div class="direct-cards reveal">
+                <div class="contact-card">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <h4>Email</h4>
+                    <p><a href="mailto:support@sahyak.com" style="color: inherit; text-decoration: none;">support@sahyak.com</a></p>
+                    <a href="mailto:support@sahyak.com">Product, enterprise and support inquiries &rarr;</a>
+                </div>
+                <div class="contact-card">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                    <h4>Direct Support</h4>
+                    <p><a href="tel:+918796475107" style="color: inherit; text-decoration: none;">+91 87964 75107</a></p>
+                    <a href="tel:+918796475107">Direct hotline &bull; Mon - Sat 24/6 &rarr;</a>
+                </div>
+                <div class="contact-card">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    <h4>Chat & WhatsApp</h4>
+                    <p><a href="https://wa.me/918796475107" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">+91 87964 75107</a></p>
+                    <a href="https://wa.me/918796475107" target="_blank" rel="noopener noreferrer">Fast onboarding & WhatsApp chat &rarr;</a>
+                </div>
+                <div class="contact-card">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <h4>Schedule a Live Demo</h4>
+                    <p>Book a walkthrough</p>
+                    <a href="#contact-form">Experience Sahyak CRM tailored to your country &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOCATION SECTION -->
+    <section class="location-section">
+        <div class="container location-grid">
+            <div class="location-info reveal">
+                <div class="section-tag">Our Location</div>
+                <h2 class="section-title">Come say hello <br>(or just drop a <span>message</span>).</h2>
+                <p>We're a remote-first team working with real estate professionals across India and beyond.</p>
+                
+                <div class="location-info-cards">
+                    <div class="info-card">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <div>
+                            <h4>Global Footprint</h4>
+                            <p>Hubs: San Francisco, London, Dubai & Singapore</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <div>
+                            <h4>Support Coverage</h4>
+                            <p>24/6 Follow-the-Sun across all global timezones</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <div>
+                            <h4>15+ Countries</h4>
+                            <p>Serving brokerages across Americas, EMEA & APAC</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="#contact-form" class="btn btn-dark-outline" style="margin-top: 2rem;">Get in touch &rarr;</a>
+            </div>
+
+            <div class="location-map reveal">
+                <!-- Map Placeholder -->
+                <img src="/images/contact/5.png" alt="Map Location" style="width: 100%; height: 100%; object-fit: cover; object-position: center; filter: grayscale(100%) contrast(1.15);">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 10px 20px; border-radius: 30px; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Sahyak
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section">
+        <div class="container faq-grid">
+            <div class="faq-visual reveal">
+                <!-- Isometric 3D Diorama / POV Phone Mockup -->
+                <div class="phone-mockup floating-element">
+                    <div class="phone-notch"></div>
+                    <img src="/images/contact/6.png" alt="App Interface" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                </div>
+            </div>
+            
+            <div class="faq-content reveal">
+                <div class="section-tag">Common Questions</div>
+                <h2 class="section-title">Quick answers to <span>common questions.</span></h2>
+                
+                <div class="faq-accordion">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            How quickly do you respond?
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            We typically respond within 1 business day. For urgent matters, please reach out via phone or WhatsApp.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Can I get a live demo of Sahyak?
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Absolutely! You can schedule a demo directly through our contact form or by clicking the "Schedule a Demo" button above.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Do you offer support for bulk onboarding?
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, we provide dedicated support for teams looking to onboard multiple agents at once. Contact our sales team for more details.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Can I integrate WhatsApp with Sahyak?
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, Sahyak offers seamless WhatsApp integration to help you manage leads and communications directly from the CRM.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Is there a free plan available?
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            We offer a 14-day free trial for all new users. No credit card required to get started.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="footer-cta">
+        <img src="/images/contact/7.png" alt="City Background" class="footer-bg">
+        
+        <div class="container reveal" style="position: relative; z-index: 2;">
+            <div class="section-tag">Let's Build Together</div>
+            <h2>Real estate grows with the <span>right support.</span></h2>
+            <p>Whether you have a question, need a demo or just want to explore possibilities, we're here to help you make real progress with Sahyak.</p>
+            
+            <div class="footer-buttons">
+                <a href="#contact-form" class="btn btn-primary">Talk to our team &rarr;</a>
+                <a href="/pricing" class="btn btn-outline">Start free</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Universal Footer -->
+    <Footer />
+
+    <!-- JavaScript for Animations, Accordion and Form Submission -->
+    <script is:inline>
+        // Intersection Observer for Scroll Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // FAQ Accordion Logic
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                item.classList.toggle('active');
+            });
+        });
+
+        // Contact Form AJAX Submission with D1 integration
+        const form = document.getElementById('contact-form-el');
+        const feedback = document.getElementById('contact-feedback');
+        const submitBtn = document.getElementById('f-submit-btn');
+
+        if (form && feedback && submitBtn) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                feedback.className = 'form-feedback';
+                feedback.style.display = 'none';
+
+                submitBtn.disabled = true;
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = 'Sending message...';
+
+                try {
+                    const formData = new FormData(form);
+                    const res = await fetch('/api/contact', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await res.json();
+
+                    if (res.ok && data.success) {
+                        feedback.textContent = data.message || 'Thank you! Your message has been received. Our team will contact you shortly.';
+                        feedback.classList.add('success');
+                        form.reset();
+                    } else {
+                        feedback.textContent = data.message || (data.errors ? Object.values(data.errors).join(' ') : 'An error occurred. Please check your details and try again.');
+                        feedback.classList.add('error');
+                    }
+                } catch (err) {
+                    feedback.textContent = 'Failed to connect to the server. Please check your connection and try again.';
+                    feedback.classList.add('error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

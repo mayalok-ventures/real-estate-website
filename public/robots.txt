@@ -1,0 +1,9 @@
+# Sahyak CRM Robots.txt
+# Public pages are fully crawlable for search engines and AI assistants
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://sahyak.com/sitemap-index.xml

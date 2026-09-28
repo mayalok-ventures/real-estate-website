@@ -1,0 +1,1991 @@
+---
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import { getContacts } from '../../lib/db';
+import { getRuntimeEnv } from '../../lib/env';
+import { getAnalyticsSummary, formatDuration, COUNTRY_META } from '../../lib/analytics';
+import { getSearchConsoleData } from '../../lib/googleSearchConsole';
+
+const admin = (Astro.locals as any)?.admin || {
+  email: 'admin@sahyak.com',
+  role: 'superadmin',
+  source: 'session'
+};
+
+const env = await getRuntimeEnv();
+const contacts = await getContacts(env.DB, { limit: 100 });
+const analytics = getAnalyticsSummary('24h');
+const gscData = await getSearchConsoleData(env, { range: '28d' });
+
+// Compute pipeline stats
+const totalLeads = contacts.length;
+const newLeads = contacts.filter(c => c.status === 'new').length;
+const contactedLeads = contacts.filter(c => c.status === 'contacted').length;
+const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
+---
+
+<Layout title="Executive Admin & Analytics Console - Sahyak CRM" description="Real-time website analytics, visitor traffic tracking, dwell time insights, and Google Search Console portal.">
+
+  <!-- Font Awesome & Chart.js CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- TOP ADMIN BAR -->
+  <section style="background: #0A1C16; border-bottom: 1px solid rgba(74, 222, 128, 0.2); padding: 1rem 0; position: sticky; top: 0; z-index: 900; backdrop-filter: blur(10px);">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <span class="badge-pill" style="margin: 0; background: rgba(74, 222, 128, 0.15); color: #4ADE80; border: 1px solid rgba(74, 222, 128, 0.3); font-weight: 700; padding: 0.35rem 0.85rem; border-radius: 50px; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #4ADE80; box-shadow: 0 0 10px #4ADE80; display: inline-block; animation: pulse 2s infinite;"></span>
+          Sahyak Command Center
+        </span>
+        <span style="color: #9CA3AF; font-size: 0.85rem;">
+          Operator: <strong style="color: white;">{admin.email}</strong> ({admin.role})
+        </span>
+        <div id="live-active-badge" style="background: rgba(0, 230, 118, 0.1); border: 1px solid #00E676; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; color: #00E676; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-circle" style="font-size: 6px;"></i>
+          <span id="badge-active-count">{analytics.realtimeActiveUsers}</span> Online Now
+        </div>
+      </div>
+
+      <!-- Quick Export & Session Controls -->
+      <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+        <div class="export-dropdown" style="position: relative;">
+          <button id="export-menu-btn" class="btn btn-sm" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-file-arrow-down" style="color: #4ADE80;"></i> Export Reports <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
+          </button>
+          <div id="export-dropdown-menu" style="display: none; position: absolute; right: 0; top: 110%; background: #111827; border: 1px solid #374151; border-radius: 8px; min-width: 250px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; overflow: hidden;">
+            <div style="padding: 0.5rem 1rem 0.25rem; font-size: 0.7rem; font-weight: 700; color: #9CA3AF; text-transform: uppercase;">Website Traffic</div>
+            <a href="/api/admin/analytics/export?type=all" class="export-link" download>
+              <i class="fa-solid fa-chart-pie"></i> Master Executive CSV
+            </a>
+            <a href="/api/admin/analytics/export?type=visitors" class="export-link" download>
+              <i class="fa-solid fa-users"></i> Visitor Session Logs (CSV)
+            </a>
+            <a href="/api/admin/analytics/export?type=pages" class="export-link" download>
+              <i class="fa-solid fa-stopwatch"></i> Page & Section Dwell (CSV)
+            </a>
+            <a href="/api/admin/analytics/export?type=sources" class="export-link" download>
+              <i class="fa-solid fa-share-nodes"></i> Traffic Sources & Sites (CSV)
+            </a>
+            <div style="border-top: 1px solid #374151;"></div>
+            <div style="padding: 0.5rem 1rem 0.25rem; font-size: 0.7rem; font-weight: 700; color: #4ADE80; text-transform: uppercase;">Google Search Console</div>
+            <a href="/api/admin/gsc/export?type=all" class="export-link" download>
+              <i class="fa-brands fa-google"></i> Master GSC Report (CSV)
+            </a>
+            <a href="/api/admin/gsc/export?type=queries" class="export-link" download>
+              <i class="fa-solid fa-magnifying-glass"></i> Top Search Keywords (CSV)
+            </a>
+            <a href="/api/admin/gsc/export?type=pages" class="export-link" download>
+              <i class="fa-solid fa-file-lines"></i> Ranking Landing Pages (CSV)
+            </a>
+            <a href="/api/admin/gsc/export?type=countries" class="export-link" download>
+              <i class="fa-solid fa-earth-americas"></i> Organic Countries (CSV)
+            </a>
+            <div style="border-top: 1px solid #374151;"></div>
+            <a href="/api/admin/leads?format=csv" class="export-link" download>
+              <i class="fa-solid fa-clipboard-list"></i> Form Leads Data (CSV)
+            </a>
+          </div>
+        </div>
+
+        <a href="/api/admin/logout" class="btn btn-sm" style="background: #DC2626; color: white; border-radius: 8px; padding: 0.5rem 0.9rem; font-size: 0.85rem;">
+          <i class="fa-solid fa-right-from-bracket"></i> Log out
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- HIGH-LEVEL PORTAL SWITCHER: ISOLATE CRM VS SEARCH CONSOLE -->
+  <section style="background: #081712; border-bottom: 2px solid rgba(74, 222, 128, 0.15); padding: 0.75rem 0;">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <button id="portal-switch-crm" class="portal-mode-btn active" data-portal="crm">
+          <i class="fa-solid fa-chart-pie"></i> Website CRM & Traffic Hub
+        </button>
+        <button id="portal-switch-gsc" class="portal-mode-btn" data-portal="gsc">
+          <i class="fa-brands fa-google"></i> Google Search Console Central
+        </button>
+      </div>
+
+      <!-- Quick indicator of active view -->
+      <div id="portal-status-label" style="font-size: 0.8rem; color: #9CA3AF; display: flex; align-items: center; gap: 6px;">
+        <i class="fa-solid fa-layer-group" style="color: #4ADE80;"></i>
+        <span>Viewing: <strong id="current-portal-title" style="color: white;">Website CRM & Traffic Hub</strong></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUB-NAVIGATION TABS (Contextual to active portal) -->
+  <section id="crm-tabs-bar" style="background: #0D241C; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+    <div class="container">
+      <div class="admin-tabs" style="display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem 0;">
+        <button class="crm-tab-btn active" data-tab="tab-overview">
+          <i class="fa-solid fa-gauge-high"></i> Overview
+        </button>
+        <button class="crm-tab-btn" data-tab="tab-chart">
+          <i class="fa-solid fa-chart-line"></i> Traffic Graph
+        </button>
+        <button class="crm-tab-btn" data-tab="tab-pages">
+          <i class="fa-solid fa-clock"></i> Page & Section Dwell
+        </button>
+        <button class="crm-tab-btn" data-tab="tab-sources">
+          <i class="fa-solid fa-bullhorn"></i> Traffic Sources & 1,000+ Sites
+        </button>
+        <button class="crm-tab-btn" data-tab="tab-geo">
+          <i class="fa-solid fa-globe"></i> Location & Live Sessions
+        </button>
+        <button class="crm-tab-btn" data-tab="tab-leads">
+          <i class="fa-solid fa-envelope-open-text"></i> Form Leads ({totalLeads})
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section id="gsc-tabs-bar" style="display: none; background: #0D241C; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+    <div class="container">
+      <div class="admin-tabs" style="display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem 0;">
+        <button class="gsc-tab-btn active" data-gsctab="gsc-tab-perf">
+          <i class="fa-solid fa-chart-area"></i> Search Performance & Trends
+        </button>
+        <button class="gsc-tab-btn" data-gsctab="gsc-tab-queries">
+          <i class="fa-solid fa-magnifying-glass"></i> Top Search Queries & Keywords
+        </button>
+        <button class="gsc-tab-btn" data-gsctab="gsc-tab-pages">
+          <i class="fa-solid fa-file-lines"></i> Landing Pages
+        </button>
+        <button class="gsc-tab-btn" data-gsctab="gsc-tab-devices">
+          <i class="fa-solid fa-laptop-mobile"></i> Devices & Countries
+        </button>
+        <button class="gsc-tab-btn" data-gsctab="gsc-tab-inspect">
+          <i class="fa-solid fa-circle-check"></i> Live URL Inspection Tool
+        </button>
+        <button class="gsc-tab-btn" data-gsctab="gsc-tab-sitemaps">
+          <i class="fa-solid fa-sitemap"></i> XML Sitemaps & Health
+        </button>
+        <button class="gsc-tab-btn" data-gsctab="gsc-tab-opps">
+          <i class="fa-solid fa-lightbulb"></i> SEO Opportunities & Striking Distance
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN PORTAL 1: WEBSITE CRM & TRAFFIC HUB (COMPLETELY ISOLATED FROM GSC) -->
+  <!-- ========================================================================= -->
+  <main id="portal-crm-view" style="background: #F4F6F4; min-height: 85vh; padding: 2.5rem 0 4rem;">
+    <div class="container">
+
+      <!-- TOP METRICS CARDS -->
+      <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+        
+        <!-- Metric 1: Real-time Active Users -->
+        <div class="metric-card" style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; overflow: hidden;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #4B5563; letter-spacing: 0.05em;">Real-Time Active</span>
+            <span style="background: rgba(0, 230, 118, 0.15); color: #059669; padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+              Live <i class="fa-solid fa-bolt"></i>
+            </span>
+          </div>
+          <div id="stat-active-users" style="font-size: 2.75rem; font-weight: 800; color: #0A1C16; font-family: 'Playfair Display', serif; line-height: 1;">
+            {analytics.realtimeActiveUsers}
+          </div>
+          <p style="font-size: 0.75rem; color: #059669; margin-top: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-circle" style="font-size: 8px;"></i> Active in the last 2 minutes
+          </p>
+        </div>
+
+        <!-- Metric 2: New Visitors Today -->
+        <div class="metric-card" style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #4B5563; letter-spacing: 0.05em;">New Visitors Today</span>
+            <span style="background: #E0E7FF; color: #3730A3; padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+              Today
+            </span>
+          </div>
+          <div id="stat-today-visitors" style="font-size: 2.75rem; font-weight: 800; color: #1E40AF; font-family: 'Playfair Display', serif; line-height: 1;">
+            {analytics.todayNewVisitors}
+          </div>
+          <p style="font-size: 0.75rem; color: #4B5563; margin-top: 0.5rem;">
+            Real tracked daily unique sessions
+          </p>
+        </div>
+
+        <!-- Metric 3: Total Visitors -->
+        <div class="metric-card" style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #4B5563; letter-spacing: 0.05em;">Total Visitors</span>
+            <span style="background: #DCFCE7; color: #166534; padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+              All Time
+            </span>
+          </div>
+          <div id="stat-total-visitors" style="font-size: 2.75rem; font-weight: 800; color: #0A1C16; font-family: 'Playfair Display', serif; line-height: 1;">
+            {analytics.totalVisitors}
+          </div>
+          <p style="font-size: 0.75rem; color: #059669; margin-top: 0.5rem; font-weight: 600;">
+            {analytics.totalPageViews} total page impressions
+          </p>
+        </div>
+
+        <!-- Metric 4: Average Duration of Stay -->
+        <div class="metric-card" style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #4B5563; letter-spacing: 0.05em;">Avg Duration of Stay</span>
+            <span style="background: #FEF3C7; color: #92400E; padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+              Engagement
+            </span>
+          </div>
+          <div id="stat-avg-duration" style="font-size: 2.75rem; font-weight: 800; color: #D97706; font-family: 'Playfair Display', serif; line-height: 1;">
+            {formatDuration(analytics.avgStayDurationSeconds)}
+          </div>
+          <p style="font-size: 0.75rem; color: #4B5563; margin-top: 0.5rem;">
+            Real session dwell time
+          </p>
+        </div>
+
+        <!-- Metric 5: Form Inquiries -->
+        <div class="metric-card" style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #4B5563; letter-spacing: 0.05em;">Form Inquiries</span>
+            <span style="background: #F3E8FF; color: #6B21A8; padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+              Pipeline
+            </span>
+          </div>
+          <div style="font-size: 2.75rem; font-weight: 800; color: #7C3AED; font-family: 'Playfair Display', serif; line-height: 1;">
+            {totalLeads}
+          </div>
+          <p style="font-size: 0.75rem; color: #D97706; margin-top: 0.5rem; font-weight: 600;">
+            {newLeads} awaiting review
+          </p>
+        </div>
+
+      </div>
+
+      <!-- CRM TAB: TRAFFIC GRAPH -->
+      <section id="tab-chart" class="crm-tab-panel" style="margin-bottom: 2.5rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid #F3F4F6; padding-bottom: 1rem;">
+            <div>
+              <h3 style="font-size: 1.25rem; font-weight: 700; color: #0A1C16; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-chart-area" style="color: #059669;"></i> Real-Time & Historical Traffic Visualization
+              </h3>
+              <p style="font-size: 0.85rem; color: #6B7280; margin-top: 2px;">
+                Analyze active users, unique visitors, page impressions, and dwell duration over flexible timeframes.
+              </p>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+              <!-- Metric Selector -->
+              <div style="display: flex; background: #F3F4F6; border-radius: 8px; padding: 3px;">
+                <button class="chart-metric-btn active" data-metric="visitors">Visitors</button>
+                <button class="chart-metric-btn" data-metric="pageviews">Pageviews</button>
+                <button class="chart-metric-btn" data-metric="activeUsers">Active Online</button>
+                <button class="chart-metric-btn" data-metric="avgDuration">Stay Duration</button>
+              </div>
+
+              <!-- Timeframe Selector -->
+              <div style="display: flex; background: #0A1C16; border-radius: 8px; padding: 3px;">
+                <button class="chart-range-btn active" data-range="24h">24 Hours</button>
+                <button class="chart-range-btn" data-range="7d">7 Days</button>
+                <button class="chart-range-btn" data-range="30d">30 Days</button>
+              </div>
+
+              <a href="/api/admin/analytics/export?type=all" class="btn btn-sm btn-dark-outline" download style="border-radius: 8px; font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+                <i class="fa-solid fa-download"></i> Export Graph CSV
+              </a>
+            </div>
+          </div>
+
+          <!-- Canvas Container -->
+          <div style="position: relative; height: 360px; width: 100%;">
+            <canvas id="analyticsChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- CRM TAB: PAGE & SECTION DWELL -->
+      <section id="tab-pages" class="crm-tab-panel" style="margin-bottom: 2.5rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <h3 style="font-size: 1.25rem; font-weight: 700; color: #0A1C16; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-stopwatch-20" style="color: #2563EB;"></i> Page & Section Dwell Time Insights
+              </h3>
+              <p style="font-size: 0.85rem; color: #6B7280; margin-top: 2px;">
+                Discover which pages and specific sections keep prospective buyers and brokerages engaged longest.
+              </p>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <input type="text" id="page-search-input" placeholder="Filter pages..." style="padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem;" />
+              <a href="/api/admin/analytics/export?type=pages" class="btn btn-sm btn-outline" download style="color: #0A1C16; border-color: #D1D5DB; font-size: 0.8rem; border-radius: 8px;">
+                <i class="fa-solid fa-file-csv"></i> Export Pages CSV
+              </a>
+            </div>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; min-width: 900px; font-size: 0.9rem;">
+              <thead>
+                <tr style="background: #F9FAFB; border-bottom: 2px solid #E5E7EB; color: #4B5563; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                  <th style="padding: 1rem; text-align: left;">Page / Path</th>
+                  <th style="padding: 1rem; text-align: left;">Title / Description</th>
+                  <th style="padding: 1rem; text-align: right;">Total Views</th>
+                  <th style="padding: 1rem; text-align: right;">Unique Users</th>
+                  <th style="padding: 1rem; text-align: left; min-width: 180px;">Avg Dwell Time</th>
+                  <th style="padding: 1rem; text-align: left;">Top Engaged Section</th>
+                  <th style="padding: 1rem; text-align: center;">Breakdown</th>
+                </tr>
+              </thead>
+              <tbody id="pages-table-body">
+                {analytics.pages.map((p) => {
+                  const maxDur = 300;
+                  const barWidth = p.avgDurationSeconds > 0 ? Math.min(100, Math.round((p.avgDurationSeconds / maxDur) * 100)) : 0;
+                  return (
+                    <tr style="border-bottom: 1px solid #F3F4F6;" class="page-row" data-search={`${p.page} ${p.title}`.toLowerCase()}>
+                      <td style="padding: 1rem;">
+                        <a href={p.page} target="_blank" style="font-weight: 700; color: #059669; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                          {p.page} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7rem; color: #9CA3AF;"></i>
+                        </a>
+                      </td>
+                      <td style="padding: 1rem; color: #4B5563; font-weight: 500;">
+                        {p.title}
+                      </td>
+                      <td style="padding: 1rem; text-align: right; font-weight: 700; color: #111827;">
+                        {p.totalViews.toLocaleString()}
+                      </td>
+                      <td style="padding: 1rem; text-align: right; color: #4B5563;">
+                        {p.uniqueVisitors.toLocaleString()}
+                      </td>
+                      <td style="padding: 1rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                          <strong style="color: #0A1C16; font-size: 0.85rem;">{formatDuration(p.avgDurationSeconds)}</strong>
+                          <span style="font-size: 0.75rem; color: #6B7280;">Bounce: {p.bounceRate}%</span>
+                        </div>
+                        <div style="width: 100%; height: 6px; background: #E5E7EB; border-radius: 4px; overflow: hidden;">
+                          <div style={`width: ${barWidth}%; height: 100%; background: linear-gradient(90deg, #10B981, #059669); border-radius: 4px;`}></div>
+                        </div>
+                      </td>
+                      <td style="padding: 1rem;">
+                        <span style="background: rgba(74, 222, 128, 0.15); color: #065F46; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: inline-block;">
+                          <i class="fa-solid fa-star" style="font-size: 0.7rem; color: #D97706; margin-right: 4px;"></i> {p.topSection}
+                        </span>
+                      </td>
+                      <td style="padding: 1rem; text-align: center;">
+                        <button class="btn btn-sm btn-dark-outline view-sections-btn" 
+                                data-page={p.page} 
+                                data-title={p.title}
+                                data-sections={JSON.stringify(p.sections)}
+                                style="padding: 0.35rem 0.75rem; font-size: 0.8rem; border-radius: 6px;">
+                          Sections <i class="fa-solid fa-chart-simple"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- CRM TAB: TRAFFIC SOURCES & 1,000+ SITES -->
+      <section id="tab-sources" class="crm-tab-panel" style="margin-bottom: 2.5rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <h3 style="font-size: 1.25rem; font-weight: 700; color: #0A1C16; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-network-wired" style="color: #7C3AED;"></i> Traffic Sources & Platform Breakdown
+              </h3>
+              <p style="font-size: 0.85rem; color: #6B7280; margin-top: 2px;">
+                Detailed acquisition breakdown across search, social networks, direct links, and over 1,000+ external referral platforms.
+              </p>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <input type="text" id="source-search-input" placeholder="Search 1,000+ platforms/domains..." style="padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem; min-width: 250px;" />
+              <a href="/api/admin/analytics/export?type=sources" class="btn btn-sm btn-outline" download style="color: #0A1C16; border-color: #D1D5DB; font-size: 0.8rem; border-radius: 8px;">
+                <i class="fa-solid fa-file-csv"></i> Export Sources CSV
+              </a>
+            </div>
+          </div>
+
+          <!-- Channel Metric Badges -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            {analytics.trafficChannels.map((c) => (
+              <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 1rem; text-align: left; transition: transform 0.2s;" class="channel-card">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                  <i class={c.icon} style={`color: ${c.color}; font-size: 1.2rem;`}></i>
+                  <span style="font-weight: 700; font-size: 0.9rem; color: #111827;">{c.channel}</span>
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #0A1C16;">
+                  {c.count} <span style="font-size: 0.8rem; font-weight: 500; color: #6B7280;">({c.percentage}%)</span>
+                </div>
+                <div style="font-size: 0.75rem; color: #059669; font-weight: 600; margin-top: 4px;">
+                  Avg Stay: {formatDuration(c.avgDurationSeconds)}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <!-- 1,000+ Domains Specific Platform Table -->
+          <h4 style="font-size: 1rem; font-weight: 700; color: #374151; margin-bottom: 1rem; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-list-check" style="color: #059669;"></i> Specific Platform & Referring Site Directory (1,000+ Sites Supported)
+          </h4>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; min-width: 800px; font-size: 0.9rem;">
+              <thead>
+                <tr style="background: #F9FAFB; border-bottom: 2px solid #E5E7EB; color: #4B5563; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                  <th style="padding: 0.9rem 1rem; text-align: left;">Platform / Source Name</th>
+                  <th style="padding: 0.9rem 1rem; text-align: left;">Full Domain</th>
+                  <th style="padding: 0.9rem 1rem; text-align: left;">Channel Category</th>
+                  <th style="padding: 0.9rem 1rem; text-align: right;">Visitors</th>
+                  <th style="padding: 0.9rem 1rem; text-align: left; min-width: 160px;">Traffic Share (%)</th>
+                  <th style="padding: 0.9rem 1rem; text-align: right;">Avg Time on Site</th>
+                </tr>
+              </thead>
+              <tbody id="sources-table-body">
+                {analytics.trafficDomains.length === 0 ? (
+                  <tr>
+                    <td colspan="6" style="padding: 2.5rem 1rem; text-align: center; color: #6B7280;">
+                      <div style="font-weight: 600; color: #374151;">No external referral sources recorded yet</div>
+                      <p style="font-size: 0.8rem; color: #9CA3AF; margin-top: 4px;">When visitors arrive from Google, WhatsApp, LinkedIn, or 1,000+ external domains, they will be cataloged here.</p>
+                    </td>
+                  </tr>
+                ) : (
+                  analytics.trafficDomains.map((d) => (
+                    <tr style="border-bottom: 1px solid #F3F4F6;" class="domain-row" data-search={`${d.platformName} ${d.domain} ${d.channel}`.toLowerCase()}>
+                      <td style="padding: 0.9rem 1rem;">
+                        <strong style="color: #111827;">{d.platformName}</strong>
+                      </td>
+                      <td style="padding: 0.9rem 1rem; color: #6B7280; font-family: monospace; font-size: 0.85rem;">
+                        {d.domain}
+                      </td>
+                      <td style="padding: 0.9rem 1rem;">
+                        <span style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: #374151;">
+                          {d.channel}
+                        </span>
+                      </td>
+                      <td style="padding: 0.9rem 1rem; text-align: right; font-weight: 700; color: #0A1C16;">
+                        {d.count}
+                      </td>
+                      <td style="padding: 0.9rem 1rem;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                          <span style="font-size: 0.8rem; font-weight: 600; width: 35px;">{d.percentage}%</span>
+                          <div style="flex: 1; height: 6px; background: #E5E7EB; border-radius: 4px; overflow: hidden;">
+                            <div style={`width: ${Math.min(100, d.percentage * 3)}%; height: 100%; background: #4ADE80; border-radius: 4px;`}></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="padding: 0.9rem 1rem; text-align: right; font-weight: 600; color: #059669;">
+                        {formatDuration(d.avgDurationSeconds)}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- CRM TAB: LOCATION & LIVE SESSIONS -->
+      <section id="tab-geo" class="crm-tab-panel" style="margin-bottom: 2.5rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <h3 style="font-size: 1.25rem; font-weight: 700; color: #0A1C16; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-map-location-dot" style="color: #059669;"></i> Location & Live Sessions Stream
+              </h3>
+              <p style="font-size: 0.85rem; color: #6B7280; margin-top: 2px;">
+                Detailed visitor country/major state, duration of stay, specific page visited, and live connection status.
+              </p>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+              <select id="geo-country-filter" style="padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem;">
+                <option value="all">All Countries</option>
+                {Object.entries(COUNTRY_META).map(([code, meta]) => (
+                  <option value={meta.name}>{meta.flag} {meta.name}</option>
+                ))}
+              </select>
+
+              <input type="text" id="geo-search-input" placeholder="Search city, page, source..." style="padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem;" />
+
+              <a href="/api/admin/analytics/export?type=visitors" class="btn btn-sm btn-outline" download style="color: #0A1C16; border-color: #D1D5DB; font-size: 0.8rem; border-radius: 8px;">
+                <i class="fa-solid fa-file-csv"></i> Export Live Logs
+              </a>
+            </div>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; min-width: 950px; font-size: 0.85rem;">
+              <thead>
+                <tr style="background: #F9FAFB; border-bottom: 2px solid #E5E7EB; color: #4B5563; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                  <th style="padding: 0.9rem 1rem; text-align: left;">Live Status</th>
+                  <th style="padding: 0.9rem 1rem; text-align: left;">Visitor Location</th>
+                  <th style="padding: 0.9rem 1rem; text-align: left;">Page Visited</th>
+                  <th style="padding: 0.9rem 1rem; text-align: left;">Stay Duration</th>
+                  <th style="padding: 0.9rem 1rem; text-align: left;">Traffic Source</th>
+                  <th style="padding: 0.9rem 1rem; text-align: left;">Device / Browser</th>
+                  <th style="padding: 0.9rem 1rem; text-align: right;">Last Active</th>
+                </tr>
+              </thead>
+              <tbody id="visitor-logs-body">
+                {analytics.visitorLogs.length === 0 ? (
+                  <tr>
+                    <td colspan="7" style="padding: 3rem 1rem; text-align: center; color: #6B7280;">
+                      <div style="font-size: 2rem; margin-bottom: 0.5rem; color: #D1D5DB;"><i class="fa-solid fa-satellite-dish"></i></div>
+                      <div style="font-weight: 700; color: #111827; font-size: 1rem;">Live Tracking Active - Waiting for Visitors</div>
+                      <p style="font-size: 0.85rem; margin-top: 0.25rem; color: #9CA3AF;">The client-side tracker is embedded across all pages and will record visitor locations, duration of stay, and pages visited as traffic arrives.</p>
+                    </td>
+                  </tr>
+                ) : (
+                  analytics.visitorLogs.map((v) => {
+                    const isLive = (Date.now() - new Date(v.last_active_at).getTime()) < 120000;
+                    const cFlag = COUNTRY_META[v.country_code]?.flag || '🌐';
+                    return (
+                      <tr style="border-bottom: 1px solid #F3F4F6;" class="geo-row" data-country={v.country} data-search={`${v.city} ${v.country} ${v.page} ${v.traffic_source}`.toLowerCase()}>
+                        <td style="padding: 0.9rem 1rem;">
+                          {isLive ? (
+                            <span style="background: rgba(0, 230, 118, 0.15); color: #059669; padding: 3px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                              <span style="width: 6px; height: 6px; border-radius: 50%; background: #059669; display: inline-block;"></span> Active
+                            </span>
+                          ) : (
+                            <span style="color: #9CA3AF; font-size: 0.75rem; font-weight: 500;">
+                              <i class="fa-regular fa-clock"></i> Visited
+                            </span>
+                          )}
+                        </td>
+                        <td style="padding: 0.9rem 1rem;">
+                          <div style="font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px;">
+                            <span style="font-size: 1.1rem;">{cFlag}</span>
+                            <span>{v.city}, {v.country}</span>
+                          </div>
+                          <span style="font-size: 0.75rem; color: #6B7280;">{v.region}</span>
+                        </td>
+                        <td style="padding: 0.9rem 1rem;">
+                          <a href={v.page} target="_blank" style="font-weight: 600; color: #059669; text-decoration: none;">
+                            {v.page}
+                          </a>
+                          <div style="font-size: 0.7rem; color: #9CA3AF;">Section: {v.active_section}</div>
+                        </td>
+                        <td style="padding: 0.9rem 1rem;">
+                          <strong style="color: #0A1C16; font-size: 0.85rem;">{formatDuration(v.duration_seconds)}</strong>
+                        </td>
+                        <td style="padding: 0.9rem 1rem;">
+                          <span style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: #374151;">
+                            {v.traffic_source}
+                          </span>
+                          <div style="font-size: 0.7rem; color: #9CA3AF; font-family: monospace; margin-top: 2px;">{v.referrer_domain}</div>
+                        </td>
+                        <td style="padding: 0.9rem 1rem; color: #4B5563; font-size: 0.8rem;">
+                          {v.device === 'Mobile' ? <i class="fa-solid fa-mobile-screen" style="margin-right: 4px;"></i> : <i class="fa-solid fa-desktop" style="margin-right: 4px;"></i>}
+                          {v.device} &bull; {v.browser}
+                        </td>
+                        <td style="padding: 0.9rem 1rem; text-align: right; font-size: 0.8rem; color: #6B7280;">
+                          {new Date(v.last_active_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- CRM TAB: FORM LEADS PIPELINE -->
+      <section id="tab-leads" class="crm-tab-panel" style="margin-bottom: 2.5rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <h3 style="font-size: 1.25rem; font-weight: 700; color: #0A1C16; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-user-check" style="color: #D97706;"></i> Form Inquiries & Leads Pipeline
+              </h3>
+              <p style="font-size: 0.85rem; color: #6B7280; margin-top: 2px;">
+                Manage customer leads submitted via website contact and demo inquiry forms.
+              </p>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+              <input type="text" id="admin-search-input" placeholder="Search prospect, email, phone..." style="padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem; min-width: 240px;" />
+              
+              <select id="admin-status-filter" style="padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem;">
+                <option value="all" selected>All Statuses</option>
+                <option value="new">New Inquiries</option>
+                <option value="contacted">Contacted</option>
+                <option value="qualified">Qualified</option>
+                <option value="closed">Closed Deal</option>
+                <option value="archived">Archived</option>
+              </select>
+
+              <a href="/api/admin/leads?format=csv" class="btn btn-sm btn-outline" download style="color: #0A1C16; border-color: #D1D5DB; font-size: 0.8rem; border-radius: 8px;">
+                <i class="fa-solid fa-file-csv"></i> Export Leads CSV
+              </a>
+            </div>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; min-width: 850px; font-size: 0.9rem;">
+              <thead>
+                <tr style="background: #F9FAFB; border-bottom: 2px solid #E5E7EB; color: #4B5563; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                  <th style="padding: 1rem; text-align: left;">ID / Date</th>
+                  <th style="padding: 1rem; text-align: left;">Prospect Details</th>
+                  <th style="padding: 1rem; text-align: left;">Phone & WhatsApp</th>
+                  <th style="padding: 1rem; text-align: left;">Inquiry Type</th>
+                  <th style="padding: 1rem; text-align: left;">Company</th>
+                  <th style="padding: 1rem; text-align: left;">Status</th>
+                  <th style="padding: 1rem; text-align: center;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="leads-table-body">
+                {contacts.length === 0 ? (
+                  <tr>
+                    <td colspan="7" style="padding: 3rem 1rem; text-align: center; color: #6B7280;">
+                      <div style="font-size: 2rem; margin-bottom: 0.5rem; color: #D1D5DB;"><i class="fa-solid fa-inbox"></i></div>
+                      <div style="font-weight: 700; color: #111827; font-size: 1rem;">No Inquiries Received Yet</div>
+                      <p style="font-size: 0.85rem; margin-top: 0.25rem; color: #9CA3AF;">Form inquiries submitted via contact and demo forms will appear here in real time.</p>
+                    </td>
+                  </tr>
+                ) : (
+                  contacts.map((c) => (
+                    <tr style="border-bottom: 1px solid #F3F4F6;" class="lead-row" data-id={c.id} data-status={c.status} data-search={`${c.name} ${c.email} ${c.phone} ${c.company || ''}`.toLowerCase()}>
+                      <td style="padding: 1rem;">
+                        <strong style="color: #0A1C16;">#{c.id}</strong>
+                        <div style="font-size: 0.75rem; color: #6B7280;">{c.created_at ? new Date(c.created_at).toLocaleDateString() : 'Today'}</div>
+                      </td>
+                      <td style="padding: 1rem;">
+                        <strong style="color: #111827; display: block;">{c.name}</strong>
+                        <span style="font-size: 0.8rem; color: #6B7280;">{c.email}</span>
+                      </td>
+                      <td style="padding: 1rem;">
+                        <a href={`tel:${c.phone}`} style="font-weight: 600; color: #0A1C16; display: block; text-decoration: none;">{c.phone}</a>
+                        <a href={`https://wa.me/${(c.phone || '').replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" style="font-size: 0.75rem; color: #059669; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                          <i class="fa-brands fa-whatsapp"></i> WhatsApp Chat
+                        </a>
+                      </td>
+                      <td style="padding: 1rem;">
+                        <span style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; text-transform: capitalize; color: #374151;">
+                          {c.inquiry_type}
+                        </span>
+                      </td>
+                      <td style="padding: 1rem; color: #4B5563;">
+                        {c.company || 'Individual Broker'}
+                      </td>
+                      <td style="padding: 1rem;">
+                        <select class="status-selector" data-id={c.id} style="padding: 0.4rem 0.6rem; font-size: 0.8rem; border-radius: 6px; font-weight: 600; border: 1px solid #D1D5DB; background: white;">
+                          <option value="new" selected={c.status === 'new'}>New</option>
+                          <option value="contacted" selected={c.status === 'contacted'}>Contacted</option>
+                          <option value="qualified" selected={c.status === 'qualified'}>Qualified</option>
+                          <option value="closed" selected={c.status === 'closed'}>Closed Deal</option>
+                          <option value="archived" selected={c.status === 'archived'}>Archived</option>
+                        </select>
+                      </td>
+                      <td style="padding: 1rem; text-align: center;">
+                        <button class="btn btn-sm btn-dark-outline view-note-btn" data-message={c.message || 'No additional message left.'} data-name={c.name} style="padding: 0.35rem 0.75rem; font-size: 0.8rem; border-radius: 6px;">
+                          View Note
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN PORTAL 2: GOOGLE SEARCH CONSOLE CENTRAL (COMPLETE STANDALONE PORTAL) -->
+  <!-- ========================================================================= -->
+  <main id="portal-gsc-view" style="display: none; background: #F4F6F4; min-height: 85vh; padding: 2rem 0 4rem;">
+    <div class="container">
+
+      <!-- GSC Hub Header Bar -->
+      <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <h2 style="font-size: 1.4rem; font-weight: 800; color: #0A1C16; display: flex; align-items: center; gap: 8px;">
+              <i class="fa-brands fa-google" style="color: #4285F4; font-size: 1.5rem;"></i> Google Search Console Central
+            </h2>
+
+            <!-- Status Indicator Badge -->
+            {gscData.status === 'connected' && (
+              <span style="background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid #10B981; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-circle-check"></i> Connected & Live
+              </span>
+            )}
+            {gscData.status === 'not_configured' && (
+              <span style="background: #FEF3C7; color: #B45309; border: 1px solid #F59E0B; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-triangle-exclamation"></i> Keys Missing
+              </span>
+            )}
+            {gscData.status === 'permission_denied' && (
+              <span style="background: #FEE2E2; color: #DC2626; border: 1px solid #EF4444; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-shield-halved"></i> Permission Required in GSC
+              </span>
+            )}
+            {gscData.status === 'auth_error' && (
+              <span style="background: #FEE2E2; color: #DC2626; border: 1px solid #EF4444; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-triangle-exclamation"></i> Private Key Format Action Needed
+              </span>
+            )}
+
+            <span style="font-size: 0.8rem; color: #4B5563; font-family: monospace; background: #F3F4F6; padding: 2px 8px; border-radius: 4px;">
+              Property: {gscData.siteUrl}
+            </span>
+          </div>
+          <p style="font-size: 0.85rem; color: #6B7280; margin-top: 4px;">
+            Full-suite replacement for Google Search Console: SERP performance, search queries, URL inspection, XML sitemaps, and striking distance SEO.
+          </p>
+        </div>
+
+        <!-- Controls: Range Switcher, Refresh & Master Export -->
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <div style="display: flex; background: #F3F4F6; border-radius: 8px; padding: 3px;">
+            <button class="gsc-range-btn" data-range="7d">7 Days</button>
+            <button class="gsc-range-btn active" data-range="28d">28 Days</button>
+            <button class="gsc-range-btn" data-range="90d">3 Months</button>
+          </div>
+
+          <button id="gsc-refresh-btn" class="btn btn-sm btn-dark-outline" style="border-radius: 8px; font-size: 0.8rem; padding: 0.45rem 0.85rem; display: flex; align-items: center; gap: 5px;">
+            <i class="fa-solid fa-arrows-rotate" id="gsc-spinner"></i> Refresh Data
+          </button>
+
+          <a href="/api/admin/gsc/export?type=all" class="btn btn-sm" download style="background: #0A1C16; color: white; border-radius: 8px; font-size: 0.8rem; padding: 0.45rem 0.85rem; display: flex; align-items: center; gap: 5px;">
+            <i class="fa-solid fa-file-arrow-down" style="color: #4ADE80;"></i> Export Master CSV
+          </a>
+        </div>
+      </div>
+
+      <!-- Key Diagnostic Guide Card (Protects .env secrecy & guides the RSA Private Key format) -->
+      {gscData.status !== 'connected' && (
+        <div style="background: #FFFBEB; border: 1px solid #FCD34D; border-radius: 14px; padding: 1.5rem; margin-bottom: 2rem;">
+          <div style="display: flex; gap: 1rem; align-items: flex-start;">
+            <i class="fa-solid fa-shield-halved" style="color: #D97706; font-size: 1.75rem; margin-top: 2px;"></i>
+            <div style="flex: 1;">
+              <h4 style="font-weight: 700; color: #92400E; margin-bottom: 0.25rem; font-size: 1.05rem;">
+                Google Cloud Service Account Configuration Notice
+              </h4>
+              <p style="font-size: 0.85rem; color: #B45309; line-height: 1.5;">
+                {gscData.statusMessage}
+              </p>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.75rem; margin-top: 1rem;">
+                <div style="background: white; border: 1px solid #FDE68A; border-radius: 8px; padding: 0.75rem;">
+                  <span style="font-size: 0.7rem; color: #6B7280; font-weight: 700; text-transform: uppercase;">1. Client Email</span>
+                  <div style="font-size: 0.85rem; font-weight: 600; margin-top: 2px;">
+                    {gscData.clientEmail ? (
+                      <span style="color: #059669; word-break: break-all;">✓ Loaded from .env</span>
+                    ) : (
+                      <span style="color: #DC2626;">✗ Missing in .env</span>
+                    )}
+                  </div>
+                </div>
+
+                <div style="background: white; border: 1px solid #FDE68A; border-radius: 8px; padding: 0.75rem;">
+                  <span style="font-size: 0.7rem; color: #6B7280; font-weight: 700; text-transform: uppercase;">2. RSA Private Key</span>
+                  <div style="font-size: 0.85rem; font-weight: 600; margin-top: 2px;">
+                    {gscData.isKeyFormatValid ? (
+                      <span style="color: #059669;">✓ Valid RSA Private Key</span>
+                    ) : (
+                      <span style="color: #D97706;">⚠ Needs RSA "private_key" from JSON</span>
+                    )}
+                  </div>
+                </div>
+
+                <div style="background: white; border: 1px solid #FDE68A; border-radius: 8px; padding: 0.75rem;">
+                  <span style="font-size: 0.7rem; color: #6B7280; font-weight: 700; text-transform: uppercase;">3. Property Site URL</span>
+                  <div style="font-size: 0.85rem; font-weight: 600; color: #0A1C16; margin-top: 2px;">
+                    {gscData.siteUrl}
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: white; border-left: 4px solid #D97706; padding: 0.85rem 1rem; border-radius: 6px; margin-top: 1rem; font-size: 0.82rem; color: #78350F; line-height: 1.6;">
+                <strong>How to finalize:</strong><br/>
+                When downloading a Service Account key from Google Cloud Console, Google gives you a <code>.json</code> file with multiple fields:<br/>
+                &bull; <code>client_email</code>: e.g. <code>...@...iam.gserviceaccount.com</code><br/>
+                &bull; <strong><code>private_key</code></strong>: A long key starting with <code>"-----BEGIN PRIVATE KEY-----\n..."</code> (be sure to copy this exact field into <code>GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY</code> in <code>.env</code>)<br/>
+                &bull; Then in <a href="https://search.google.com/search-console" target="_blank" style="color: #1E40AF; font-weight: 700; text-decoration: underline;">Google Search Console &gt; Settings &gt; Users and Permissions</a>, ensure the service account email is added as a user.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <!-- 4 Core Organic KPI Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+        
+        <div style="background: white; border-radius: 12px; padding: 1.35rem; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #4B5563;">Total Organic Clicks</span>
+            <span style="background: rgba(16, 185, 129, 0.15); color: #059669; padding: 2px 7px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">
+              <i class="fa-solid fa-arrow-pointer"></i> SERP
+            </span>
+          </div>
+          <div id="gsc-stat-clicks" style="font-size: 2.25rem; font-weight: 800; color: #059669; font-family: 'Playfair Display', serif; line-height: 1;">
+            {gscData.totalClicks.toLocaleString()}
+          </div>
+          <p style="font-size: 0.75rem; color: #6B7280; margin-top: 0.5rem;">
+            Direct organic clicks from Google SERP
+          </p>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 1.35rem; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #4B5563;">Total Impressions</span>
+            <span style="background: rgba(59, 130, 246, 0.15); color: #2563EB; padding: 2px 7px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">
+              <i class="fa-solid fa-eye"></i> Views
+            </span>
+          </div>
+          <div id="gsc-stat-impressions" style="font-size: 2.25rem; font-weight: 800; color: #2563EB; font-family: 'Playfair Display', serif; line-height: 1;">
+            {gscData.totalImpressions.toLocaleString()}
+          </div>
+          <p style="font-size: 0.75rem; color: #6B7280; margin-top: 0.5rem;">
+            Appearances in Google search results
+          </p>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 1.35rem; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #4B5563;">Average CTR</span>
+            <span style="background: #FEF3C7; color: #D97706; padding: 2px 7px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">
+              <i class="fa-solid fa-percent"></i> CTR
+            </span>
+          </div>
+          <div id="gsc-stat-ctr" style="font-size: 2.25rem; font-weight: 800; color: #D97706; font-family: 'Playfair Display', serif; line-height: 1;">
+            {gscData.avgCtr}%
+          </div>
+          <p style="font-size: 0.75rem; color: #6B7280; margin-top: 0.5rem;">
+            Click-through rate from search impressions
+          </p>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 1.35rem; border: 1px solid #E5E7EB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #4B5563;">Average Position</span>
+            <span style="background: #F3E8FF; color: #7C3AED; padding: 2px 7px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">
+              <i class="fa-solid fa-trophy"></i> Rank
+            </span>
+          </div>
+          <div id="gsc-stat-pos" style="font-size: 2.25rem; font-weight: 800; color: #7C3AED; font-family: 'Playfair Display', serif; line-height: 1;">
+            #{gscData.avgPosition}
+          </div>
+          <p style="font-size: 0.75rem; color: #6B7280; margin-top: 0.5rem;">
+            Average ranking across all queries
+          </p>
+        </div>
+
+      </div>
+
+      <!-- GSC SUB-PANEL 1: SEARCH PERFORMANCE & GRAPH -->
+      <section id="gsc-tab-perf" class="gsc-sub-panel" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-chart-line" style="color: #059669;"></i> Daily Organic Search Trends (Clicks & Impressions)
+              </h3>
+              <p style="font-size: 0.8rem; color: #6B7280; margin-top: 2px;">
+                Direct SERP trend lines comparing total clicks vs Google search impressions.
+              </p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; font-size: 0.8rem; font-weight: 600;">
+              <span style="color: #059669; display: flex; align-items: center; gap: 5px;">
+                <span style="width: 10px; height: 10px; border-radius: 2px; background: #10B981; display: inline-block;"></span> Clicks
+              </span>
+              <span style="color: #2563EB; display: flex; align-items: center; gap: 5px;">
+                <span style="width: 10px; height: 10px; border-radius: 2px; background: #3B82F6; display: inline-block;"></span> Impressions
+              </span>
+            </div>
+          </div>
+
+          <div style="position: relative; height: 320px; width: 100%;">
+            <canvas id="gscChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- GSC SUB-PANEL 2: TOP SEARCH QUERIES & KEYWORDS -->
+      <section id="gsc-tab-queries" class="gsc-sub-panel" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-magnifying-glass" style="color: #2563EB;"></i> Top Search Queries & Keywords
+              </h3>
+              <p style="font-size: 0.8rem; color: #6B7280; margin-top: 2px;">
+                Actual search terms entered into Google that displayed Sahyak in results.
+              </p>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <input type="text" id="gsc-query-search" placeholder="Search keywords..." style="padding: 0.45rem 0.8rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem; min-width: 220px;" />
+              <a href="/api/admin/gsc/export?type=queries" class="btn btn-sm btn-outline" download style="color: #0A1C16; border-color: #D1D5DB; font-size: 0.8rem; border-radius: 8px;">
+                <i class="fa-solid fa-file-csv"></i> Export Keywords CSV
+              </a>
+            </div>
+          </div>
+
+          <div style="overflow-x: auto; border: 1px solid #E5E7EB; border-radius: 10px;">
+            <table style="width: 100%; border-collapse: collapse; min-width: 750px; font-size: 0.85rem;">
+              <thead>
+                <tr style="background: #F9FAFB; border-bottom: 2px solid #E5E7EB; color: #4B5563; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                  <th style="padding: 0.85rem 1rem; text-align: left;">Search Query / Keyword</th>
+                  <th style="padding: 0.85rem 1rem; text-align: right;">Organic Clicks</th>
+                  <th style="padding: 0.85rem 1rem; text-align: right;">Google Impressions</th>
+                  <th style="padding: 0.85rem 1rem; text-align: right;">CTR (%)</th>
+                  <th style="padding: 0.85rem 1rem; text-align: center;">Average SERP Position</th>
+                </tr>
+              </thead>
+              <tbody id="gsc-queries-body">
+                {gscData.topQueries.length === 0 ? (
+                  <tr>
+                    <td colspan="5" style="padding: 2.5rem 1rem; text-align: center; color: #6B7280;">
+                      <i class="fa-solid fa-magnifying-glass" style="font-size: 1.5rem; color: #D1D5DB; margin-bottom: 0.5rem; display: block;"></i>
+                      <span style="font-weight: 600; color: #374151;">No query data returned for this period</span>
+                      <p style="font-size: 0.75rem; color: #9CA3AF; margin-top: 4px;">Once your keys are verified and users search for Sahyak on Google, exact keywords and clicks will be cataloged here.</p>
+                    </td>
+                  </tr>
+                ) : (
+                  gscData.topQueries.map((q) => {
+                    let rankBadge = '#6B7280';
+                    let rankBg = '#F3F4F6';
+                    if (q.position <= 3) { rankBadge = '#059669'; rankBg = 'rgba(16, 185, 129, 0.15)'; }
+                    else if (q.position <= 10) { rankBadge = '#2563EB'; rankBg = 'rgba(59, 130, 246, 0.15)'; }
+                    else if (q.position <= 20) { rankBadge = '#D97706'; rankBg = '#FEF3C7'; }
+
+                    return (
+                      <tr style="border-bottom: 1px solid #F3F4F6;" class="gsc-query-row" data-query={q.query.toLowerCase()}>
+                        <td style="padding: 0.85rem 1rem;">
+                          <strong style="color: #111827; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-magnifying-glass" style="font-size: 0.7rem; color: #9CA3AF;"></i> {q.query}
+                          </strong>
+                        </td>
+                        <td style="padding: 0.85rem 1rem; text-align: right; font-weight: 700; color: #059669;">
+                          {q.clicks.toLocaleString()}
+                        </td>
+                        <td style="padding: 0.85rem 1rem; text-align: right; color: #4B5563;">
+                          {q.impressions.toLocaleString()}
+                        </td>
+                        <td style="padding: 0.85rem 1rem; text-align: right; font-weight: 600; color: #111827;">
+                          {q.ctr}%
+                        </td>
+                        <td style="padding: 0.85rem 1rem; text-align: center;">
+                          <span style={`background: ${rankBg}; color: ${rankBadge}; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.8rem;`}>
+                            #{q.position}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- GSC SUB-PANEL 3: TOP LANDING PAGES -->
+      <section id="gsc-tab-pages" class="gsc-sub-panel" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-file-lines" style="color: #059669;"></i> Top Ranking Landing Pages in Google
+              </h3>
+              <p style="font-size: 0.8rem; color: #6B7280; margin-top: 2px;">
+                Specific URLs driving organic visitors from Google SERP.
+              </p>
+            </div>
+            <a href="/api/admin/gsc/export?type=pages" class="btn btn-sm btn-outline" download style="font-size: 0.8rem; border-radius: 8px;">
+              <i class="fa-solid fa-file-csv"></i> Export Pages CSV
+            </a>
+          </div>
+
+          <div style="overflow-x: auto; border: 1px solid #E5E7EB; border-radius: 10px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+              <thead>
+                <tr style="background: #F9FAFB; border-bottom: 2px solid #E5E7EB; color: #4B5563; font-size: 0.75rem; text-transform: uppercase;">
+                  <th style="padding: 0.75rem 1rem; text-align: left;">Landing Page URL</th>
+                  <th style="padding: 0.75rem 1rem; text-align: right;">Clicks</th>
+                  <th style="padding: 0.75rem 1rem; text-align: right;">Impressions</th>
+                  <th style="padding: 0.75rem 1rem; text-align: right;">CTR (%)</th>
+                  <th style="padding: 0.75rem 1rem; text-align: center;">Position</th>
+                </tr>
+              </thead>
+              <tbody>
+                {gscData.topPages.length === 0 ? (
+                  <tr>
+                    <td colspan="5" style="padding: 2.5rem 1rem; text-align: center; color: #9CA3AF;">
+                      No page records returned yet for this period.
+                    </td>
+                  </tr>
+                ) : (
+                  gscData.topPages.map(p => (
+                    <tr style="border-bottom: 1px solid #F3F4F6;">
+                      <td style="padding: 0.75rem 1rem;">
+                        <a href={p.page} target="_blank" style="color: #059669; font-weight: 600; text-decoration: none; word-break: break-all;">
+                          {p.page.replace('https://sahyak.com', '') || '/'} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7rem; color: #9CA3AF;"></i>
+                        </a>
+                      </td>
+                      <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 700; color: #059669;">
+                        {p.clicks.toLocaleString()}
+                      </td>
+                      <td style="padding: 0.75rem 1rem; text-align: right; color: #4B5563;">
+                        {p.impressions.toLocaleString()}
+                      </td>
+                      <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600;">
+                        {p.ctr}%
+                      </td>
+                      <td style="padding: 0.75rem 1rem; text-align: center;">
+                        <span style="background: #F3F4F6; padding: 2px 7px; border-radius: 6px; font-weight: 600;">#{p.position}</span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- GSC SUB-PANEL 4: DEVICES & COUNTRIES -->
+      <section id="gsc-tab-devices" class="gsc-sub-panel" style="margin-bottom: 2rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem;">
+          
+          <!-- Devices -->
+          <div style="background: white; border: 1px solid #E5E7EB; border-radius: 14px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #111827; margin-bottom: 1rem; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-mobile-screen" style="color: #2563EB;"></i> Search Devices Distribution
+            </h3>
+
+            {gscData.devices.length === 0 ? (
+              <p style="font-size: 0.85rem; color: #9CA3AF;">Awaiting search device statistics from Google.</p>
+            ) : (
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                {gscData.devices.map(d => (
+                  <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                      <strong style="color: #111827;">{d.device}</strong>
+                      <span style="color: #059669; font-weight: 700;">{d.clicks} clicks &bull; {d.percentage}% share</span>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden;">
+                      <div style={`width: ${d.percentage}%; height: 100%; background: #4ADE80; border-radius: 4px;`}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <!-- Countries -->
+          <div style="background: white; border: 1px solid #E5E7EB; border-radius: 14px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="font-size: 1.1rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-earth-americas" style="color: #7C3AED;"></i> Global Search Countries
+              </h3>
+              <a href="/api/admin/gsc/export?type=countries" class="btn btn-sm btn-outline" download style="font-size: 0.75rem; border-radius: 6px; padding: 0.25rem 0.6rem;">
+                Export Countries
+              </a>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              {gscData.countries.length === 0 ? (
+                <p style="font-size: 0.85rem; color: #9CA3AF;">Awaiting country reach statistics.</p>
+              ) : (
+                gscData.countries.slice(0, 8).map(c => (
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; background: #F9FAFB; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #F3F4F6;">
+                    <span>{c.flag} <strong style="color: #111827;">{c.countryName}</strong></span>
+                    <span style="color: #059669; font-weight: 700;">{c.clicks} clicks &bull; {c.impressions} views</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- GSC SUB-PANEL 5: LIVE URL INSPECTION TOOL -->
+      <section id="gsc-tab-inspect" class="gsc-sub-panel" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-magnifying-glass-chart" style="color: #2563EB;"></i> Live URL Inspection Tool
+            </h3>
+            <p style="font-size: 0.85rem; color: #6B7280; margin-top: 2px;">
+              Inspect any URL on your domain for Google indexability, HTTP status, canonical tags, meta robots, and sitemap inclusion.
+            </p>
+          </div>
+
+          <!-- URL Inspection Search Bar -->
+          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+            <div style="flex: 1; min-width: 280px; position: relative;">
+              <input type="text" id="gsc-inspect-input" value="/" placeholder="Enter URL path (e.g. /pricing, /features, /contact)" style="width: 100%; padding: 0.65rem 1rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.9rem;" />
+            </div>
+
+            <select id="gsc-inspect-quick-select" style="padding: 0.65rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem;">
+              <option value="/">Homepage (/)</option>
+              <option value="/pricing">Pricing (/pricing)</option>
+              <option value="/features">Features (/features)</option>
+              <option value="/resources">Resources (/resources)</option>
+              <option value="/contact">Contact (/contact)</option>
+              <option value="/security">Security (/security)</option>
+              <option value="/about">About (/about)</option>
+            </select>
+
+            <button id="gsc-inspect-btn" class="btn btn-sm" style="background: #0A1C16; color: white; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-search"></i> Inspect URL
+            </button>
+          </div>
+
+          <!-- Inspection Result Card -->
+          <div id="gsc-inspect-result-box" style="display: none; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 1.5rem;">
+            <!-- Populated via client script -->
+          </div>
+
+        </div>
+      </section>
+
+      <!-- GSC SUB-PANEL 6: XML SITEMAPS & COVERAGE -->
+      <section id="gsc-tab-sitemaps" class="gsc-sub-panel" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-sitemap" style="color: #2563EB;"></i> XML Sitemaps & Indexing Health
+              </h3>
+              <p style="font-size: 0.8rem; color: #6B7280; margin-top: 2px;">
+                Ensure Googlebot discovers, crawls, and indexes all public pages cleanly.
+              </p>
+            </div>
+            
+            <a href={`${gscData.siteUrl}/sitemap-index.xml`} target="_blank" class="btn btn-sm btn-outline" style="border-radius: 8px; font-size: 0.8rem;">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live XML Sitemap
+            </a>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; padding: 1rem; border-radius: 10px;">
+              <span style="font-size: 0.75rem; color: #6B7280; font-weight: 600; text-transform: uppercase;">Sitemap URL</span>
+              <div style="font-weight: 700; color: #059669; word-break: break-all; margin-top: 4px;">
+                {gscData.siteUrl}/sitemap-index.xml
+              </div>
+            </div>
+
+            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; padding: 1rem; border-radius: 10px;">
+              <span style="font-size: 0.75rem; color: #6B7280; font-weight: 600; text-transform: uppercase;">Status</span>
+              <div style="font-weight: 700; color: #059669; margin-top: 4px; display: flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-circle-check"></i> Success (Clean)
+              </div>
+            </div>
+
+            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; padding: 1rem; border-radius: 10px;">
+              <span style="font-size: 0.75rem; color: #6B7280; font-weight: 600; text-transform: uppercase;">Discovered Pages</span>
+              <div style="font-weight: 800; color: #111827; font-size: 1.2rem; margin-top: 2px;">
+                7 Core URLs
+              </div>
+            </div>
+
+            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; padding: 1rem; border-radius: 10px;">
+              <span style="font-size: 0.75rem; color: #6B7280; font-weight: 600; text-transform: uppercase;">Admin / Private Isolation</span>
+              <div style="font-weight: 700; color: #2563EB; margin-top: 4px;">
+                Protected from Googlebot
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- GSC SUB-PANEL 7: SEO OPPORTUNITIES & STRIKING DISTANCE -->
+      <section id="gsc-tab-opps" class="gsc-sub-panel" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-lightbulb" style="color: #D97706;"></i> SEO Opportunities & Striking Distance Keywords
+              </h3>
+              <p style="font-size: 0.8rem; color: #6B7280; margin-top: 2px;">
+                High-leverage keywords ranking in positions 4–15 where minor content optimization will push them into Google Top 3.
+              </p>
+            </div>
+            <a href="/api/admin/gsc/export?type=opportunities" class="btn btn-sm btn-outline" download style="font-size: 0.8rem; border-radius: 8px;">
+              <i class="fa-solid fa-file-csv"></i> Export Opportunities CSV
+            </a>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            {gscData.opportunities.length === 0 ? (
+              <div style="background: #F9FAFB; border: 1px dashed #D1D5DB; border-radius: 10px; padding: 2rem; text-align: center; color: #6B7280;">
+                <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 1.5rem; color: #D1D5DB; margin-bottom: 0.5rem; display: block;"></i>
+                <span style="font-weight: 600; color: #374151;">Awaiting organic search keyword volume</span>
+                <p style="font-size: 0.75rem; color: #9CA3AF; margin-top: 4px;">As users search on Google, our SEO algorithm will automatically detect striking distance queries and low-CTR alerts.</p>
+              </div>
+            ) : (
+              gscData.opportunities.map(opp => (
+                <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                  <div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                      <strong style="color: #111827; font-size: 0.95rem;">{opp.query}</strong>
+                      <span style="background: #FEF3C7; color: #B45309; padding: 2px 7px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
+                        Rank #{opp.position}
+                      </span>
+                    </div>
+                    <p style="font-size: 0.8rem; color: #4B5563;">
+                      {opp.recommendation}
+                    </p>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: #059669;">{opp.clicks} Clicks &bull; {opp.impressions} Views</div>
+                    <span style="font-size: 0.75rem; color: #6B7280;">{opp.ctr}% CTR</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Section Dwell Breakdown Modal -->
+  <dialog id="section-breakdown-dialog" style="border: none; border-radius: 16px; padding: 2rem; max-width: 560px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.25); margin: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+      <div>
+        <h3 id="sec-modal-title" style="font-size: 1.25rem; font-weight: 700; color: #0A1C16; margin-bottom: 4px;">Page Section Engagement</h3>
+        <p id="sec-modal-subtitle" style="font-size: 0.85rem; color: #6B7280;">Dwell time analysis across page sections</p>
+      </div>
+      <button id="close-sec-modal-btn" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: #9CA3AF;">&times;</button>
+    </div>
+    <div id="sec-modal-content" style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.5rem;">
+      <!-- Populated via JS -->
+    </div>
+    <div style="display: flex; justify-content: flex-end;">
+      <button id="close-sec-btn-bottom" class="btn btn-sm" style="background: #0A1C16; color: white; border-radius: 8px; padding: 0.5rem 1.25rem;">Close</button>
+    </div>
+  </dialog>
+
+  <!-- Lead Message Modal -->
+  <dialog id="message-dialog" style="border: none; border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.25); margin: auto;">
+    <h3 id="modal-lead-name" style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #0A1C16;">Lead Message</h3>
+    <div id="modal-lead-message" style="background: #F9FAFB; padding: 1.25rem; border-radius: 8px; border: 1px solid #E5E7EB; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; color: #374151;"></div>
+    <div style="display: flex; justify-content: flex-end;">
+      <button id="close-modal-btn" class="btn btn-sm" style="background: #0A1C16; color: white; border-radius: 8px; padding: 0.5rem 1.25rem;">Close</button>
+    </div>
+  </dialog>
+
+  <!-- Pass Server Data safely to client script -->
+  <script is:inline id="analytics-init-data" type="application/json" set:html={JSON.stringify(analytics.timeSeries)} />
+  <script is:inline id="gsc-init-data" type="application/json" set:html={JSON.stringify(gscData.timeSeries)} />
+
+  <!-- Client-side Interactive Dashboard Script -->
+  <script is:inline>
+    // ==========================================
+    // PORTAL SWITCHER: CRM VS SEARCH CONSOLE
+    // ==========================================
+    const switchCrm = document.getElementById('portal-switch-crm');
+    const switchGsc = document.getElementById('portal-switch-gsc');
+    const portalCrmView = document.getElementById('portal-crm-view');
+    const portalGscView = document.getElementById('portal-gsc-view');
+    const crmTabsBar = document.getElementById('crm-tabs-bar');
+    const gscTabsBar = document.getElementById('gsc-tabs-bar');
+    const portalTitle = document.getElementById('current-portal-title');
+
+    function setPortal(portal) {
+      if (portal === 'gsc') {
+        switchGsc.classList.add('active');
+        switchCrm.classList.remove('active');
+        portalCrmView.style.display = 'none';
+        portalGscView.style.display = 'block';
+        crmTabsBar.style.display = 'none';
+        gscTabsBar.style.display = 'block';
+        portalTitle.textContent = 'Google Search Console Central';
+        setTimeout(() => renderGscChart(), 50);
+      } else {
+        switchCrm.classList.add('active');
+        switchGsc.classList.remove('active');
+        portalCrmView.style.display = 'block';
+        portalGscView.style.display = 'none';
+        crmTabsBar.style.display = 'block';
+        gscTabsBar.style.display = 'none';
+        portalTitle.textContent = 'Website CRM & Traffic Hub';
+      }
+    }
+
+    switchCrm?.addEventListener('click', () => setPortal('crm'));
+    switchGsc?.addEventListener('click', () => setPortal('gsc'));
+
+    // ==========================================
+    // CRM SUB-TABS
+    // ==========================================
+    const crmTabBtns = document.querySelectorAll('.crm-tab-btn');
+    const crmTabPanels = document.querySelectorAll('.crm-tab-panel');
+
+    crmTabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        crmTabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const targetId = btn.getAttribute('data-tab');
+        if (targetId === 'tab-overview') {
+          crmTabPanels.forEach(p => p.style.display = '');
+        } else {
+          crmTabPanels.forEach(p => {
+            p.style.display = (p.id === targetId) ? '' : 'none';
+          });
+        }
+      });
+    });
+
+    // ==========================================
+    // GSC SUB-TABS
+    // ==========================================
+    const gscTabBtns = document.querySelectorAll('.gsc-tab-btn');
+    const gscSubPanels = document.querySelectorAll('.gsc-sub-panel');
+
+    gscTabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        gscTabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const targetId = btn.getAttribute('data-gsctab');
+        gscSubPanels.forEach(p => {
+          p.style.display = (p.id === targetId) ? '' : 'none';
+        });
+
+        if (targetId === 'gsc-tab-perf') {
+          setTimeout(() => renderGscChart(), 50);
+        }
+      });
+    });
+
+    // Dropdown toggle
+    const exportBtn = document.getElementById('export-menu-btn');
+    const exportMenu = document.getElementById('export-dropdown-menu');
+    if (exportBtn && exportMenu) {
+      exportBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportMenu.style.display = exportMenu.style.display === 'block' ? 'none' : 'block';
+      });
+      document.addEventListener('click', () => {
+        exportMenu.style.display = 'none';
+      });
+    }
+
+    // ==========================================
+    // WEBSITE ANALYTICS CHART
+    // ==========================================
+    let rawSeries = {};
+    try {
+      rawSeries = JSON.parse(document.getElementById('analytics-init-data').textContent || '{}');
+    } catch(e) {
+      rawSeries = {};
+    }
+
+    let currentRange = '24h';
+    let currentMetric = 'visitors';
+    let chartInstance = null;
+
+    const ctx = document.getElementById('analyticsChart')?.getContext('2d');
+
+    const metricConfig = {
+      visitors: { label: 'Unique Visitors', color: '#10B981', bgColor: 'rgba(16, 185, 129, 0.15)', unit: ' visitors' },
+      pageviews: { label: 'Total Pageviews', color: '#3B82F6', bgColor: 'rgba(59, 130, 246, 0.15)', unit: ' views' },
+      activeUsers: { label: 'Active Users', color: '#059669', bgColor: 'rgba(5, 150, 105, 0.15)', unit: ' online' },
+      avgDuration: { label: 'Stay Duration (Seconds)', color: '#F59E0B', bgColor: 'rgba(245, 158, 11, 0.15)', unit: 's' }
+    };
+
+    function renderChart() {
+      if (!ctx) return;
+      const series = rawSeries[currentRange] || { labels: [], visitors: [], pageviews: [], activeUsers: [], avgDuration: [] };
+      const config = metricConfig[currentMetric];
+      const dataValues = series[currentMetric] || [];
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: series.labels,
+          datasets: [{
+            label: config.label,
+            data: dataValues,
+            borderColor: config.color,
+            backgroundColor: config.bgColor,
+            borderWidth: 3,
+            fill: true,
+            tension: 0.38,
+            pointRadius: 4,
+            pointHoverRadius: 7,
+            pointBackgroundColor: config.color
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#0A1C16',
+              titleColor: '#FFFFFF',
+              bodyColor: '#4ADE80',
+              padding: 12,
+              cornerRadius: 8,
+              callbacks: {
+                label: function(context) { return ` ${context.parsed.y}${config.unit}`; }
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(0, 0, 0, 0.04)' }, ticks: { color: '#6B7280', font: { size: 11 } } },
+            y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.06)' }, ticks: { color: '#6B7280', font: { size: 11 } } }
+          }
+        }
+      });
+    }
+
+    renderChart();
+
+    // Metric Toggle Buttons
+    document.querySelectorAll('.chart-metric-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.chart-metric-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMetric = btn.getAttribute('data-metric');
+        renderChart();
+      });
+    });
+
+    // Range Toggle Buttons
+    document.querySelectorAll('.chart-range-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.chart-range-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentRange = btn.getAttribute('data-range');
+        renderChart();
+      });
+    });
+
+    // Real-Time Polling every 12 seconds for real visitor sessions
+    async function pollLiveAnalytics() {
+      try {
+        const res = await fetch('/api/admin/analytics?range=' + currentRange);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            const d = json.data;
+            document.getElementById('badge-active-count').textContent = d.realtimeActiveUsers;
+            document.getElementById('stat-active-users').textContent = d.realtimeActiveUsers;
+            document.getElementById('stat-today-visitors').textContent = d.todayNewVisitors;
+            document.getElementById('stat-total-visitors').textContent = d.totalVisitors;
+            if (d.timeSeries) {
+              rawSeries = d.timeSeries;
+              renderChart();
+            }
+          }
+        }
+      } catch(e) {}
+    }
+    setInterval(pollLiveAnalytics, 12000);
+
+    // ==========================================
+    // GOOGLE SEARCH CONSOLE CLIENT SCRIPT
+    // ==========================================
+    let gscSeries = [];
+    try {
+      gscSeries = JSON.parse(document.getElementById('gsc-init-data').textContent || '[]');
+    } catch(e) {
+      gscSeries = [];
+    }
+
+    let gscChartInstance = null;
+    const gscCtx = document.getElementById('gscChart')?.getContext('2d');
+
+    function renderGscChart(datesData) {
+      if (!gscCtx) return;
+      const dataToUse = datesData || gscSeries;
+
+      const labels = dataToUse.map(d => d.date);
+      const clicks = dataToUse.map(d => d.clicks);
+      const impressions = dataToUse.map(d => d.impressions);
+
+      if (gscChartInstance) {
+        gscChartInstance.destroy();
+      }
+
+      gscChartInstance = new Chart(gscCtx, {
+        type: 'line',
+        data: {
+          labels: labels.length > 0 ? labels : ['Past Days'],
+          datasets: [
+            {
+              label: 'Clicks',
+              data: clicks.length > 0 ? clicks : [0],
+              borderColor: '#10B981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              borderWidth: 2.5,
+              tension: 0.3,
+              fill: true,
+              yAxisID: 'yClicks'
+            },
+            {
+              label: 'Impressions',
+              data: impressions.length > 0 ? impressions : [0],
+              borderColor: '#3B82F6',
+              backgroundColor: 'rgba(59, 130, 246, 0.05)',
+              borderWidth: 2,
+              borderDash: [4, 4],
+              tension: 0.3,
+              fill: false,
+              yAxisID: 'yImpressions'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#0A1C16',
+              titleColor: '#FFFFFF',
+              padding: 10,
+              cornerRadius: 8
+            }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(0, 0, 0, 0.04)' }, ticks: { color: '#6B7280', font: { size: 10 } } },
+            yClicks: {
+              type: 'linear',
+              position: 'left',
+              beginAtZero: true,
+              title: { display: true, text: 'Clicks', color: '#10B981' },
+              grid: { color: 'rgba(0, 0, 0, 0.04)' }
+            },
+            yImpressions: {
+              type: 'linear',
+              position: 'right',
+              beginAtZero: true,
+              title: { display: true, text: 'Impressions', color: '#3B82F6' },
+              grid: { drawOnChartArea: false }
+            }
+          }
+        }
+      });
+    }
+
+    renderGscChart();
+
+    // GSC Range Toggles
+    document.querySelectorAll('.gsc-range-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        document.querySelectorAll('.gsc-range-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const range = btn.getAttribute('data-range');
+        loadGscData(range);
+      });
+    });
+
+    // GSC Refresh Button
+    document.getElementById('gsc-refresh-btn')?.addEventListener('click', () => {
+      const activeBtn = document.querySelector('.gsc-range-btn.active');
+      const range = activeBtn ? activeBtn.getAttribute('data-range') : '28d';
+      loadGscData(range, true);
+    });
+
+    async function loadGscData(range, forceRefresh = false) {
+      const spinner = document.getElementById('gsc-spinner');
+      if (spinner) spinner.classList.add('fa-spin');
+
+      try {
+        const url = `/api/admin/gsc/data?range=${range}${forceRefresh ? '&refresh=true' : ''}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            const d = json.data;
+            document.getElementById('gsc-stat-clicks').textContent = Number(d.totalClicks).toLocaleString();
+            document.getElementById('gsc-stat-impressions').textContent = Number(d.totalImpressions).toLocaleString();
+            document.getElementById('gsc-stat-ctr').textContent = `${d.avgCtr}%`;
+            document.getElementById('gsc-stat-pos').textContent = `#${d.avgPosition}`;
+            renderGscChart(d.timeSeries);
+          }
+        }
+      } catch (e) {
+      } finally {
+        if (spinner) spinner.classList.remove('fa-spin');
+      }
+    }
+
+    // GSC Query Search Filter
+    const gscSearch = document.getElementById('gsc-query-search');
+    gscSearch?.addEventListener('input', () => {
+      const q = gscSearch.value.toLowerCase().trim();
+      document.querySelectorAll('.gsc-query-row').forEach(row => {
+        const query = row.getAttribute('data-query') || '';
+        row.style.display = !q || query.includes(q) ? '' : 'none';
+      });
+    });
+
+    // ==========================================
+    // LIVE URL INSPECTION TOOL SCRIPT
+    // ==========================================
+    const inspectInput = document.getElementById('gsc-inspect-input');
+    const inspectQuickSelect = document.getElementById('gsc-inspect-quick-select');
+    const inspectBtn = document.getElementById('gsc-inspect-btn');
+    const inspectBox = document.getElementById('gsc-inspect-result-box');
+
+    inspectQuickSelect?.addEventListener('change', () => {
+      inspectInput.value = inspectQuickSelect.value;
+    });
+
+    inspectBtn?.addEventListener('click', async () => {
+      const urlToTest = inspectInput.value.trim() || '/';
+      inspectBtn.disabled = true;
+      inspectBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Inspecting...';
+
+      try {
+        const res = await fetch('/api/admin/gsc/inspect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: urlToTest })
+        });
+
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            const r = json.data;
+            const isGood = r.verdict === 'INDEXED';
+            inspectBox.style.display = 'block';
+            inspectBox.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                  <span style="background: ${isGood ? 'rgba(16, 185, 129, 0.15)' : '#FEE2E2'}; color: ${isGood ? '#059669' : '#DC2626'}; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px;">
+                    <i class="fa-solid ${isGood ? 'fa-circle-check' : 'fa-triangle-exclamation'}"></i> Verdict: ${r.verdict}
+                  </span>
+                  <h4 style="font-size: 1.1rem; font-weight: 700; color: #111827; margin-top: 6px; word-break: break-all;">
+                    ${r.url}
+                  </h4>
+                </div>
+                <span style="font-size: 0.75rem; color: #6B7280;">Inspected: ${new Date(r.inspectedAt).toLocaleTimeString()}</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; font-size: 0.85rem;">
+                <div style="background: white; border: 1px solid #E5E7EB; padding: 0.75rem; border-radius: 8px;">
+                  <span style="font-size: 0.7rem; color: #6B7280; font-weight: 700; text-transform: uppercase;">HTTP Response</span>
+                  <div style="font-weight: 700; color: ${r.httpStatus === 200 ? '#059669' : '#DC2626'}; margin-top: 2px;">
+                    ${r.httpStatus} OK
+                  </div>
+                </div>
+                <div style="background: white; border: 1px solid #E5E7EB; padding: 0.75rem; border-radius: 8px;">
+                  <span style="font-size: 0.7rem; color: #6B7280; font-weight: 700; text-transform: uppercase;">Robots Meta Tag</span>
+                  <div style="font-weight: 600; color: #111827; margin-top: 2px;">
+                    ${r.metaRobots}
+                  </div>
+                </div>
+                <div style="background: white; border: 1px solid #E5E7EB; padding: 0.75rem; border-radius: 8px;">
+                  <span style="font-size: 0.7rem; color: #6B7280; font-weight: 700; text-transform: uppercase;">XML Sitemap Inclusion</span>
+                  <div style="font-weight: 700; color: #059669; margin-top: 2px;">
+                    ${r.isSitemapIncluded ? '✓ In /sitemap-index.xml' : '✗ Excluded'}
+                  </div>
+                </div>
+                <div style="background: white; border: 1px solid #E5E7EB; padding: 0.75rem; border-radius: 8px;">
+                  <span style="font-size: 0.7rem; color: #6B7280; font-weight: 700; text-transform: uppercase;">Canonical URL</span>
+                  <div style="font-weight: 600; color: #059669; margin-top: 2px; font-size: 0.75rem; word-break: break-all;">
+                    ${r.canonicalUrl}
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: white; border: 1px solid #E5E7EB; padding: 0.75rem; border-radius: 8px; margin-top: 0.75rem; font-size: 0.85rem;">
+                <span style="font-size: 0.7rem; color: #6B7280; font-weight: 700; text-transform: uppercase;">HTML Title Tag</span>
+                <div style="font-weight: 600; color: #111827; margin-top: 2px;">${r.title}</div>
+              </div>
+            `;
+          }
+        }
+      } catch (err) {
+        alert('Inspection request failed.');
+      } finally {
+        inspectBtn.disabled = false;
+        inspectBtn.innerHTML = '<i class="fa-solid fa-search"></i> Inspect URL';
+      }
+    });
+
+    // Section Breakdown Modal Logic
+    const secDialog = document.getElementById('section-breakdown-dialog');
+    const secModalTitle = document.getElementById('sec-modal-title');
+    const secModalSubtitle = document.getElementById('sec-modal-subtitle');
+    const secModalContent = document.getElementById('sec-modal-content');
+
+    document.querySelectorAll('.view-sections-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const page = btn.getAttribute('data-page');
+        const title = btn.getAttribute('data-title');
+        const sections = JSON.parse(btn.getAttribute('data-sections') || '[]');
+
+        secModalTitle.textContent = `Sections Dwell: ${page}`;
+        secModalSubtitle.textContent = title;
+        secModalContent.innerHTML = '';
+
+        sections.forEach(s => {
+          const row = document.createElement('div');
+          row.style.background = '#F9FAFB';
+          row.style.padding = '0.85rem 1rem';
+          row.style.borderRadius = '8px';
+          row.style.border = '1px solid #E5E7EB';
+          row.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <strong style="color: #111827; font-size: 0.9rem;">${s.label}</strong>
+              <span style="font-weight: 700; color: #059669; font-size: 0.85rem;">${s.avgSeconds}s avg (${s.viewPercent}%)</span>
+            </div>
+            <div style="width: 100%; height: 6px; background: #E5E7EB; border-radius: 4px; overflow: hidden;">
+              <div style="width: ${s.viewPercent}%; height: 100%; background: #10B981; border-radius: 4px;"></div>
+            </div>
+          `;
+          secModalContent.appendChild(row);
+        });
+
+        secDialog.showModal();
+      });
+    });
+
+    document.getElementById('close-sec-modal-btn')?.addEventListener('click', () => secDialog.close());
+    document.getElementById('close-sec-btn-bottom')?.addEventListener('click', () => secDialog.close());
+
+    // Page Search Filter
+    const pageSearch = document.getElementById('page-search-input');
+    pageSearch?.addEventListener('input', () => {
+      const q = pageSearch.value.toLowerCase().trim();
+      document.querySelectorAll('.page-row').forEach(row => {
+        const s = row.getAttribute('data-search') || '';
+        row.style.display = !q || s.includes(q) ? '' : 'none';
+      });
+    });
+
+    // Traffic Source Search Filter (Supports 1,000+ Domains)
+    const sourceSearch = document.getElementById('source-search-input');
+    sourceSearch?.addEventListener('input', () => {
+      const q = sourceSearch.value.toLowerCase().trim();
+      document.querySelectorAll('.domain-row').forEach(row => {
+        const s = row.getAttribute('data-search') || '';
+        row.style.display = !q || s.includes(q) ? '' : 'none';
+      });
+    });
+
+    // Geolocation Filter
+    const geoFilter = document.getElementById('geo-country-filter');
+    const geoSearch = document.getElementById('geo-search-input');
+
+    function filterGeo() {
+      const country = geoFilter.value;
+      const q = (geoSearch.value || '').toLowerCase().trim();
+
+      document.querySelectorAll('.geo-row').forEach(row => {
+        const rCountry = row.getAttribute('data-country') || '';
+        const rSearch = row.getAttribute('data-search') || '';
+
+        const matchCountry = country === 'all' || rCountry === country;
+        const matchSearch = !q || rSearch.includes(q);
+
+        row.style.display = (matchCountry && matchSearch) ? '' : 'none';
+      });
+    }
+
+    geoFilter?.addEventListener('change', filterGeo);
+    geoSearch?.addEventListener('input', filterGeo);
+
+    // Form Leads Search & Status Filter
+    const searchInput = document.getElementById('admin-search-input');
+    const statusFilter = document.getElementById('admin-status-filter');
+    const tableRows = document.querySelectorAll('.lead-row');
+    const dialog = document.getElementById('message-dialog');
+    const modalLeadName = document.getElementById('modal-lead-name');
+    const modalLeadMessage = document.getElementById('modal-lead-message');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+
+    function filterLeads() {
+      const query = (searchInput.value || '').toLowerCase().trim();
+      const status = statusFilter.value;
+
+      tableRows.forEach(row => {
+        const rowSearch = row.getAttribute('data-search') || '';
+        const rowStatus = row.getAttribute('data-status') || '';
+
+        const matchesQuery = !query || rowSearch.includes(query);
+        const matchesStatus = status === 'all' || rowStatus === status;
+
+        row.style.display = (matchesQuery && matchesStatus) ? '' : 'none';
+      });
+    }
+
+    if (searchInput) searchInput.addEventListener('input', filterLeads);
+    if (statusFilter) statusFilter.addEventListener('change', filterLeads);
+
+    // Live status update handler
+    document.querySelectorAll('.status-selector').forEach(sel => {
+      sel.addEventListener('change', async () => {
+        const id = sel.getAttribute('data-id');
+        const newStatus = sel.value;
+
+        sel.disabled = true;
+        try {
+          const res = await fetch('/api/admin/leads', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, status: newStatus })
+          });
+          if (res.ok) {
+            const parentRow = sel.closest('.lead-row');
+            if (parentRow) parentRow.setAttribute('data-status', newStatus);
+          } else {
+            alert('Failed to update status.');
+          }
+        } catch {
+          alert('Network error while updating status.');
+        } finally {
+          sel.disabled = false;
+        }
+      });
+    });
+
+    // Modal view
+    document.querySelectorAll('.view-note-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const name = btn.getAttribute('data-name');
+        const message = btn.getAttribute('data-message');
+        modalLeadName.textContent = `Inquiry Note: ${name}`;
+        modalLeadMessage.textContent = message;
+        dialog.showModal();
+      });
+    });
+
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', () => dialog.close());
+    }
+  </script>
+
+  <style>
+    .portal-mode-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #D1D5DB;
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.2s ease;
+    }
+    .portal-mode-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    .portal-mode-btn.active {
+      background: #10B981;
+      color: #0A1C16;
+      border-color: #10B981;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .crm-tab-btn, .gsc-tab-btn {
+      background: none;
+      border: none;
+      color: #9CA3AF;
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .crm-tab-btn:hover, .gsc-tab-btn:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .crm-tab-btn.active, .gsc-tab-btn.active {
+      color: #4ADE80;
+      background: rgba(74, 222, 128, 0.12);
+    }
+
+    .chart-metric-btn, .chart-range-btn, .gsc-range-btn {
+      background: none;
+      border: none;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #4B5563;
+      transition: all 0.2s ease;
+    }
+    .chart-metric-btn.active, .gsc-range-btn.active {
+      background: white;
+      color: #111827;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .chart-range-btn {
+      color: #9CA3AF;
+    }
+    .chart-range-btn.active {
+      background: #4ADE80;
+      color: #0A1C16;
+    }
+
+    .export-link {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.75rem 1rem;
+      color: #D1D5DB;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .export-link:hover {
+      background: #1F2937;
+      color: #4ADE80;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+  </style>
+
+</Layout>

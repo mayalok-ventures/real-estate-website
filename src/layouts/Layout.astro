@@ -1,0 +1,263 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  schema?: Record<string, any> | Record<string, any>[];
+  activeNav?: 'home' | 'features' | 'pricing' | 'about' | 'resources' | 'security' | 'contact';
+}
+
+const {
+  title,
+  description,
+  canonicalUrl = Astro.url.href,
+  ogImage = 'https://sahyak.com/images/sahyak-logo.png',
+  schema,
+  activeNav = 'home'
+} = Astro.props;
+
+// Base Organization Schema for Google & AI discoverability
+const baseOrgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Sahyak CRM",
+  "url": "https://sahyak.com",
+  "logo": "https://sahyak.com/images/sahyak-logo.png",
+  "description": "Mobile-first Real Estate CRM built for brokers, sales agents, and real estate developers across 15+ countries.",
+  "sameAs": [
+    "https://twitter.com/sahyakcrm",
+    "https://linkedin.com/company/sahyakcrm"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+91 87964 75107",
+    "contactType": "Customer Support",
+    "email": "support@sahyak.com",
+    "availableLanguage": ["English", "Hindi", "Spanish", "French", "German", "Japanese", "Arabic"]
+  }
+};
+
+// Software Application Schema
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Sahyak CRM",
+  "operatingSystem": "Web, Android, iOS",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "128"
+  }
+};
+
+const fullSchemaList = [
+  baseOrgSchema,
+  softwareSchema,
+  ...(schema ? (Array.isArray(schema) ? schema : [schema]) : [])
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalUrl} />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={canonicalUrl} />
+  <meta property="twitter:title" content={title} />
+  <meta property="twitter:description" content={description} />
+  <meta property="twitter:image" content={ogImage} />
+
+  <!-- Theme & Icons -->
+  <meta name="theme-color" content="#0A1C16" />
+  <link rel="icon" type="image/png" href="/images/sahyak-logo.png" />
+
+  <!-- Google Fonts: Playfair Display (Serif), Inter (Sans), Caveat (Handwritten) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+
+  <!-- Structured Data JSON-LD -->
+  {fullSchemaList.map((item) => (
+    <script type="application/ld+json" set:html={JSON.stringify(item)} />
+  ))}
+</head>
+<body>
+  <!-- Header Navigation -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="/" class="site-logo" aria-label="Sahyak CRM Homepage">
+        <img src="/images/sahyak-logo.png" alt="Sahyak CRM" style="height: 34px; width: auto; object-fit: contain; border-radius: 4px;" />
+        <span>Sahyak CRM</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="/" class={`nav-link ${activeNav === 'home' ? 'active' : ''}`}>Home</a></li>
+          <li><a href="/features" class={`nav-link ${activeNav === 'features' ? 'active' : ''}`}>Features</a></li>
+          <li><a href="/pricing" class={`nav-link ${activeNav === 'pricing' ? 'active' : ''}`}>Pricing</a></li>
+          <li><a href="/about" class={`nav-link ${activeNav === 'about' ? 'active' : ''}`}>About</a></li>
+          <li><a href="/resources" class={`nav-link ${activeNav === 'resources' ? 'active' : ''}`}>Resources</a></li>
+          <li><a href="/security" class={`nav-link ${activeNav === 'security' ? 'active' : ''}`}>Security</a></li>
+          <li><a href="/contact" class={`nav-link ${activeNav === 'contact' ? 'active' : ''}`}>Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="header-actions">
+        <a href="/contact" class="btn btn-primary btn-sm">Start free &rarr;</a>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="mobile-toggle" id="mobile-toggle-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer Navigation -->
+    <div class="mobile-drawer" id="mobile-drawer-menu">
+      <a href="/">Home</a>
+      <a href="/features">Features</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/about">About Us</a>
+      <a href="/resources">Resources & Guides</a>
+      <a href="/security">Security & Privacy</a>
+      <a href="/contact">Contact Sales</a>
+      <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+        <a href="/contact" class="btn btn-primary" style="text-align: center;">Get Started Free &rarr;</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Slot -->
+  <main id="main-content">
+    <slot />
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="site-logo" style="margin-bottom: 1.25rem;">
+            <img src="/images/sahyak-logo.png" alt="Sahyak CRM" style="height: 36px; width: auto; object-fit: contain; border-radius: 4px;" />
+            <span>Sahyak CRM</span>
+          </div>
+          <p style="color: var(--text-light-muted); max-width: 320px; font-size: 0.95rem; margin-bottom: 1.5rem;">
+            The mobile-first real estate CRM built for real people. Capture leads, coordinate client visits, and close deals effortlessly across 15+ countries.
+          </p>
+          <div style="display: flex; gap: 0.75rem;">
+            <span class="badge-pill" style="margin: 0; font-size: 0.75rem;">
+              <span class="badge-dot"></span> Built for Global Real Estate
+            </span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="/features">All Features</a></li>
+            <li><a href="/features#lead-management">Lead Capture</a></li>
+            <li><a href="/features#whatsapp">Multi-Channel Follow-ups</a></li>
+            <li><a href="/features#site-visits">Site Visit Coordinator</a></li>
+            <li><a href="/features#inventory">Inventory Management</a></li>
+            <li><a href="/pricing">Pricing & Plans</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="/resources">Resource Center</a></li>
+            <li><a href="/resources#guides">Real Estate Playbooks</a></li>
+            <li><a href="/resources#tutorials">Video Tutorials</a></li>
+            <li><a href="/security">Security & Encryption</a></li>
+            <li><a href="/contact">Support & Help Desk</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about">About Sahyak CRM</a></li>
+            <li><a href="/contact">Contact Team</a></li>
+            <li><a href="mailto:support@sahyak.com">support@sahyak.com</a></li>
+            <li><a href="tel:+918796475107">+91 87964 75107</a></li>
+            <li><a href="/security">Data Privacy & GDPR</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; {new Date().getFullYear()} Sahyak CRM (<a href="https://sahyak.com" style="color: #4ADE80; text-decoration: none;">sahyak.com</a>). All rights reserved.</p>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <a href="/security" style="color: inherit;">Privacy Policy</a>
+          <a href="/security" style="color: inherit;">Terms of Service</a>
+          <a href="/security" style="color: inherit;">Data Protection</a>
+          <a href="/sitemap-index.xml" style="color: inherit;">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightweight Client Script for Interactivity -->
+  <script is:inline>
+    // 1. Mobile Menu Drawer Toggle
+    const toggleBtn = document.getElementById('mobile-toggle-btn');
+    const drawer = document.getElementById('mobile-drawer-menu');
+    if (toggleBtn && drawer) {
+      toggleBtn.addEventListener('click', () => {
+        const isOpen = drawer.classList.toggle('open');
+        toggleBtn.setAttribute('aria-expanded', isOpen);
+      });
+      // Close drawer on link click
+      drawer.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          drawer.classList.remove('open');
+          toggleBtn.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
+
+    // 2. Scroll Animation Observer
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    } else {
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+    }
+  </script>
+</body>
+</html>

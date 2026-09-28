@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahyak - Real Estate CRM Pricing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS VARIABLES & RESET */
+        :root {
+            --bg-dark: #0A0E0A;
+            --bg-light: #F4F6F4;
+            --green-primary: #00A859;
+            --green-hover: #008C4A;
+            --text-white: #FFFFFF;
+            --text-dark: #111111;
+            --text-gray: #666666;
+            --text-light-gray: #A0A0A0;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        section {
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ANIMATIONS */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-left { transform: translateX(-40px); }
+        .reveal-right { transform: translateX(40px); }
+        .reveal-left.active, .reveal-right.active { transform: translateX(0); }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating { animation: float 6s ease-in-out infinite; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background-color: var(--green-primary);
+            color: var(--text-white);
+        }
+        .btn-primary:hover {
+            background-color: var(--green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 168, 89, 0.3);
+        }
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-white);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .btn-outline:hover {
+            border-color: var(--text-white);
+            background: rgba(255,255,255,0.1);
+        }
+        .btn-dark-outline {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+        .btn-dark-outline:hover {
+            border-color: var(--text-dark);
+            background: rgba(0,0,0,0.05);
+        }
+
+        /* SECTION 1: HERO */
+        .hero {
+            background-color: var(--bg-dark);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            min-height: 90vh;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop') center/cover;
+            opacity: 0.15;
+            filter: grayscale(100%) contrast(120%);
+            z-index: 0;
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .hero h1 { font-size: 4rem; margin-bottom: 20px; }
+        .hero h1 span { color: var(--green-primary); font-style: italic; }
+        .hero p { font-size: 1.1rem; color: var(--text-light-gray); margin-bottom: 30px; max-width: 400px; }
+        .hero-cta { display: flex; gap: 15px; margin-bottom: 40px; }
+        .trust-badge { display: flex; align-items: center; gap: 15px; font-size: 0.9rem; color: var(--text-light-gray); }
+        .trust-badge img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--bg-dark); margin-left: -15px; }
+        .trust-badge img:first-child { margin-left: 0; }
+        
+        .hero-visual { position: relative; z-index: 1; display: flex; justify-content: center; }
+        .phone-mockup {
+            width: 320px;
+            height: 650px;
+            background: #fff;
+            border-radius: 40px;
+            border: 8px solid #1a1a1a;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            animation: float 6s ease-in-out infinite;
+        }
+        .phone-screen { padding: 20px; color: var(--text-dark); height: 100%; overflow-y: auto; }
+        .phone-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .phone-header h4 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1.1rem; }
+        .phone-plan { background: #f0f0f0; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+        .phone-plan h5 { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1rem; margin-bottom: 5px; }
+        .phone-plan p { font-size: 0.8rem; color: var(--text-gray); }
+        .phone-slider { margin-bottom: 20px; }
+        .phone-slider label { font-size: 0.8rem; font-weight: 600; display: flex; justify-content: space-between; }
+        .phone-slider input { width: 100%; accent-color: var(--green-primary); }
+        .phone-total { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; }
+        .phone-total h3 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1.5rem; }
+
+        /* SECTION 2: ISOMETRIC */
+        .isometric-section { background-color: var(--bg-light); color: var(--text-dark); }
+        .isometric-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; }
+        .isometric-text h2 { font-size: 3rem; margin-bottom: 20px; }
+        .isometric-text h2 span { color: var(--green-primary); font-style: italic; }
+        .isometric-text p { color: var(--text-gray); font-size: 1.1rem; }
+        .isometric-visual { position: relative; height: 500px; display: flex; justify-content: center; align-items: center; }
+        .iso-img { width: 100%; max-width: 600px; border-radius: 20px; position: relative; z-index: 1; }
+        .floating-card {
+            position: absolute;
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 2;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .fc-1 { top: 10%; left: 0; animation: float 5s ease-in-out infinite; }
+        .fc-2 { bottom: 20%; left: 10%; animation: float 7s ease-in-out infinite 1s; }
+        .fc-3 { top: 30%; right: 0; animation: float 6s ease-in-out infinite 0.5s; }
+
+        /* SECTION 3: CALCULATOR */
+        .calculator-section { background-color: var(--bg-dark); }
+        .calc-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 60px; align-items: center; }
+        .calc-text h2 { font-size: 3.5rem; margin-bottom: 20px; }
+        .calc-text h2 span { color: var(--green-primary); font-style: italic; }
+        .calc-text p { color: var(--text-light-gray); font-size: 1.1rem; margin-bottom: 30px; }
+        .calc-visual {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            color: var(--text-dark);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .calc-controls label { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; }
+        .calc-controls input[type="range"] { width: 100%; margin-bottom: 25px; accent-color: var(--green-primary); }
+        .calc-summary { border-left: 1px solid #eee; padding-left: 40px; display: flex; flex-direction: column; justify-content: space-between; }
+        .calc-summary h4 { font-family: 'Inter', sans-serif; font-size: 1.2rem; margin-bottom: 20px; }
+        .calc-line { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-gray); margin-bottom: 12px; }
+        .calc-total { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 700; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+
+        /* SECTION 4: PRICING CARDS */
+        .pricing-section { background-color: var(--bg-light); color: var(--text-dark); }
+        .pricing-header { text-align: center; margin-bottom: 60px; }
+        .pricing-header h2 { font-size: 3.5rem; margin-bottom: 20px; }
+        .pricing-header h2 span { color: var(--green-primary); font-style: italic; }
+        .pricing-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 900px; margin: 0 auto; }
+        .pricing-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #eee;
+            transition: var(--transition);
+        }
+        .pricing-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .pricing-card.popular { border: 2px solid var(--green-primary); position: relative; }
+        .popular-badge {
+            position: absolute;
+            top: -15px;
+            right: 40px;
+            background: var(--green-primary);
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .pricing-card h3 { font-family: 'Inter', sans-serif; font-size: 1.5rem; margin-bottom: 10px; }
+        .pricing-card .price { font-size: 3rem; font-weight: 700; margin-bottom: 20px; }
+        .pricing-card .price span { font-size: 1rem; color: var(--text-gray); font-weight: 400; }
+        .pricing-card ul { list-style: none; margin-bottom: 40px; }
+        .pricing-card ul li { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: var(--text-gray); }
+        .pricing-card ul li::before { content: '✓'; color: var(--green-primary); font-weight: bold; }
+
+        /* SECTION 5: FEATURES */
+        .features-section { background-color: var(--bg-dark); }
+        .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .features-text h2 { font-size: 3.5rem; margin-bottom: 20px; }
+        .features-text h2 span { color: var(--green-primary); font-style: italic; }
+        .features-text p { color: var(--text-light-gray); font-size: 1.1rem; margin-bottom: 30px; }
+        .features-visual { position: relative; display: flex; justify-content: center; }
+        .features-phone {
+            width: 350px;
+            height: 700px;
+            background: #fff;
+            border-radius: 45px;
+            border: 10px solid #1a1a1a;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .features-screen { padding: 30px; color: var(--text-dark); height: 100%; }
+        .features-screen h4 { font-family: 'Inter', sans-serif; font-size: 1.2rem; margin-bottom: 20px; }
+        .feature-item { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding: 15px; border-radius: 12px; background: #f9f9f9; }
+        .feature-icon { width: 40px; height: 40px; background: var(--green-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; }
+
+        /* SECTION 6: TRANSPARENT */
+        .transparent-section { background-color: var(--bg-light); color: var(--text-dark); }
+        .trans-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 60px; align-items: center; }
+        .trans-text h2 { font-size: 3.5rem; margin-bottom: 20px; }
+        .trans-text h2 span { color: var(--green-primary); font-style: italic; }
+        .trans-text p { color: var(--text-gray); font-size: 1.1rem; }
+        .trans-features { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .trans-item { display: flex; gap: 15px; }
+        .trans-item-icon { width: 50px; height: 50px; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--green-primary); font-size: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); flex-shrink: 0; }
+        .trans-item h4 { font-family: 'Inter', sans-serif; font-size: 1rem; margin-bottom: 5px; }
+        .trans-item p { font-size: 0.9rem; color: var(--text-gray); }
+
+        /* SECTION 7: CTA */
+        .cta-section { background-color: var(--bg-dark); text-align: left; padding: 120px 0; position: relative; }
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=2070&auto=format&fit=crop') center/cover;
+            opacity: 0.2;
+            filter: grayscale(100%) contrast(120%);
+        }
+        .cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
+        .cta-text h2 { font-size: 4rem; margin-bottom: 20px; }
+        .cta-text h2 span { color: var(--green-primary); font-style: italic; }
+        .cta-text p { color: var(--text-light-gray); font-size: 1.1rem; margin-bottom: 30px; }
+        .cta-visual { display: flex; justify-content: center; }
+        .portal-frame {
+            width: 300px;
+            height: 600px;
+            border: 4px solid var(--green-primary);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0, 168, 89, 0.3);
+        }
+        .portal-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* RESPONSIVE DESIGN (Mobile First) */
+        @media (max-width: 1024px) {
+            .hero h1 { font-size: 3rem; }
+            .calc-grid, .features-grid, .trans-grid, .cta-grid { grid-template-columns: 1fr; gap: 40px; }
+            .calc-visual { grid-template-columns: 1fr; }
+            .calc-summary { border-left: none; border-top: 1px solid #eee; padding-left: 0; padding-top: 20px; }
+            .isometric-grid { grid-template-columns: 1fr; }
+            .pricing-cards { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .hero { grid-template-columns: 1fr; text-align: center; padding-top: 60px; }
+            .hero-cta { justify-content: center; }
+            .trust-badge { justify-content: center; }
+            .hero-visual { margin-top: 40px; }
+            .hero h1 { font-size: 2.5rem; }
+            .isometric-text h2, .calc-text h2, .pricing-header h2, .features-text h2, .trans-text h2, .cta-text h2 { font-size: 2.5rem; }
+            .trans-features { grid-template-columns: 1fr; }
+            .phone-mockup, .features-phone { width: 280px; height: 550px; }
+            .portal-frame { width: 250px; height: 500px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: HERO -->
+    <section class="hero">
+        <div class="container hero-content reveal reveal-left">
+            <h1>Your team grows.<br>Your CRM <span>scales with you.</span></h1>
+            <p>Choose the capacity you need — users, leads, storage and connected platforms. Simple, transparent pricing for real estate teams.</p>
+            <div class="hero-cta">
+                <a href="#" class="btn btn-primary">Configure your plan &rarr;</a>
+                <a href="#" class="btn btn-outline">Start free</a>
+            </div>
+            <div class="trust-badge">
+                <img src="https://i.pravatar.cc/100?img=1" alt="User">
+                <img src="https://i.pravatar.cc/100?img=2" alt="User">
+                <img src="https://i.pravatar.cc/100?img=3" alt="User">
+                <span>Trusted by real estate teams<br>across India and beyond</span>
+            </div>
+        </div>
+        <div class="container hero-visual reveal reveal-right">
+            <div class="phone-mockup floating">
+                <div class="phone-screen">
+                    <div class="phone-header">
+                        <h4>Sahyak</h4>
+                        <span>&#9881;</span>
+                    </div>
+                    <div class="phone-plan">
+                        <h5>Configure your plan</h5>
+                        <p>India (INR ₹)</p>
+                    </div>
+                    <div class="phone-slider">
+                        <label>Sales Team Users <span>5</span></label>
+                        <input type="range" min="1" max="50" value="5">
+                    </div>
+                    <div class="phone-slider">
+                        <label>Active Leads <span>10,000</span></label>
+                        <input type="range" min="1000" max="100000" value="10000">
+                    </div>
+                    <div class="phone-slider">
+                        <label>Document Storage <span>20 GB</span></label>
+                        <input type="range" min="5" max="500" value="20">
+                    </div>
+                    <div class="phone-total">
+                        <div>
+                            <p style="font-size: 0.8rem; color: #888;">Estimated Monthly</p>
+                            <h3>₹4,850</h3>
+                        </div>
+                        <a href="#" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.8rem;">Get started &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: ISOMETRIC -->
+    <section class="isometric-section">
+        <div class="container isometric-grid">
+            <div class="isometric-text reveal reveal-left">
+                <h2>A plan that fits your <span>real estate operation.</span></h2>
+                <p>Start with Base Access and add the capacity your business needs. No hidden charges, no complex tiers.</p>
+            </div>
+            <div class="isometric-visual reveal reveal-right">
+                <!-- Isometric Diorama Image -->
+                <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1000&auto=format&fit=crop" alt="Isometric 3D Diorama" class="iso-img">
+                <div class="floating-card fc-1">
+                    <span style="color: var(--green-primary);">&#128101;</span> Users<br><small>Scale your team</small>
+                </div>
+                <div class="floating-card fc-2">
+                    <span style="color: var(--green-primary);">&#128200;</span> Active Leads<br><small>Grow without limits</small>
+                </div>
+                <div class="floating-card fc-3">
+                    <span style="color: var(--green-primary);">&#128279;</span> Platforms<br><small>Connect your channels</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: CALCULATOR -->
+    <section class="calculator-section">
+        <div class="container calc-grid">
+            <div class="calc-text reveal reveal-left">
+                <h2>Build your own plan in <span>seconds.</span></h2>
+                <p>Select your requirements and see the exact price for your business — instantly.</p>
+                <p style="color: var(--green-primary); font-weight: 600; font-style: italic;">REAL PRICING. REAL SAVINGS.</p>
+            </div>
+            <div class="calc-visual reveal reveal-right">
+                <div class="calc-controls">
+                    <label>Sales Team Users <span>5</span></label>
+                    <input type="range" min="1" max="50" value="5">
+                    <label>Active Leads <span>10,000</span></label>
+                    <input type="range" min="1000" max="100000" value="10000">
+                    <label>Document Storage <span>20 GB</span></label>
+                    <input type="range" min="5" max="500" value="20">
+                    <label>Connected Platforms <span>2</span></label>
+                    <input type="range" min="1" max="10" value="2">
+                </div>
+                <div class="calc-summary">
+                    <h4>Your Plan</h4>
+                    <div class="calc-line"><span>Base Access</span> <span>₹2,000</span></div>
+                    <div class="calc-line"><span>Additional Users (4)</span> <span>₹800</span></div>
+                    <div class="calc-line"><span>Additional Leads</span> <span>₹1,000</span></div>
+                    <div class="calc-line"><span>Storage (20 GB)</span> <span>₹800</span></div>
+                    <div class="calc-line"><span>Platforms (1)</span> <span>₹250</span></div>
+                    <div class="calc-total"><span>Total (Monthly)</span> <span>₹4,850</span></div>
+                    <a href="#" class="btn btn-primary" style="margin-top: 20px; width: 100%;">Start free &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: PRICING CARDS -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="pricing-header reveal">
+                <h2>Start free.<br>Then scale <span>on your terms.</span></h2>
+                <p>Try Sahyak for free or start with Base Access and add the capacity you need as your business grows.</p>
+            </div>
+            <div class="pricing-cards">
+                <div class="pricing-card reveal reveal-left">
+                    <h3>Free Starter</h3>
+                    <div class="price">₹0</div>
+                    <p style="color: var(--text-gray); margin-bottom: 20px;">Start free — no credit card required.</p>
+                    <ul>
+                        <li>20 active leads</li>
+                        <li>1 user seat</li>
+                        <li>10 WhatsApp actions</li>
+                        <li>3 property listings</li>
+                    </ul>
+                    <a href="#" class="btn btn-dark-outline" style="width: 100%;">Start free &rarr;</a>
+                </div>
+                <div class="pricing-card popular reveal reveal-right">
+                    <div class="popular-badge">Most Popular</div>
+                    <h3>Base Access</h3>
+                    <div class="price">₹2,000 <span>/ month</span></div>
+                    <p style="color: var(--text-gray); margin-bottom: 20px;">The complete CRM to run your real estate business.</p>
+                    <ul>
+                        <li>1 organization workspace</li>
+                        <li>1 active user seat</li>
+                        <li>2,000 active leads</li>
+                        <li>5 GB document storage</li>
+                        <li>All core CRM features included</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary" style="width: 100%;">Configure your plan &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: FEATURES -->
+    <section class="features-section">
+        <div class="container features-grid">
+            <div class="features-text reveal reveal-left">
+                <h2>Everything you need to run your <span>real estate business.</span></h2>
+                <p>Base Access includes all core CRM features. Add more users, leads, storage or platforms as your business grows.</p>
+                <a href="#" class="btn btn-primary">See all features &rarr;</a>
+            </div>
+            <div class="features-visual reveal reveal-right">
+                <div class="features-phone">
+                    <div class="features-screen">
+                        <h4>Sahyak</h4>
+                        <div class="feature-item">
+                            <div class="feature-icon">&#128101;</div>
+                            <div><strong>Leads</strong><br><small style="color: #888;">Manage contacts</small></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">&#128200;</div>
+                            <div><strong>Follow-ups</strong><br><small style="color: #888;">Track activities</small></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">&#127968;</div>
+                            <div><strong>Properties</strong><br><small style="color: #888;">Listings & inventory</small></div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">&#128172;</div>
+                            <div><strong>WhatsApp Hub</strong><br><small style="color: #888;">Direct messaging</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: TRANSPARENT -->
+    <section class="transparent-section">
+        <div class="container trans-grid">
+            <div class="trans-text reveal reveal-left">
+                <h2>Transparent pricing. <span>No surprises.</span></h2>
+                <p>Simple billing, annual savings and the freedom to change your plan as your business evolves.</p>
+            </div>
+            <div class="trans-features reveal reveal-right">
+                <div class="trans-item">
+                    <div class="trans-item-icon">&#128197;</div>
+                    <div>
+                        <h4>Monthly or annual billing</h4>
+                        <p>Choose what works for you.</p>
+                    </div>
+                </div>
+                <div class="trans-item">
+                    <div class="trans-item-icon">&#128176;</div>
+                    <div>
+                        <h4>10% annual discount</h4>
+                        <p>Save more with yearly billing.</p>
+                    </div>
+                </div>
+                <div class="trans-item">
+                    <div class="trans-item-icon">&#9881;</div>
+                    <div>
+                        <h4>No setup fees</h4>
+                        <p>Get started quickly.</p>
+                    </div>
+                </div>
+                <div class="trans-item">
+                    <div class="trans-item-icon">&#128260;</div>
+                    <div>
+                        <h4>Change or cancel anytime</h4>
+                        <p>Stay flexible as you grow.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: CTA -->
+    <section class="cta-section">
+        <div class="container cta-grid">
+            <div class="cta-text reveal reveal-left">
+                <h2>Power your real estate business with <span>Sahy ak.</span></h2>
+                <p>Start free or configure your plan and see how simple it is to get the capacity you need.</p>
+                <div class="hero-cta">
+                    <a href="#" class="btn btn-primary">Configure your plan &rarr;</a>
+                    <a href="#" class="btn btn-outline">Talk to us</a>
+                </div>
+            </div>
+            <div class="cta-visual reveal reveal-right">
+                <div class="portal-frame floating">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop" alt="Surrealist Portal City">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JAVASCRIPT FOR SCROLL ANIMATIONS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const reveals = document.querySelectorAll('.reveal');
+            
+            const revealOnScroll = () => {
+                const windowHeight = window.innerHeight;
+                const elementVisible = 100;
+                
+                reveals.forEach(reveal => {
+                    const elementTop = reveal.getBoundingClientRect().top;
+                    if (elementTop < windowHeight - elementVisible) {
+                        reveal.classList.add('active');
+                    }
+                });
+            };
+            
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll(); // Trigger on load
+        });
+    </script>
+</body>
+</html>

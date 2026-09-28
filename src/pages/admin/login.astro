@@ -1,0 +1,101 @@
+---
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+
+// Check if user is already authenticated
+const sessionCookie = Astro.cookies.get('sahyak_admin_session')?.value;
+if (sessionCookie && sessionCookie.startsWith('session_')) {
+  return Astro.redirect('/admin');
+}
+
+const seoTitle = "Administrator Authentication - Sahyak CRM";
+const seoDesc = "Secure administrator portal access for Sahyak Real Estate CRM.";
+---
+
+<Layout title={seoTitle} description={seoDesc}>
+  <section class="section section-dark" style="min-height: 85vh; display: flex; align-items: center; justify-content: center; position: relative;">
+    <div class="hero-bg-sketch"></div>
+
+    <div class="container" style="max-width: 480px; position: relative; z-index: 10;">
+      <div style="background: rgba(10, 28, 22, 0.95); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: var(--radius-lg); padding: 3rem 2.5rem; box-shadow: var(--shadow-lg);">
+        
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <img src="/images/sahyak-logo.png" alt="Sahyak CRM" style="margin: 0 auto 1rem; height: 48px; width: auto; object-contain;" />
+          <h1 style="font-size: 1.75rem; color: white; margin-bottom: 0.5rem;">Admin Access Portal</h1>
+          <p style="font-size: 0.85rem; color: var(--text-light-muted);">
+            Protected by Cloudflare Access & Cryptographic Sessions
+          </p>
+        </div>
+
+        <div id="login-alert" class="form-status-alert error" style="display: none;"></div>
+
+        <form id="admin-login-form">
+          <div class="form-group">
+            <label for="admin-email" class="form-label" style="color: var(--text-light);">Admin Email</label>
+            <input type="email" id="admin-email" name="email" class="form-input" style="background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: white;" placeholder="admin@sahyak.com" required autocomplete="username" />
+          </div>
+
+          <div class="form-group">
+            <label for="admin-password" class="form-label" style="color: var(--text-light);">Security Key / Password</label>
+            <input type="password" id="admin-password" name="password" class="form-input" style="background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: white;" placeholder="Enter security secret" required autocomplete="current-password" />
+          </div>
+
+          <button type="submit" id="login-btn" class="btn btn-primary" style="width: 100%; padding: 0.95rem; margin-top: 1rem;">
+            Authenticate &rarr;
+          </button>
+        </form>
+
+        <div style="margin-top: 1.75rem; padding: 1rem; background: rgba(74, 222, 128, 0.08); border: 1px solid rgba(74, 222, 128, 0.2); border-radius: 8px; font-size: 0.8rem; color: #D1D5DB; text-align: center; line-height: 1.6;">
+          <p style="margin: 0;"><strong>Username / Email:</strong> <code style="color: #4ADE80;">admin@sahyak.com</code> (or <code style="color: #4ADE80;">admin</code>)<br /><strong>Password:</strong> <code style="color: #4ADE80;">admin123</code> (or <code style="color: #4ADE80;">sahyak2026</code>)</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    const form = document.getElementById('admin-login-form');
+    const alertEl = document.getElementById('login-alert');
+    const submitBtn = document.getElementById('login-btn');
+
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        alertEl.style.display = 'none';
+
+        const email = document.getElementById('admin-email').value.trim();
+        const password = document.getElementById('admin-password').value;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Verifying credentials...';
+
+        try {
+          const res = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            // Get redirect destination if specified in query
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get('redirect') || '/admin';
+            window.location.href = redirectUrl;
+          } else {
+            alertEl.textContent = data.message || 'Authentication failed. Please check your credentials.';
+            alertEl.style.display = 'block';
+          }
+        } catch (err) {
+          alertEl.textContent = 'Network error while attempting to log in.';
+          alertEl.style.display = 'block';
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Authenticate &rarr;';
+        }
+      });
+    }
+  </script>
+</Layout>
