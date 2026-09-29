@@ -108,14 +108,14 @@ export interface GSCTopicNode {
   rankingKeywords: number;
   targetUrl: string;
   internalLinks: number;
-  status: 'Dominant' | 'Strong' | 'Growing' | 'Emerging';
+  status: 'Dominant' | 'Strong' | 'Growing' | 'Emerging' | 'Targeted';
 }
 
 export interface GSCProductTruth {
   query: string;
   claimedFeature: string;
   landingPage: string;
-  verifiedStatus: '100% Verified Truth' | 'Aligned' | 'Feature Supported';
+  verifiedStatus: '100% Verified Truth' | 'Aligned' | 'Feature Supported' | 'Verified On-Page';
   accuracyScore: number; // 0-100
   notes: string;
 }
@@ -183,7 +183,7 @@ export interface GSCHealthOverview {
 }
 
 export interface GSCDataSummary {
-  status: 'connected' | 'not_configured' | 'auth_error' | 'permission_denied';
+  status: 'connected' | 'not_configured' | 'auth_error' | 'permission_denied' | 'api_error';
   statusMessage: string;
   isLive: boolean;
   siteUrl: string;
@@ -203,7 +203,7 @@ export interface GSCDataSummary {
   timeSeries: GSCDateRow[];
   sitemaps: GSCSitemapRow[];
   opportunities: GSCOpportunity[];
-  lastFetchedAt: string;
+  lastFetchedAt: string | null;
   // Optional / Nullable modules
   healthOverview?: GSCHealthOverview | null;
   alerts: GSCAlert[];
