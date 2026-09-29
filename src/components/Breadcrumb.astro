@@ -11,19 +11,19 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<nav aria-label="Breadcrumb" class="sahyak-breadcrumb-nav">
-  <div class="sahyak-breadcrumb-container">
-    <ol class="sahyak-breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+<nav aria-label="Breadcrumb" class="sahyak-breadcrumb-nav" style="background: #081712; border-bottom: 1px solid rgba(74, 222, 128, 0.1); width: 100%;">
+  <div class="sahyak-breadcrumb-container" style="max-width: 1300px; margin: 0 auto; padding: 0.65rem 1.5rem;">
+    <ol class="sahyak-breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList" style="display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0.5rem; list-style: none; list-style-type: none; margin: 0; padding: 0;">
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
         const position = index + 1;
         return (
-          <li class="sahyak-breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            {index > 0 && <span class="sahyak-breadcrumb-separator" aria-hidden="true">/</span>}
+          <li class="sahyak-breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" style="display: inline-flex; align-items: center; gap: 0.5rem; list-style: none; list-style-type: none; margin: 0; padding: 0;">
+            {index > 0 && <span class="sahyak-breadcrumb-separator" aria-hidden="true" style="color: #4b5563; margin-right: 0.25rem;">/</span>}
             {isLast ? (
-              <span class="sahyak-breadcrumb-current" itemprop="name" aria-current="page">{item.name}</span>
+              <span class="sahyak-breadcrumb-current" itemprop="name" aria-current="page" style="color: #f3f4f6; font-weight: 600;">{item.name}</span>
             ) : (
-              <a href={item.url || '/'} class="sahyak-breadcrumb-link" itemprop="item">
+              <a href={item.url || '/'} class="sahyak-breadcrumb-link" itemprop="item" style="color: #9ca3af; text-decoration: none; font-weight: 500;">
                 <span itemprop="name">{item.name}</span>
               </a>
             )}
