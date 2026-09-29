@@ -7,7 +7,3 @@ pages_build_output_dir = ".vercel/output/static"
 binding = "DB"
 database_name = "mobile-crm-website"
 database_id = "29ac8dce-f4f3-4878-aa36-53648608b38c"
-
-[vars]
-ADMIN_EMAILS = "admin@sahyak.com,team@sahyak.com"
-APP_ENV = "production"
