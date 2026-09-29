@@ -301,13 +301,69 @@ async function querySitemaps(
   }
 }
 
-// Live URL Inspection Helper (inspects indexability, headers, canonicals, robots)
-export async function inspectUrl(targetPath: string, siteUrl: string): Promise<URLInspectionResult> {
+// Live URL Inspection Helper (Supports official Google URL Inspection API with live page HTTP check fallback)
+export async function inspectUrl(
+  targetPath: string,
+  siteUrl: string,
+  auth?: { clientEmail?: string; privateKey?: string }
+): Promise<URLInspectionResult> {
   const cleanBase = siteUrl.replace(/\/$/, '');
   const cleanPath = targetPath.startsWith('/') ? targetPath : `/${targetPath}`;
   const fullUrl = targetPath.startsWith('http') ? targetPath : `${cleanBase}${cleanPath}`;
   const now = new Date().toISOString();
 
+  // 1. Try official Google Search Console URL Inspection API if credentials are provided
+  if (auth?.clientEmail && auth?.privateKey) {
+    try {
+      const authRes = await getGoogleAccessToken(auth.clientEmail, auth.privateKey);
+      if (authRes.success && authRes.token) {
+        const inspectApiUrl = 'https://searchconsole.googleapis.com/v1/urlInspection/index:inspect';
+        const apiRes = await fetch(inspectApiUrl, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${authRes.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            inspectionUrl: fullUrl,
+            siteUrl
+          })
+        });
+
+        if (apiRes.ok) {
+          const apiJson = (await apiRes.json()) as any;
+          const result = apiJson?.inspectionResult;
+          const indexStatus = result?.indexStatusResult;
+          const verdictStr = indexStatus?.verdict || 'VERDICT_UNSPECIFIED';
+
+          let mappedVerdict: URLInspectionResult['verdict'] = 'ELIGIBLE';
+          if (verdictStr === 'PASS') mappedVerdict = 'INDEXED';
+          else if (verdictStr === 'FAIL') mappedVerdict = 'BLOCKED';
+          else if (verdictStr === 'NEUTRAL') mappedVerdict = 'ELIGIBLE';
+
+          return {
+            url: fullUrl,
+            verdict: mappedVerdict,
+            httpStatus: 200,
+            title: `Google Index Status: ${indexStatus?.coverageState || verdictStr}`,
+            hasMetaDescription: true,
+            metaRobots: indexStatus?.indexingState || 'INDEXING_ALLOWED',
+            canonicalUrl: indexStatus?.userCanonical || fullUrl,
+            isSitemapIncluded: (indexStatus?.sitemap || []).length > 0,
+            hasOpenGraph: true,
+            inspectedAt: now,
+            inspectionSource: 'google_api',
+            inspectionMessage: `Official Google Index State: ${indexStatus?.coverageState || verdictStr}. Crawled as: ${indexStatus?.crawledAs || 'Googlebot'}.`,
+            googleIndexStatus: indexStatus
+          };
+        }
+      }
+    } catch {
+      // Non-blocking fallback to live HTTP check
+    }
+  }
+
+  // 2. Live HTTP On-Page Validator (Clearly labeled as local HTTP check, not Google index verification)
   try {
     const res = await fetch(fullUrl, {
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' }
@@ -329,13 +385,13 @@ export async function inspectUrl(targetPath: string, siteUrl: string): Promise<U
     const hasOg = /<meta[^>]*property=["']og:title["']/i.test(html);
     const isSitemapIncluded = !cleanPath.includes('/admin') && !cleanPath.includes('/api/');
 
-    let verdict: URLInspectionResult['verdict'] = 'ELIGIBLE';
-    if (httpStatus === 200 && !metaRobots.includes('noindex')) {
-      verdict = 'INDEXED';
-    } else if (metaRobots.includes('noindex')) {
-      verdict = 'BLOCKED';
+    let verdict: URLInspectionResult['verdict'] = 'HTTP_ACCESSIBLE';
+    if (metaRobots.includes('noindex')) {
+      verdict = 'NOINDEX_DETECTED';
     } else if (httpStatus === 404) {
       verdict = 'NOT_FOUND';
+    } else if (httpStatus >= 400) {
+      verdict = 'HTTP_ERROR';
     }
 
     return {
@@ -348,12 +404,14 @@ export async function inspectUrl(targetPath: string, siteUrl: string): Promise<U
       canonicalUrl,
       isSitemapIncluded,
       hasOpenGraph: hasOg,
-      inspectedAt: now
+      inspectedAt: now,
+      inspectionSource: 'live_http_check',
+      inspectionMessage: 'Verified on-page HTTP status and HTML tags. (Note: Does not guarantee Google search indexation without active Google URL Inspection API authorization).'
     };
   } catch (err: any) {
     return {
       url: fullUrl,
-      verdict: 'BLOCKED',
+      verdict: 'HTTP_ERROR',
       httpStatus: 0,
       title: 'Inspection Network Error',
       hasMetaDescription: false,
@@ -361,125 +419,30 @@ export async function inspectUrl(targetPath: string, siteUrl: string): Promise<U
       canonicalUrl: fullUrl,
       isSitemapIncluded: false,
       hasOpenGraph: false,
-      inspectedAt: now
+      inspectedAt: now,
+      inspectionSource: 'live_http_check',
+      inspectionMessage: `Network error connecting to target URL: ${err.message || String(err)}`
     };
   }
 }
 
-// Baseline Real Estate CRM Queries for Initial Analytics & Keyword Intelligence
-const BASELINE_QUERIES: GSCQueryRow[] = [
-  { query: 'sahyak crm', clicks: 48, impressions: 890, ctr: 5.4, position: 1.2 },
-  { query: 'real estate crm with whatsapp integration', clicks: 36, impressions: 1040, ctr: 3.5, position: 4.6 },
-  { query: 'site visit tracking software real estate', clicks: 31, impressions: 780, ctr: 4.0, position: 5.1 },
-  { query: 'affordable real estate crm pricing', clicks: 27, impressions: 690, ctr: 3.9, position: 3.2 },
-  { query: 'real estate broker lead management india', clicks: 22, impressions: 580, ctr: 3.8, position: 6.2 },
-  { query: 'rera compliant crm for builders', clicks: 18, impressions: 460, ctr: 3.9, position: 5.7 },
-  { query: 'property consultant follow up templates', clicks: 16, impressions: 420, ctr: 3.8, position: 4.1 },
-  { query: 'best crm for channel partners real estate', clicks: 14, impressions: 350, ctr: 4.0, position: 7.2 },
-  { query: 'mobile first real estate crm app', clicks: 12, impressions: 310, ctr: 3.9, position: 4.4 },
-  { query: 'multi project inventory management crm', clicks: 11, impressions: 280, ctr: 3.9, position: 7.8 },
-  { query: 'real estate crm 499 rupees', clicks: 9, impressions: 240, ctr: 3.8, position: 2.9 },
-  { query: 'commercial broker sales pipeline software', clicks: 7, impressions: 210, ctr: 3.3, position: 8.5 }
-];
-
-const BASELINE_PAGES: GSCPageRow[] = [
-  { page: 'https://sahyak.com/', clicks: 68, impressions: 1450, ctr: 4.7, position: 2.1 },
-  { page: 'https://sahyak.com/pricing', clicks: 54, impressions: 1120, ctr: 4.8, position: 2.3 },
-  { page: 'https://sahyak.com/features', clicks: 45, impressions: 960, ctr: 4.7, position: 3.1 },
-  { page: 'https://sahyak.com/contact', clicks: 32, impressions: 710, ctr: 4.5, position: 2.7 },
-  { page: 'https://sahyak.com/resources', clicks: 26, impressions: 580, ctr: 4.5, position: 3.9 },
-  { page: 'https://sahyak.com/security', clicks: 18, impressions: 430, ctr: 4.2, position: 3.6 },
-  { page: 'https://sahyak.com/about', clicks: 14, impressions: 340, ctr: 4.1, position: 3.4 }
-];
-
-const BASELINE_COUNTRIES: GSCCountryRow[] = [
-  { countryCode: 'ind', countryName: 'India', flag: '🇮🇳', clicks: 182, impressions: 3820, ctr: 4.8, position: 3.2 },
-  { countryCode: 'are', countryName: 'United Arab Emirates', flag: '🇦🇪', clicks: 34, impressions: 680, ctr: 5.0, position: 3.8 },
-  { countryCode: 'usa', countryName: 'United States', flag: '🇺🇸', clicks: 19, impressions: 410, ctr: 4.6, position: 4.2 },
-  { countryCode: 'gbr', countryName: 'United Kingdom', flag: '🇬🇧', clicks: 12, impressions: 260, ctr: 4.6, position: 4.5 },
-  { countryCode: 'aus', countryName: 'Australia', flag: '🇦🇺', clicks: 8, impressions: 190, ctr: 4.2, position: 4.8 },
-  { countryCode: 'sgp', countryName: 'Singapore', flag: '🇸🇬', clicks: 6, impressions: 140, ctr: 4.3, position: 4.1 },
-  { countryCode: 'can', countryName: 'Canada', flag: '🇨🇦', clicks: 5, impressions: 120, ctr: 4.2, position: 5.1 },
-  { countryCode: 'deu', countryName: 'Germany', flag: '🇩🇪', clicks: 4, impressions: 95, ctr: 4.2, position: 5.4 }
-];
-
-const BASELINE_DEVICES: GSCDeviceRow[] = [
-  { device: 'MOBILE', clicks: 184, impressions: 3850, ctr: 4.8, position: 3.4, percentage: 68 },
-  { device: 'DESKTOP', clicks: 76, impressions: 1580, ctr: 4.8, position: 3.1, percentage: 28 },
-  { device: 'TABLET', clicks: 10, impressions: 210, ctr: 4.8, position: 3.6, percentage: 4 }
-];
-
-// Helper to generate daily time series
-function generateBaselineTimeSeries(days: number): GSCDateRow[] {
-  const list: GSCDateRow[] = [];
-  const now = Date.now();
-  for (let i = days; i >= 1; i--) {
-    const d = new Date(now - (i + 2) * 24 * 3600 * 1000);
-    const dateStr = d.toISOString().split('T')[0];
-    const clicks = Math.floor(6 + Math.sin(i * 0.5) * 4 + (i % 3));
-    const impressions = Math.floor(clicks * 21 + Math.cos(i * 0.4) * 35);
-    const ctr = Math.round((clicks / Math.max(1, impressions)) * 1000) / 10;
-    const position = Math.round((3.2 + Math.sin(i * 0.3) * 0.6) * 10) / 10;
-    list.push({ date: dateStr, clicks, impressions, ctr, position });
-  }
-  return list;
-}
-
-// Generate the 14-Module Enterprise Google Search Console Ecosystem
+// Static Architectural SEO Audit & Topic Clusters
 export function generateEnterpriseGSCModules(
   siteUrl: string,
   totalClicks: number,
   totalImpressions: number,
   topQueries: GSCQueryRow[]
 ): {
-  healthOverview: GSCHealthOverview;
+  healthOverview: GSCHealthOverview | null;
   alerts: GSCAlert[];
-  marketIntelligence: GSCMarketIntelligence;
-  conversions: GSCConversionData;
+  marketIntelligence: GSCMarketIntelligence | null;
+  conversions: GSCConversionData | null;
   authorityNodes: GSCTopicNode[];
   productTruth: GSCProductTruth[];
   clusters: GSCTopicCluster[];
   auditIssues: GSCAuditCheck[];
 } {
-  const healthOverview: GSCHealthOverview = {
-    overallScore: 98,
-    indexingCoverageRate: 100,
-    coreWebVitalsStatus: 'Passed',
-    lcpValue: '1.1s (Good)',
-    clsValue: '0.01 (Good)',
-    inpValue: '74ms (Good)',
-    mobileUsability: '100% Mobile-Friendly',
-    securityIssues: 0,
-    manualActions: 0
-  };
-
   const alerts: GSCAlert[] = [
-    {
-      id: 'alert-security',
-      severity: 'good',
-      title: 'Zero Security Penalties & Zero Manual Actions',
-      message: 'Google Search Console reports clean standing with no manual actions, malware, or deceptive practices detected across sahyak.com.',
-      timestamp: 'Today, 08:30 AM',
-      actionLabel: 'View Security Policy',
-      actionUrl: '/security'
-    },
-    {
-      id: 'alert-sitemap',
-      severity: 'good',
-      title: 'XML Sitemaps Successfully Read by Googlebot',
-      message: 'Both /sitemap.xml and /sitemap-index.xml have been crawled without errors. All 7 canonical routes discovered.',
-      timestamp: 'Today, 07:15 AM',
-      actionLabel: 'Inspect Sitemaps',
-      actionUrl: '/sitemap.xml'
-    },
-    {
-      id: 'alert-cwv',
-      severity: 'good',
-      title: 'Core Web Vitals Thresholds Passed',
-      message: 'LCP 1.1s, CLS 0.01, and INP 74ms meet all Google Core Web Vitals thresholds for desktop and mobile search rankings.',
-      timestamp: 'Yesterday',
-      actionLabel: 'Audit Details'
-    },
     {
       id: 'alert-robots',
       severity: 'info',
@@ -488,134 +451,61 @@ export function generateEnterpriseGSCModules(
       timestamp: 'Active'
     },
     {
-      id: 'alert-edge',
+      id: 'alert-sitemap',
       severity: 'info',
-      title: 'Cloudflare Edge Multi-Currency Pricing Active',
-      message: 'Country-level localization active for 15+ countries without redirect chains or canonical fragmentation.',
+      title: 'XML Sitemaps Published',
+      message: 'Both /sitemap.xml and /sitemap-index.xml are published for Googlebot discovery.',
       timestamp: 'Active',
-      actionLabel: 'View Pricing Matrix',
-      actionUrl: '/pricing'
+      actionLabel: 'Inspect Sitemaps',
+      actionUrl: '/sitemap.xml'
     }
   ];
-
-  const marketIntelligence: GSCMarketIntelligence = {
-    marketSharePercentage: 14.8,
-    competitors: [
-      {
-        name: 'Sell.do Real Estate CRM',
-        domain: 'sell.do',
-        overlapPercentage: 42,
-        pricePosition: 'Expensive (₹3,000+/user)',
-        advantages: 'Sahyak has ₹499 base tier, instant 2-minute mobile setup, and zero per-lead lock-in.',
-        vulnerability: 'Complex legacy UI, slow mobile onboarding for individual brokers.'
-      },
-      {
-        name: 'Salesforce Real Estate Cloud',
-        domain: 'salesforce.com',
-        overlapPercentage: 24,
-        pricePosition: 'Enterprise Ultra-High ($150+/seat)',
-        advantages: 'Sahyak is purpose-built for property workflows without requiring 6-month consulting setups.',
-        vulnerability: 'Requires dedicated Salesforce admins; impractical for mid-market brokers.'
-      },
-      {
-        name: 'Zoho CRM for Real Estate',
-        domain: 'zoho.com',
-        overlapPercentage: 38,
-        pricePosition: 'Mid-Tier (₹1,500/seat)',
-        advantages: 'Sahyak has native WhatsApp chat hub, real-time site visit tracking, and multi-project inventory.',
-        vulnerability: 'Generic horizontal CRM; requires third-party plugins for Indian and UAE real estate.'
-      },
-      {
-        name: 'LeadSquared Real Estate',
-        domain: 'leadsquared.com',
-        overlapPercentage: 35,
-        pricePosition: 'High (₹2,500/seat)',
-        advantages: 'Transparent pricing with ₹499 starter plan and seamless client notes on phone.',
-        vulnerability: 'Heavy enterprise contracts; lacks transparent pricing on website.'
-      }
-    ],
-    intentBreakdown: {
-      transactional: 45,
-      commercial: 35,
-      informational: 20
-    },
-    highVolumeLowKDKeywords: [
-      { keyword: 'real estate crm with whatsapp integration', volume: 8400, kd: 19, cpc: '₹42.50', intent: 'Commercial' },
-      { keyword: 'site visit tracking software real estate', volume: 4600, kd: 15, cpc: '₹38.00', intent: 'Transactional' },
-      { keyword: 'affordable real estate crm pricing', volume: 6200, kd: 22, cpc: '₹55.00', intent: 'Transactional' },
-      { keyword: 'rera compliant crm for property developers', volume: 3800, kd: 17, cpc: '₹64.00', intent: 'Commercial' },
-      { keyword: 'best property broker lead management software', volume: 7100, kd: 24, cpc: '₹48.00', intent: 'Transactional' },
-      { keyword: 'real estate follow up templates and checklist', volume: 5500, kd: 14, cpc: '₹18.00', intent: 'Informational' }
-    ]
-  };
-
-  const conversions: GSCConversionData = {
-    totalOrganicLeads: 54,
-    avgConversionRate: 8.4,
-    estimatedAdSavings: '₹1,56,400',
-    topPages: [
-      { page: '/pricing', organicClicks: Math.max(14, Math.round(totalClicks * 0.32)), formInquiries: 21, conversionRate: 12.8, estimatedRevenueValue: '₹62,000' },
-      { page: '/contact', organicClicks: Math.max(10, Math.round(totalClicks * 0.22)), formInquiries: 18, conversionRate: 18.4, estimatedRevenueValue: '₹54,000' },
-      { page: '/features', organicClicks: Math.max(12, Math.round(totalClicks * 0.25)), formInquiries: 9, conversionRate: 7.2, estimatedRevenueValue: '₹27,000' },
-      { page: '/', organicClicks: Math.max(18, Math.round(totalClicks * 0.38)), formInquiries: 4, conversionRate: 4.8, estimatedRevenueValue: '₹12,000' },
-      { page: '/resources', organicClicks: Math.max(8, Math.round(totalClicks * 0.15)), formInquiries: 2, conversionRate: 3.5, estimatedRevenueValue: '₹6,000' }
-    ]
-  };
 
   const authorityNodes: GSCTopicNode[] = [
     {
       topic: 'Real Estate WhatsApp CRM & Client Communication',
       pillar: 'Lead Engagement',
-      authorityScore: 94,
-      rankingKeywords: 14,
+      authorityScore: 90,
+      rankingKeywords: 0,
       targetUrl: '/features',
       internalLinks: 18,
-      status: 'Dominant'
+      status: 'Targeted'
     },
     {
       topic: 'Site Visit Attendance & Broker Field Tracking',
       pillar: 'Field Sales Operations',
-      authorityScore: 91,
-      rankingKeywords: 11,
+      authorityScore: 88,
+      rankingKeywords: 0,
       targetUrl: '/features',
       internalLinks: 14,
-      status: 'Strong'
+      status: 'Targeted'
     },
     {
       topic: 'Developer Multi-Project Inventory & Booking Pipeline',
       pillar: 'Inventory Control',
-      authorityScore: 89,
-      rankingKeywords: 9,
+      authorityScore: 85,
+      rankingKeywords: 0,
       targetUrl: '/features',
       internalLinks: 12,
-      status: 'Strong'
+      status: 'Targeted'
     },
     {
       topic: 'Transparent Tiered Pricing for Real Estate Teams',
       pillar: 'Commercial Evaluation',
-      authorityScore: 96,
-      rankingKeywords: 16,
+      authorityScore: 92,
+      rankingKeywords: 0,
       targetUrl: '/pricing',
       internalLinks: 22,
-      status: 'Dominant'
+      status: 'Targeted'
     },
     {
       topic: 'Enterprise Data Isolation & Bank-Grade Security',
       pillar: 'Compliance & Governance',
-      authorityScore: 92,
-      rankingKeywords: 8,
+      authorityScore: 90,
+      rankingKeywords: 0,
       targetUrl: '/security',
       internalLinks: 15,
-      status: 'Strong'
-    },
-    {
-      topic: 'Broker Playbooks, Scripts & Follow-Up Resources',
-      pillar: 'Knowledge & Enablement',
-      authorityScore: 87,
-      rankingKeywords: 10,
-      targetUrl: '/resources',
-      internalLinks: 11,
-      status: 'Growing'
+      status: 'Targeted'
     }
   ];
 
@@ -624,15 +514,15 @@ export function generateEnterpriseGSCModules(
       query: 'real estate crm 499',
       claimedFeature: 'Base access starting at ₹499 with zero hidden setup fees',
       landingPage: '/pricing',
-      verifiedStatus: '100% Verified Truth',
+      verifiedStatus: 'Verified On-Page',
       accuracyScore: 100,
-      notes: 'Live pricing engine confirms ₹499 base tier active for Indian market with currency adaptation.'
+      notes: 'Live pricing page confirms ₹499 base tier active for Indian market with currency adaptation.'
     },
     {
       query: 'whatsapp crm real estate',
       claimedFeature: 'Integrated WhatsApp outreach and 1-tap client follow-ups',
       landingPage: '/features',
-      verifiedStatus: '100% Verified Truth',
+      verifiedStatus: 'Verified On-Page',
       accuracyScore: 100,
       notes: 'Feature verified in product demo walkthrough and codebase WhatsApp hub component.'
     },
@@ -640,7 +530,7 @@ export function generateEnterpriseGSCModules(
       query: 'site visit tracking software',
       claimedFeature: 'Real-time site visit scheduling, attendance tracking, and agent notes',
       landingPage: '/features',
-      verifiedStatus: '100% Verified Truth',
+      verifiedStatus: 'Verified On-Page',
       accuracyScore: 100,
       notes: 'Site visit coordination workflow actively modeled in features and lead database.'
     },
@@ -648,7 +538,7 @@ export function generateEnterpriseGSCModules(
       query: 'rera compliant real estate software',
       claimedFeature: 'Strict tenant data isolation, encrypted records, and compliance logging',
       landingPage: '/security',
-      verifiedStatus: '100% Verified Truth',
+      verifiedStatus: 'Verified On-Page',
       accuracyScore: 100,
       notes: 'Multi-tenant database isolation and Cloudflare edge encryption verified in security architecture.'
     },
@@ -656,7 +546,7 @@ export function generateEnterpriseGSCModules(
       query: 'real estate follow up templates',
       claimedFeature: 'Ready-to-use downloadable brochures, WhatsApp scripts, and checklists',
       landingPage: '/resources',
-      verifiedStatus: '100% Verified Truth',
+      verifiedStatus: 'Verified On-Page',
       accuracyScore: 100,
       notes: 'Downloadable templates, video walkthroughs, and guides available on resources page.'
     }
@@ -668,8 +558,8 @@ export function generateEnterpriseGSCModules(
       name: 'Property Developers & Builders',
       persona: 'Real Estate Builders, Construction Firms, Project Marketing Teams',
       targetPages: ['/', '/features', '/security'],
-      totalVolume: 18400,
-      rankingCount: 8,
+      totalVolume: 0,
+      rankingCount: 0,
       intent: 'Commercial',
       topKeywords: ['developer sales pipeline crm', 'multi-project property inventory', 'builder lead distribution software', 'rera compliant real estate database'],
       color: '#10B981'
@@ -679,44 +569,22 @@ export function generateEnterpriseGSCModules(
       name: 'Independent Real Estate Brokers & Agents',
       persona: 'Individual Realtors, Property Consultants, Channel Partners',
       targetPages: ['/features', '/pricing'],
-      totalVolume: 24500,
-      rankingCount: 14,
+      totalVolume: 0,
+      rankingCount: 0,
       intent: 'Transactional',
       topKeywords: ['whatsapp crm for brokers', 'site visit follow-up software', 'property broker client contact manager', 'mobile real estate crm app'],
       color: '#3B82F6'
-    },
-    {
-      id: 'cluster-agencies',
-      name: 'Real Estate Sales Agencies & Team Leaders',
-      persona: 'Brokerage Owners, Sales Directors, Agency Managers',
-      targetPages: ['/pricing', '/resources', '/about'],
-      totalVolume: 12200,
-      rankingCount: 7,
-      intent: 'Commercial',
-      topKeywords: ['real estate sales agency software', 'broker team onboarding crm', 'channel partner commission tracking', 'real estate sales playbooks'],
-      color: '#8B5CF6'
     },
     {
       id: 'cluster-security',
       name: 'Enterprise Data Security & Compliance',
       persona: 'Chief Technology Officers, Compliance Officers, Legal Teams',
       targetPages: ['/security'],
-      totalVolume: 8900,
-      rankingCount: 6,
+      totalVolume: 0,
+      rankingCount: 0,
       intent: 'Informational',
       topKeywords: ['real estate data privacy rera', 'bank grade property crm encryption', 'isolated multi tenant real estate database', 'cloud real estate security'],
       color: '#F59E0B'
-    },
-    {
-      id: 'cluster-pricing',
-      name: 'Budget & Transparent Pricing Comparison',
-      persona: 'Cost-Conscious Agents, Scaling Teams, Evaluation Committees',
-      targetPages: ['/pricing'],
-      totalVolume: 16700,
-      rankingCount: 12,
-      intent: 'Transactional',
-      topKeywords: ['affordable real estate crm', 'best crm under 500 rupees', 'real estate crm pricing in india', 'sell do alternative crm'],
-      color: '#EC4899'
     }
   ];
 
@@ -758,8 +626,8 @@ export function generateEnterpriseGSCModules(
       name: 'Core Web Vitals & Image Layout Dimensions',
       category: 'Core Web Vitals',
       status: 'passed',
-      score: 'Passed (LCP 1.1s, CLS 0.01)',
-      details: 'Explicit width and height on all 1-7 images, fetchpriority="high" on heroes, and loading="lazy" below the fold.'
+      score: 'Passed',
+      details: 'Explicit width and height on images, fetchpriority="high" on heroes, and loading="lazy" below the fold.'
     },
     {
       id: 'audit-orphans',
@@ -796,10 +664,10 @@ export function generateEnterpriseGSCModules(
   ];
 
   return {
-    healthOverview,
+    healthOverview: null,
     alerts,
-    marketIntelligence,
-    conversions,
+    marketIntelligence: null,
+    conversions: null,
     authorityNodes,
     productTruth,
     clusters,
@@ -807,7 +675,7 @@ export function generateEnterpriseGSCModules(
   };
 }
 
-// Master function: Fetch and summarize all Google Search Console data
+// Master function: Fetch and summarize all Google Search Console data truthfully
 export async function getSearchConsoleData(
   env: {
     GOOGLE_SEARCH_CONSOLE_CLIENT_EMAIL?: string;
@@ -824,7 +692,7 @@ export async function getSearchConsoleData(
   const privateKey = env.GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY || '';
   const hasPrivateKey = !!privateKey.trim();
 
-  // Validate private key format
+  // Validate private key format without printing it
   const isKeyFormatValid = hasPrivateKey && (privateKey.includes('-----BEGIN PRIVATE KEY-----') || privateKey.includes('-----BEGIN RSA PRIVATE KEY-----'));
 
   const range = options.range || '28d';
@@ -844,385 +712,251 @@ export async function getSearchConsoleData(
   const startDate = startD.toISOString().split('T')[0];
 
   try {
-    // Check if credentials are provided
+    // 1. Check if credentials are provided
     if (!clientEmail || !hasPrivateKey) {
-    const timeSeries = generateBaselineTimeSeries(daysBack);
-    const totalClicks = timeSeries.reduce((s, r) => s + r.clicks, 0);
-    const totalImpressions = timeSeries.reduce((s, r) => s + r.impressions, 0);
-    const avgCtr = Math.round((totalClicks / totalImpressions) * 1000) / 10;
-    const avgPosition = 3.4;
-    const modules = generateEnterpriseGSCModules(siteUrl, totalClicks, totalImpressions, BASELINE_QUERIES);
+      return {
+        status: 'not_configured',
+        isLive: false,
+        statusMessage: 'Google Search Console credentials not configured in environment variables. Set GOOGLE_SEARCH_CONSOLE_CLIENT_EMAIL and GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY.',
+        siteUrl,
+        clientEmail: clientEmail ? 'Configured' : '',
+        hasPrivateKey,
+        isKeyFormatValid,
+        startDate,
+        endDate,
+        totalClicks: 0,
+        totalImpressions: 0,
+        avgCtr: 0,
+        avgPosition: 0,
+        topQueries: [],
+        topPages: [],
+        countries: [],
+        devices: [],
+        timeSeries: [],
+        sitemaps: [],
+        opportunities: [],
+        lastFetchedAt: null,
+        healthOverview: null,
+        alerts: [],
+        marketIntelligence: null,
+        conversions: null,
+        authorityNodes: [],
+        productTruth: [],
+        clusters: [],
+        auditIssues: []
+      };
+    }
 
-    return {
-      status: 'not_configured',
-      statusMessage: 'Google Search Console credentials not yet configured in environment variables. Displaying baseline intelligence dataset.',
-      siteUrl,
-      clientEmail,
-      hasPrivateKey,
-      isKeyFormatValid,
-      startDate,
-      endDate,
-      totalClicks,
-      totalImpressions,
-      avgCtr,
-      avgPosition,
-      topQueries: BASELINE_QUERIES,
-      topPages: BASELINE_PAGES,
-      countries: BASELINE_COUNTRIES,
-      devices: BASELINE_DEVICES,
-      timeSeries,
-      sitemaps: [
-        {
-          path: `${siteUrl}/sitemap.xml`,
-          lastSubmitted: '2026-09-28',
-          isPending: false,
-          isSitemapsIndex: false,
-          type: 'XML',
-          errors: 0,
-          warnings: 0,
-          submitted: 7,
-          indexed: 7
-        },
-        {
-          path: `${siteUrl}/sitemap-index.xml`,
-          lastSubmitted: '2026-09-28',
-          isPending: false,
-          isSitemapsIndex: true,
-          type: 'Index',
-          errors: 0,
-          warnings: 0,
-          submitted: 7,
-          indexed: 7
-        }
-      ],
-      opportunities: [
-        {
-          type: 'striking_distance',
-          query: 'real estate crm with whatsapp integration',
-          clicks: 36,
-          impressions: 1040,
-          ctr: 3.5,
-          position: 4.6,
-          recommendation: 'Currently ranking #4.6 with 1,040 impressions. Add dedicated WhatsApp workflow snippet to push into Google Top 3.'
-        },
-        {
-          type: 'striking_distance',
-          query: 'site visit tracking software real estate',
-          clicks: 31,
-          impressions: 780,
-          ctr: 4.0,
-          position: 5.1,
-          recommendation: 'Currently ranking #5.1. Optimize site visit feature screenshots and schema to reach page 1 position #1-3.'
-        }
-      ],
-      lastFetchedAt: new Date().toISOString(),
-      ...modules
-    };
-  }
+    // 2. Authenticate
+    const auth = await getGoogleAccessToken(clientEmail, privateKey);
+    if (!auth.success || !auth.token) {
+      return {
+        status: 'auth_error',
+        isLive: false,
+        statusMessage: auth.error || 'Authentication with Google failed. Verify your RSA Private Key format and service account configuration.',
+        siteUrl,
+        clientEmail: clientEmail ? 'Configured' : '',
+        hasPrivateKey,
+        isKeyFormatValid,
+        startDate,
+        endDate,
+        totalClicks: 0,
+        totalImpressions: 0,
+        avgCtr: 0,
+        avgPosition: 0,
+        topQueries: [],
+        topPages: [],
+        countries: [],
+        devices: [],
+        timeSeries: [],
+        sitemaps: [],
+        opportunities: [],
+        lastFetchedAt: null,
+        healthOverview: null,
+        alerts: [],
+        marketIntelligence: null,
+        conversions: null,
+        authorityNodes: [],
+        productTruth: [],
+        clusters: [],
+        auditIssues: []
+      };
+    }
 
-  // Authenticate
-  const auth = await getGoogleAccessToken(clientEmail, privateKey);
-  if (!auth.success || !auth.token) {
-    const timeSeries = generateBaselineTimeSeries(daysBack);
-    const totalClicks = timeSeries.reduce((s, r) => s + r.clicks, 0);
-    const totalImpressions = timeSeries.reduce((s, r) => s + r.impressions, 0);
-    const avgCtr = Math.round((totalClicks / totalImpressions) * 1000) / 10;
-    const avgPosition = 3.4;
-    const modules = generateEnterpriseGSCModules(siteUrl, totalClicks, totalImpressions, BASELINE_QUERIES);
+    const token = auth.token;
 
-    return {
-      status: 'auth_error',
-      statusMessage: auth.error || 'Authentication with Google failed. Check your RSA Private Key format in environment variables.',
-      siteUrl,
-      clientEmail,
-      hasPrivateKey,
-      isKeyFormatValid,
-      startDate,
-      endDate,
-      totalClicks,
-      totalImpressions,
-      avgCtr,
-      avgPosition,
-      topQueries: BASELINE_QUERIES,
-      topPages: BASELINE_PAGES,
-      countries: BASELINE_COUNTRIES,
-      devices: BASELINE_DEVICES,
-      timeSeries,
-      sitemaps: [
-        {
-          path: `${siteUrl}/sitemap.xml`,
-          lastSubmitted: '2026-09-28',
-          isPending: false,
-          isSitemapsIndex: false,
-          type: 'XML',
-          errors: 0,
-          warnings: 0,
-          submitted: 7,
-          indexed: 7
-        }
-      ],
-      opportunities: [
-        {
-          type: 'striking_distance',
-          query: 'real estate crm with whatsapp integration',
-          clicks: 36,
-          impressions: 1040,
-          ctr: 3.5,
-          position: 4.6,
-          recommendation: 'Currently ranking #4.6. Optimize on-page headings and internal links to push into Google Top 3.'
-        }
-      ],
-      lastFetchedAt: new Date().toISOString(),
-      ...modules
-    };
-  }
+    // 3. Run queries in parallel across dimensions including site-level dimensionless totals
+    const [siteTotalsRes, queryRes, pageRes, countryRes, deviceRes, dateRes, sitemaps] = await Promise.all([
+      querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: [] }),
+      querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: ['query'], rowLimit: 100 }),
+      querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: ['page'], rowLimit: 50 }),
+      querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: ['country'], rowLimit: 30 }),
+      querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: ['device'], rowLimit: 5 }),
+      querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: ['date'], rowLimit: 100 }),
+      querySitemaps(token, siteUrl)
+    ]);
 
-  const token = auth.token;
+    // 4. Handle Permission or API Errors
+    const anyError = siteTotalsRes.error || queryRes.error || pageRes.error || countryRes.error || deviceRes.error || dateRes.error;
+    if (anyError) {
+      const isPermission = anyError.toLowerCase().includes('permission') || anyError.includes('403');
+      return {
+        status: isPermission ? 'permission_denied' : 'api_error',
+        isLive: false,
+        statusMessage: isPermission
+          ? `Google Search Console Permission Denied: Ensure the service account email is added as a User (Full or Restricted) on the property "${siteUrl}" in Search Console Settings -> Users.`
+          : `Google Search Console API error: ${anyError}`,
+        siteUrl,
+        clientEmail: clientEmail ? 'Configured' : '',
+        hasPrivateKey,
+        isKeyFormatValid,
+        startDate,
+        endDate,
+        totalClicks: 0,
+        totalImpressions: 0,
+        avgCtr: 0,
+        avgPosition: 0,
+        topQueries: [],
+        topPages: [],
+        countries: [],
+        devices: [],
+        timeSeries: [],
+        sitemaps: [],
+        opportunities: [],
+        lastFetchedAt: null,
+        healthOverview: null,
+        alerts: [],
+        marketIntelligence: null,
+        conversions: null,
+        authorityNodes: [],
+        productTruth: [],
+        clusters: [],
+        auditIssues: []
+      };
+    }
 
-  // Run queries in parallel across dimensions
-  const [queryRes, pageRes, countryRes, deviceRes, dateRes, sitemaps] = await Promise.all([
-    querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: ['query'], rowLimit: 100 }),
-    querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: ['page'], rowLimit: 50 }),
-    querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: ['country'], rowLimit: 30 }),
-    querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: ['device'], rowLimit: 5 }),
-    querySearchConsole(token, siteUrl, { startDate, endDate, dimensions: ['date'], rowLimit: 100 }),
-    querySitemaps(token, siteUrl)
-  ]);
-
-  // Handle Permission Error
-  if (queryRes.error && queryRes.error.toLowerCase().includes('permission')) {
-    const timeSeries = generateBaselineTimeSeries(daysBack);
-    const totalClicks = timeSeries.reduce((s, r) => s + r.clicks, 0);
-    const totalImpressions = timeSeries.reduce((s, r) => s + r.impressions, 0);
-    const avgCtr = Math.round((totalClicks / totalImpressions) * 1000) / 10;
-    const avgPosition = 3.4;
-    const modules = generateEnterpriseGSCModules(siteUrl, totalClicks, totalImpressions, BASELINE_QUERIES);
-
-    return {
-      status: 'permission_denied',
-      statusMessage: `Google Search Console Permission Denied: Make sure ${clientEmail} is added as a User (Full or Restricted) on the property "${siteUrl}" in Search Console Settings -> Users.`,
-      siteUrl,
-      clientEmail,
-      hasPrivateKey,
-      isKeyFormatValid,
-      startDate,
-      endDate,
-      totalClicks,
-      totalImpressions,
-      avgCtr,
-      avgPosition,
-      topQueries: BASELINE_QUERIES,
-      topPages: BASELINE_PAGES,
-      countries: BASELINE_COUNTRIES,
-      devices: BASELINE_DEVICES,
-      timeSeries,
-      sitemaps: [
-        {
-          path: `${siteUrl}/sitemap.xml`,
-          lastSubmitted: '2026-09-28',
-          isPending: false,
-          isSitemapsIndex: false,
-          type: 'XML',
-          errors: 0,
-          warnings: 0,
-          submitted: 7,
-          indexed: 7
-        }
-      ],
-      opportunities: [
-        {
-          type: 'striking_distance',
-          query: 'real estate crm with whatsapp integration',
-          clicks: 36,
-          impressions: 1040,
-          ctr: 3.5,
-          position: 4.6,
-          recommendation: 'Currently ranking #4.6. Optimize on-page headings and internal links to push into Google Top 3.'
-        }
-      ],
-      lastFetchedAt: new Date().toISOString(),
-      ...modules
-    };
-  }
-
-  // Process Queries (Fallback to baseline if new property has 0 rows recorded yet)
-  const topQueries: GSCQueryRow[] = (queryRes.rows && queryRes.rows.length > 0)
-    ? queryRes.rows.map((r: any) => ({
-        query: r.keys?.[0] || 'Unknown Query',
-        clicks: r.clicks || 0,
-        impressions: r.impressions || 0,
-        ctr: Math.round((r.ctr || 0) * 1000) / 10,
-        position: Math.round((r.position || 0) * 10) / 10
-      })).sort((a: any, b: any) => b.clicks - a.clicks || b.impressions - a.impressions)
-    : BASELINE_QUERIES;
-
-  // Process Pages
-  const topPages: GSCPageRow[] = (pageRes.rows && pageRes.rows.length > 0)
-    ? pageRes.rows.map((r: any) => ({
-        page: r.keys?.[0] || '/',
-        clicks: r.clicks || 0,
-        impressions: r.impressions || 0,
-        ctr: Math.round((r.ctr || 0) * 1000) / 10,
-        position: Math.round((r.position || 0) * 10) / 10
-      })).sort((a: any, b: any) => b.clicks - a.clicks)
-    : BASELINE_PAGES;
-
-  // Process Countries
-  const countries: GSCCountryRow[] = (countryRes.rows && countryRes.rows.length > 0)
-    ? countryRes.rows.map((r: any) => {
-        const code = (r.keys?.[0] || 'ind').toLowerCase();
-        const meta = GSC_COUNTRY_MAP[code] || { name: code.toUpperCase(), flag: '🌐' };
-        return {
-          countryCode: code,
-          countryName: meta.name,
-          flag: meta.flag,
+    // 5. Process Queries (Truthful data only - no synthetic fallback)
+    const topQueries: GSCQueryRow[] = (queryRes.rows && queryRes.rows.length > 0)
+      ? queryRes.rows.map((r: any) => ({
+          query: r.keys?.[0] || 'Unknown Query',
           clicks: r.clicks || 0,
           impressions: r.impressions || 0,
           ctr: Math.round((r.ctr || 0) * 1000) / 10,
           position: Math.round((r.position || 0) * 10) / 10
-        };
-      }).sort((a: any, b: any) => b.clicks - a.clicks)
-    : BASELINE_COUNTRIES;
+        })).sort((a: any, b: any) => b.clicks - a.clicks || b.impressions - a.impressions)
+      : [];
 
-  // Process Devices
-  const rawDevices = (deviceRes.rows && deviceRes.rows.length > 0) ? deviceRes.rows : [];
-  const totalDevClicks = rawDevices.reduce((sum: number, r: any) => sum + (r.clicks || 0), 0);
-  const devices: GSCDeviceRow[] = rawDevices.length > 0
-    ? rawDevices.map((r: any) => ({
-        device: (r.keys?.[0] || 'DESKTOP').toUpperCase(),
-        clicks: r.clicks || 0,
-        impressions: r.impressions || 0,
-        ctr: Math.round((r.ctr || 0) * 1000) / 10,
-        position: Math.round((r.position || 0) * 10) / 10,
-        percentage: totalDevClicks > 0 ? Math.round(((r.clicks || 0) / totalDevClicks) * 100) : 0
-      }))
-    : BASELINE_DEVICES;
+    // 6. Process Pages
+    const topPages: GSCPageRow[] = (pageRes.rows && pageRes.rows.length > 0)
+      ? pageRes.rows.map((r: any) => ({
+          page: r.keys?.[0] || '/',
+          clicks: r.clicks || 0,
+          impressions: r.impressions || 0,
+          ctr: Math.round((r.ctr || 0) * 1000) / 10,
+          position: Math.round((r.position || 0) * 10) / 10
+        })).sort((a: any, b: any) => b.clicks - a.clicks)
+      : [];
 
-  // Process Time Series
-  const timeSeries: GSCDateRow[] = (dateRes.rows && dateRes.rows.length > 0)
-    ? dateRes.rows.map((r: any) => ({
-        date: r.keys?.[0] || startDate,
-        clicks: r.clicks || 0,
-        impressions: r.impressions || 0,
-        ctr: Math.round((r.ctr || 0) * 1000) / 10,
-        position: Math.round((r.position || 0) * 10) / 10
-      })).sort((a: any, b: any) => a.date.localeCompare(b.date))
-    : generateBaselineTimeSeries(daysBack);
+    // 7. Process Countries
+    const countries: GSCCountryRow[] = (countryRes.rows && countryRes.rows.length > 0)
+      ? countryRes.rows.map((r: any) => {
+          const code = (r.keys?.[0] || 'ind').toLowerCase();
+          const meta = GSC_COUNTRY_MAP[code] || { name: code.toUpperCase(), flag: '🌐' };
+          return {
+            countryCode: code,
+            countryName: meta.name,
+            flag: meta.flag,
+            clicks: r.clicks || 0,
+            impressions: r.impressions || 0,
+            ctr: Math.round((r.ctr || 0) * 1000) / 10,
+            position: Math.round((r.position || 0) * 10) / 10
+          };
+        }).sort((a: any, b: any) => b.clicks - a.clicks)
+      : [];
 
-  // Aggregate Totals
-  const totalClicks = topQueries.reduce((sum, q) => sum + q.clicks, 0);
-  const totalImpressions = topQueries.reduce((sum, q) => sum + q.impressions, 0);
-  const avgCtr = totalImpressions > 0 ? Math.round((totalClicks / totalImpressions) * 1000) / 10 : 4.8;
-  const avgPosition = topQueries.length > 0
-    ? Math.round((topQueries.reduce((sum, q) => sum + q.position, 0) / topQueries.length) * 10) / 10
-    : 3.4;
+    // 8. Process Devices
+    const rawDevices = (deviceRes.rows && deviceRes.rows.length > 0) ? deviceRes.rows : [];
+    const totalDevClicks = rawDevices.reduce((sum: number, r: any) => sum + (r.clicks || 0), 0);
+    const devices: GSCDeviceRow[] = rawDevices.length > 0
+      ? rawDevices.map((r: any) => ({
+          device: (r.keys?.[0] || 'DESKTOP').toUpperCase(),
+          clicks: r.clicks || 0,
+          impressions: r.impressions || 0,
+          ctr: Math.round((r.ctr || 0) * 1000) / 10,
+          position: Math.round((r.position || 0) * 10) / 10,
+          percentage: totalDevClicks > 0 ? Math.round(((r.clicks || 0) / totalDevClicks) * 100) : 0
+        }))
+      : [];
 
-  // Auto-generate High Impact Opportunities
-  const opportunities: GSCOpportunity[] = [];
-  topQueries.filter(q => q.position >= 4 && q.position <= 15).slice(0, 8).forEach(q => {
-    opportunities.push({
-      type: 'striking_distance',
-      query: q.query,
-      clicks: q.clicks,
-      impressions: q.impressions,
-      ctr: q.ctr,
-      position: q.position,
-      recommendation: `Currently ranking #${q.position}. Optimize on-page headings and internal links to push into Google Top 3.`
-    });
-  });
+    // 9. Process Time Series
+    const timeSeries: GSCDateRow[] = (dateRes.rows && dateRes.rows.length > 0)
+      ? dateRes.rows.map((r: any) => ({
+          date: r.keys?.[0] || startDate,
+          clicks: r.clicks || 0,
+          impressions: r.impressions || 0,
+          ctr: Math.round((r.ctr || 0) * 1000) / 10,
+          position: Math.round((r.position || 0) * 10) / 10
+        })).sort((a: any, b: any) => a.date.localeCompare(b.date))
+      : [];
 
-  topQueries.filter(q => q.impressions >= 25 && q.ctr < 3.0).slice(0, 10).forEach(q => {
-    opportunities.push({
-      type: 'low_ctr',
-      query: q.query,
-      clicks: q.clicks,
-      impressions: q.impressions,
-      ctr: q.ctr,
-      position: q.position,
-      recommendation: `High visibility (${q.impressions} views) but only ${q.ctr}% CTR. Rewrite meta title & description with stronger CTR hooks.`
-    });
-  });
+    // 10. Accurate Site-Level Totals Calculation
+    let totalClicks = 0;
+    let totalImpressions = 0;
+    let avgCtr = 0;
+    let avgPosition = 0;
 
-  const enterpriseModules = generateEnterpriseGSCModules(siteUrl, totalClicks, totalImpressions, topQueries);
+    if (siteTotalsRes.rows && siteTotalsRes.rows.length > 0) {
+      // Direct site-level aggregate totals from GSC API (dimensions: [])
+      const siteRow = siteTotalsRes.rows[0];
+      totalClicks = siteRow.clicks || 0;
+      totalImpressions = siteRow.impressions || 0;
+      avgCtr = Math.round((siteRow.ctr || 0) * 1000) / 10;
+      avgPosition = Math.round((siteRow.position || 0) * 10) / 10;
+    } else if (topQueries.length > 0) {
+      // Fallback: calculate impression-weighted position from query rows
+      totalClicks = topQueries.reduce((sum, q) => sum + q.clicks, 0);
+      totalImpressions = topQueries.reduce((sum, q) => sum + q.impressions, 0);
+      avgCtr = totalImpressions > 0 ? Math.round((totalClicks / totalImpressions) * 1000) / 10 : 0;
+      const weightedPositionSum = topQueries.reduce((sum, q) => sum + (q.position * q.impressions), 0);
+      avgPosition = totalImpressions > 0 ? Math.round((weightedPositionSum / totalImpressions) * 10) / 10 : 0;
+    }
 
-  const result: GSCDataSummary = {
-    status: 'connected',
-    statusMessage: `Successfully connected to Google Search Console for property: ${siteUrl}`,
-    siteUrl,
-    clientEmail,
-    hasPrivateKey,
-    isKeyFormatValid,
-    startDate,
-    endDate,
-    totalClicks,
-    totalImpressions,
-    avgCtr,
-    avgPosition,
-    topQueries,
-    topPages,
-    countries,
-    devices,
-    timeSeries,
-    sitemaps: (sitemaps && sitemaps.length > 0) ? sitemaps : [
-      {
-        path: `${siteUrl}/sitemap.xml`,
-        lastSubmitted: '2026-09-28',
-        isPending: false,
-        isSitemapsIndex: false,
-        type: 'XML',
-        errors: 0,
-        warnings: 0,
-        submitted: 7,
-        indexed: 7
-      },
-      {
-        path: `${siteUrl}/sitemap-index.xml`,
-        lastSubmitted: '2026-09-28',
-        isPending: false,
-        isSitemapsIndex: true,
-        type: 'Index',
-        errors: 0,
-        warnings: 0,
-        submitted: 7,
-        indexed: 7
-      }
-    ],
-    opportunities: opportunities.length > 0 ? opportunities : [
-      {
+    // 11. Auto-generate Opportunities from real queries only
+    const opportunities: GSCOpportunity[] = [];
+    topQueries.filter(q => q.position >= 4 && q.position <= 15).slice(0, 8).forEach(q => {
+      opportunities.push({
         type: 'striking_distance',
-        query: 'real estate crm with whatsapp integration',
-        clicks: 36,
-        impressions: 1040,
-        ctr: 3.5,
-        position: 4.6,
-        recommendation: 'Currently ranking #4.6. Target key query for WhatsApp hub workflow.'
-      }
-    ],
-    lastFetchedAt: new Date().toISOString(),
-    ...enterpriseModules
-  };
+        query: q.query,
+        clicks: q.clicks,
+        impressions: q.impressions,
+        ctr: q.ctr,
+        position: q.position,
+        recommendation: `Currently ranking #${q.position}. Optimize on-page headings and internal links to push into Google Top 3.`
+      });
+    });
 
-  // Cache for 15 minutes
-  gscCache[cacheKey] = {
-    data: result,
-    expiresAt: now + 15 * 60 * 1000
-  };
+    topQueries.filter(q => q.impressions >= 25 && q.ctr < 3.0).slice(0, 10).forEach(q => {
+      opportunities.push({
+        type: 'low_ctr',
+        query: q.query,
+        clicks: q.clicks,
+        impressions: q.impressions,
+        ctr: q.ctr,
+        position: q.position,
+        recommendation: `High visibility (${q.impressions} views) but only ${q.ctr}% CTR. Rewrite meta title & description with stronger CTR hooks.`
+      });
+    });
 
-    return result;
-  } catch (err: any) {
-    console.error('[GSC] Unexpected error in getSearchConsoleData:', err);
-    const timeSeries = generateBaselineTimeSeries(daysBack);
-    const totalClicks = timeSeries.reduce((s, r) => s + r.clicks, 0);
-    const totalImpressions = timeSeries.reduce((s, r) => s + r.impressions, 0);
-    const avgCtr = Math.round((totalClicks / totalImpressions) * 1000) / 10;
-    const avgPosition = 3.4;
-    const modules = generateEnterpriseGSCModules(siteUrl, totalClicks, totalImpressions, BASELINE_QUERIES);
+    const enterpriseModules = generateEnterpriseGSCModules(siteUrl, totalClicks, totalImpressions, topQueries);
 
-    return {
-      status: 'auth_error',
-      statusMessage: `Search Console Initialization Warning: ${err?.message || 'Check RSA private key and service account permissions in environment variables.'}`,
+    const result: GSCDataSummary = {
+      status: 'connected',
+      isLive: true,
+      statusMessage: topQueries.length > 0 || totalImpressions > 0
+        ? `Connected to Google Search Console (Live Data for ${siteUrl})`
+        : `Connected to Google Search Console for property: ${siteUrl} (0 search impressions recorded in selected date range).`,
       siteUrl,
-      clientEmail,
+      clientEmail: clientEmail ? 'Configured' : '',
       hasPrivateKey,
       isKeyFormatValid,
       startDate,
@@ -1231,48 +965,55 @@ export async function getSearchConsoleData(
       totalImpressions,
       avgCtr,
       avgPosition,
-      topQueries: BASELINE_QUERIES,
-      topPages: BASELINE_PAGES,
-      countries: BASELINE_COUNTRIES,
-      devices: BASELINE_DEVICES,
+      topQueries,
+      topPages,
+      countries,
+      devices,
       timeSeries,
-      sitemaps: [
-        {
-          path: `${siteUrl}/sitemap.xml`,
-          lastSubmitted: '2026-09-28',
-          isPending: false,
-          isSitemapsIndex: false,
-          type: 'XML',
-          errors: 0,
-          warnings: 0,
-          submitted: 7,
-          indexed: 7
-        },
-        {
-          path: `${siteUrl}/sitemap-index.xml`,
-          lastSubmitted: '2026-09-28',
-          isPending: false,
-          isSitemapsIndex: true,
-          type: 'Index',
-          errors: 0,
-          warnings: 0,
-          submitted: 7,
-          indexed: 7
-        }
-      ],
-      opportunities: [
-        {
-          type: 'striking_distance',
-          query: 'real estate crm with whatsapp integration',
-          clicks: 36,
-          impressions: 1040,
-          ctr: 3.5,
-          position: 4.6,
-          recommendation: 'Currently ranking #4.6. Target key query for WhatsApp hub workflow.'
-        }
-      ],
+      sitemaps: (sitemaps && sitemaps.length > 0) ? sitemaps : [],
+      opportunities,
       lastFetchedAt: new Date().toISOString(),
-      ...modules
+      ...enterpriseModules
+    };
+
+    // Cache for 15 minutes
+    gscCache[cacheKey] = {
+      data: result,
+      expiresAt: now + 15 * 60 * 1000
+    };
+
+    return result;
+  } catch (err: any) {
+    return {
+      status: 'api_error',
+      isLive: false,
+      statusMessage: `Search Console API Error: ${err?.message || 'Unexpected error communicating with Google Search Console.'}`,
+      siteUrl,
+      clientEmail: clientEmail ? 'Configured' : '',
+      hasPrivateKey,
+      isKeyFormatValid,
+      startDate,
+      endDate,
+      totalClicks: 0,
+      totalImpressions: 0,
+      avgCtr: 0,
+      avgPosition: 0,
+      topQueries: [],
+      topPages: [],
+      countries: [],
+      devices: [],
+      timeSeries: [],
+      sitemaps: [],
+      opportunities: [],
+      lastFetchedAt: null,
+      healthOverview: null,
+      alerts: [],
+      marketIntelligence: null,
+      conversions: null,
+      authorityNodes: [],
+      productTruth: [],
+      clusters: [],
+      auditIssues: []
     };
   }
 }

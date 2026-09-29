@@ -33,7 +33,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const env = await getRuntimeEnv();
     const siteUrl = env.GOOGLE_SEARCH_CONSOLE_SITE_URL || 'https://sahyak.com';
 
-    const result = await inspectUrl(targetUrl, siteUrl);
+    const result = await inspectUrl(targetUrl, siteUrl, {
+      clientEmail: env.GOOGLE_SEARCH_CONSOLE_CLIENT_EMAIL,
+      privateKey: env.GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY
+    });
 
     return new Response(JSON.stringify({
       success: true,

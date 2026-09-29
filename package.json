@@ -11,6 +11,7 @@
     "pages:build": "npx -y tailwindcss@3 -i src/styles/tailwind-input.css -o public/css/tailwind.css --minify -c tailwind.config.cjs && astro build && node scripts/prepare-cloudflare.js",
     "preview": "astro preview",
     "test:security": "node tests/p0-auth-security.test.mjs",
+    "test:gsc": "node tests/p1-gsc.test.mjs",
     "astro": "astro"
   },
   "dependencies": {

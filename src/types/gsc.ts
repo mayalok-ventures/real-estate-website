@@ -65,7 +65,7 @@ export interface GSCOpportunity {
 
 export interface URLInspectionResult {
   url: string;
-  verdict: 'INDEXED' | 'ELIGIBLE' | 'BLOCKED' | 'NOT_FOUND';
+  verdict: 'INDEXED' | 'ELIGIBLE' | 'BLOCKED' | 'NOT_FOUND' | 'HTTP_ACCESSIBLE' | 'NOINDEX_DETECTED' | 'HTTP_ERROR';
   httpStatus: number;
   title: string;
   hasMetaDescription: boolean;
@@ -74,6 +74,9 @@ export interface URLInspectionResult {
   isSitemapIncluded: boolean;
   hasOpenGraph: boolean;
   inspectedAt: string;
+  inspectionSource?: 'google_api' | 'live_http_check';
+  inspectionMessage?: string;
+  googleIndexStatus?: any;
 }
 
 export interface GSCAlert {
@@ -182,6 +185,7 @@ export interface GSCHealthOverview {
 export interface GSCDataSummary {
   status: 'connected' | 'not_configured' | 'auth_error' | 'permission_denied';
   statusMessage: string;
+  isLive: boolean;
   siteUrl: string;
   clientEmail: string;
   hasPrivateKey: boolean;
@@ -200,11 +204,11 @@ export interface GSCDataSummary {
   sitemaps: GSCSitemapRow[];
   opportunities: GSCOpportunity[];
   lastFetchedAt: string;
-  // Enhanced 14-Module Suite
-  healthOverview: GSCHealthOverview;
+  // Optional / Nullable modules
+  healthOverview?: GSCHealthOverview | null;
   alerts: GSCAlert[];
-  marketIntelligence: GSCMarketIntelligence;
-  conversions: GSCConversionData;
+  marketIntelligence?: GSCMarketIntelligence | null;
+  conversions?: GSCConversionData | null;
   authorityNodes: GSCTopicNode[];
   productTruth: GSCProductTruth[];
   clusters: GSCTopicCluster[];
