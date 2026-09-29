@@ -1,10 +1,20 @@
 import type { APIRoute } from 'astro';
 import { getContacts, updateContactStatus } from '../../../lib/db';
 import { getRuntimeEnv } from '../../../lib/env';
+import { verifyCsrfAndOrigin } from '../../../lib/auth';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
+  // Defense-in-depth authorization check
+  const admin = (locals as any)?.admin;
+  if (!admin || !admin.email) {
+    return new Response(JSON.stringify({ success: false, error: 'Unauthorized', message: 'Admin authentication required.' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
   const url = new URL(request.url);
   const status = url.searchParams.get('status') || 'all';
   const search = url.searchParams.get('search') || '';
@@ -53,15 +63,46 @@ export const GET: APIRoute = async ({ request }) => {
   });
 };
 
-export const PATCH: APIRoute = async ({ request }) => {
-  try {
-    const body = (await request.json()) as any;
-    const { id, status, admin_notes } = body;
+export const PATCH: APIRoute = async ({ request, locals }) => {
+  // Defense-in-depth authorization check
+  const admin = (locals as any)?.admin;
+  if (!admin || !admin.email) {
+    return new Response(JSON.stringify({ success: false, error: 'Unauthorized', message: 'Admin authentication required.' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 
-    if (!id || !status) {
+  // Anti-CSRF Origin / Sec-Fetch-Site validation
+  const csrfCheck = verifyCsrfAndOrigin(request);
+  if (!csrfCheck.allowed) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Forbidden',
+      message: csrfCheck.reason || 'Cross-site request blocked.'
+    }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  try {
+    const contentType = request.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
       return new Response(JSON.stringify({
         success: false,
-        message: 'Lead ID and new status are required.'
+        message: 'Invalid Content-Type. Expected application/json.'
+      }), { status: 415, headers: { 'Content-Type': 'application/json' } });
+    }
+
+    const body = (await request.json().catch(() => ({}))) as any;
+    const { id, status, admin_notes } = body;
+
+    const numericId = parseInt(id, 10);
+    if (!id || isNaN(numericId) || numericId <= 0 || !status) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'A valid positive numeric Lead ID and new status are required.'
       }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
@@ -69,23 +110,23 @@ export const PATCH: APIRoute = async ({ request }) => {
     if (!validStatuses.includes(status)) {
       return new Response(JSON.stringify({
         success: false,
-        message: 'Invalid status value.'
+        message: 'Invalid status value. Permitted values: new, contacted, qualified, closed, archived.'
       }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
     const env = await getRuntimeEnv();
     const db = env.DB;
-    const success = await updateContactStatus(db, Number(id), status, admin_notes);
+    const success = await updateContactStatus(db, numericId, status, admin_notes);
 
     if (success) {
       return new Response(JSON.stringify({
         success: true,
-        message: `Lead #${id} status updated to '${status}'.`
+        message: `Lead #${numericId} status updated to '${status}'.`
       }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } else {
       return new Response(JSON.stringify({
         success: false,
-        message: `Lead #${id} not found.`
+        message: `Lead #${numericId} not found.`
       }), { status: 404, headers: { 'Content-Type': 'application/json' } });
     }
   } catch (err: any) {

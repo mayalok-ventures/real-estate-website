@@ -1,12 +1,33 @@
 import type { APIRoute } from 'astro';
 import { getRuntimeEnv } from '../../../../lib/env';
 import { inspectUrl } from '../../../../lib/googleSearchConsole';
+import { verifyCsrfAndOrigin } from '../../../../lib/auth';
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+  const admin = (locals as any)?.admin;
+  if (!admin || !admin.email) {
+    return new Response(JSON.stringify({ success: false, error: 'Unauthorized', message: 'Admin authentication required.' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  const csrfCheck = verifyCsrfAndOrigin(request);
+  if (!csrfCheck.allowed) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Forbidden',
+      message: csrfCheck.reason || 'Cross-site request blocked.'
+    }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
   try {
-    const body = (await request.json()) as any;
+    const body = (await request.json().catch(() => ({}))) as any;
     const targetUrl = body.url || '/';
 
     const env = await getRuntimeEnv();

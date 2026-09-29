@@ -3,7 +3,15 @@ import { exportAnalyticsToCsv } from '../../../../lib/analytics';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
+  const admin = (locals as any)?.admin;
+  if (!admin || !admin.email) {
+    return new Response('Unauthorized: Administrator session required.', {
+      status: 401,
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
+
   try {
     const type = (url.searchParams.get('type') || 'all') as 'visitors' | 'pages' | 'sources' | 'all';
     const csvContent = exportAnalyticsToCsv(type);

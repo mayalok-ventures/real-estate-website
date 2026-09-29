@@ -1,28 +1,41 @@
 import type { APIRoute } from 'astro';
 import { getRuntimeEnv } from '../../../lib/env';
+import { createSessionToken, timingSafeEqual } from '../../../lib/auth';
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
-    const body = (await request.json()) as any;
+    const body = (await request.json().catch(() => ({}))) as any;
     const { email, password } = body;
 
     const env = await getRuntimeEnv();
     const adminEmails = env.ADMIN_EMAILS.split(',').map((e: string) => e.trim().toLowerCase());
-    adminEmails.push('admin', 'admin@sahyak.com');
-    const validSecret = env.ADMIN_SECRET;
-    const validPassword = env.ADMIN_PASSWORD;
+    if (!adminEmails.includes('admin@sahyak.com')) {
+      adminEmails.push('admin@sahyak.com');
+    }
+
+    const validSecret = env.ADMIN_SECRET || '';
+    const validPassword = env.ADMIN_PASSWORD || '';
+    const sessionSecret = env.ADMIN_SESSION_SECRET || validSecret || validPassword;
+
+    // Fail safely if no administrative secret is configured in the environment
+    if (!validPassword && !validSecret) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'Administrator security credentials are not configured on the server.'
+      }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
     let normalizedEmail = (email || '').trim().toLowerCase();
     if (normalizedEmail === 'admin') normalizedEmail = 'admin@sahyak.com';
 
-    // Verify allowed email and password (supports Cloudflare ADMIN_PASSWORD / ADMIN_SECRET)
-    const isPasswordValid = (validPassword && password === validPassword) ||
-                            (validSecret && password === validSecret) || 
-                            password === 'sahyak2026' || 
-                            password === 'admin123' || 
-                            password === 'admin';
+    // Constant-time timing-safe password comparison against configured secrets only
+    const isPasswordValid = (validPassword && timingSafeEqual(password || '', validPassword)) ||
+                            (validSecret && timingSafeEqual(password || '', validSecret));
 
     if (!adminEmails.includes(normalizedEmail) || !isPasswordValid) {
       return new Response(JSON.stringify({
@@ -34,10 +47,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       });
     }
 
-    // Generate secure session token (24-hour expiry)
-    const expiry = Date.now() + 24 * 60 * 60 * 1000;
-    const sigKey = env.ADMIN_SESSION_SECRET || validSecret || 'sahyak_sig';
-    const token = `session_${btoa(normalizedEmail)}:${expiry}:sig_${btoa(normalizedEmail + expiry + sigKey).slice(0, 10)}`;
+    // Generate cryptographic HMAC-SHA256 session token (24-hour expiry) backed by D1
+    const token = await createSessionToken(normalizedEmail, sessionSecret, env.DB);
 
     const isSecure = new URL(request.url).protocol === 'https:' || env.APP_ENV === 'production';
 

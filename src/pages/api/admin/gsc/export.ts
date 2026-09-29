@@ -4,7 +4,15 @@ import { getSearchConsoleData, exportGscToCsv } from '../../../../lib/googleSear
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
+  const admin = (locals as any)?.admin;
+  if (!admin || !admin.email) {
+    return new Response('Unauthorized: Administrator session required.', {
+      status: 401,
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
+
   try {
     const dimension = (url.searchParams.get('type') || url.searchParams.get('dimension') || 'all') as 'all' | 'queries' | 'pages' | 'countries' | 'dates' | 'opportunities' | 'clusters' | 'market' | 'audit' | 'truth' | 'authority';
     const range = (url.searchParams.get('range') as '7d' | '28d' | '90d') || '28d';

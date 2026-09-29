@@ -7,11 +7,10 @@ import { getRuntimeEnv } from '../../lib/env';
 import { getAnalyticsSummary, formatDuration, COUNTRY_META } from '../../lib/analytics';
 import { getSearchConsoleData } from '../../lib/googleSearchConsole';
 
-const admin = (Astro.locals as any)?.admin || {
-  email: 'admin@sahyak.com',
-  role: 'superadmin',
-  source: 'session'
-};
+const admin = (Astro.locals as any)?.admin;
+if (!admin || !admin.email) {
+  return Astro.redirect('/admin/login');
+}
 
 let env: any = {};
 let contacts: any[] = [];

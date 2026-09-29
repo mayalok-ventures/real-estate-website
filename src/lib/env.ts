@@ -112,8 +112,8 @@ export async function getRuntimeEnv(contextOrLocals?: any): Promise<ProductionRu
   };
 
   const adminPassword = getVal('ADMIN_PASSWORD', '');
-  const adminSecret = getVal('ADMIN_SECRET', adminPassword || 'sahyak_admin_secure_key_2026');
-  const adminSessionSecret = getVal('ADMIN_SESSION_SECRET', adminSecret);
+  const adminSecret = getVal('ADMIN_SECRET', adminPassword || '');
+  const adminSessionSecret = getVal('ADMIN_SESSION_SECRET', adminSecret || '');
   const adminAccessToken = getVal('ADMIN_ACCESS_TOKEN', '');
 
   return {

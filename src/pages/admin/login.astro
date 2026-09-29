@@ -2,11 +2,30 @@
 export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
+import { getRuntimeEnv } from '../../lib/env';
+import { verifySessionToken } from '../../lib/auth';
 
-// Check if user is already authenticated
+// Check if user is already authenticated with a valid cryptographic session
 const sessionCookie = Astro.cookies.get('sahyak_admin_session')?.value;
 if (sessionCookie && sessionCookie.startsWith('session_')) {
-  return Astro.redirect('/admin');
+  try {
+    const env = await getRuntimeEnv();
+    const adminEmailsConfig = env.ADMIN_EMAILS.split(',').map((e: string) => e.trim().toLowerCase());
+    if (!adminEmailsConfig.includes('admin@sahyak.com')) {
+      adminEmailsConfig.push('admin@sahyak.com');
+    }
+    const sessionSecret = env.ADMIN_SESSION_SECRET || env.ADMIN_SECRET;
+
+    if (sessionSecret) {
+      const verification = await verifySessionToken(sessionCookie, sessionSecret, adminEmailsConfig, env.DB);
+      if (verification.valid) {
+        return Astro.redirect('/admin');
+      }
+    }
+  } catch {}
+
+  // If session is expired or forged, purge cookie to avoid redirect loop
+  Astro.cookies.delete('sahyak_admin_session', { path: '/' });
 }
 
 const seoTitle = "Administrator Authentication - Sahyak CRM";
@@ -33,23 +52,18 @@ const seoDesc = "Secure administrator portal access for Sahyak Real Estate CRM."
         <form id="admin-login-form">
           <div class="form-group">
             <label for="admin-email" class="form-label" style="color: var(--text-light);">Admin Email</label>
-            <input type="email" id="admin-email" name="email" class="form-input" style="background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: white;" placeholder="admin@sahyak.com" required autocomplete="username" />
+            <input type="email" id="admin-email" name="email" class="form-input" style="background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: white;" placeholder="name@company.com" required autocomplete="username" />
           </div>
 
           <div class="form-group">
             <label for="admin-password" class="form-label" style="color: var(--text-light);">Security Key / Password</label>
-            <input type="password" id="admin-password" name="password" class="form-input" style="background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: white;" placeholder="Enter security secret" required autocomplete="current-password" />
+            <input type="password" id="admin-password" name="password" class="form-input" style="background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: white;" placeholder="Enter password" required autocomplete="current-password" />
           </div>
 
           <button type="submit" id="login-btn" class="btn btn-primary" style="width: 100%; padding: 0.95rem; margin-top: 1rem;">
             Authenticate &rarr;
           </button>
         </form>
-
-        <div style="margin-top: 1.75rem; padding: 1rem; background: rgba(74, 222, 128, 0.08); border: 1px solid rgba(74, 222, 128, 0.2); border-radius: 8px; font-size: 0.8rem; color: #D1D5DB; text-align: center; line-height: 1.6;">
-          <p style="margin: 0;"><strong>Username / Email:</strong> <code style="color: #4ADE80;">admin@sahyak.com</code> (or <code style="color: #4ADE80;">admin</code>)<br /><strong>Password:</strong> <code style="color: #4ADE80;">admin123</code> (or <code style="color: #4ADE80;">sahyak2026</code>)</p>
-        </div>
-
       </div>
     </div>
   </section>

@@ -7,9 +7,10 @@
   },
   "scripts": {
     "dev": "astro dev --force",
-    "build": "astro build && node scripts/prepare-cloudflare.js",
-    "pages:build": "astro build && node scripts/prepare-cloudflare.js",
+    "build": "npx -y tailwindcss@3 -i src/styles/tailwind-input.css -o public/css/tailwind.css --minify -c tailwind.config.cjs && astro build && node scripts/prepare-cloudflare.js",
+    "pages:build": "npx -y tailwindcss@3 -i src/styles/tailwind-input.css -o public/css/tailwind.css --minify -c tailwind.config.cjs && astro build && node scripts/prepare-cloudflare.js",
     "preview": "astro preview",
+    "test:security": "node tests/p0-auth-security.test.mjs",
     "astro": "astro"
   },
   "dependencies": {

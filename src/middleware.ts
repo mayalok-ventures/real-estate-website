@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 import { getRuntimeEnv } from './lib/env';
+import { verifySessionToken } from './lib/auth';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url);
@@ -14,7 +15,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     const env = await getRuntimeEnv(context);
     const adminEmailsConfig = env.ADMIN_EMAILS.split(',').map((e: string) => e.trim().toLowerCase());
-    adminEmailsConfig.push('admin', 'admin@sahyak.com');
+    if (!adminEmailsConfig.includes('admin@sahyak.com')) {
+      adminEmailsConfig.push('admin@sahyak.com');
+    }
 
     // 1. Bearer / Access Token Check (Supports Cloudflare ADMIN_ACCESS_TOKEN)
     const authHeader = context.request.headers.get('Authorization') || '';
@@ -41,26 +44,27 @@ export const onRequest = defineMiddleware(async (context, next) => {
       return next();
     }
 
-    // 2. App-Level Session Cookie Check
+    // 3. Cryptographically Signed App-Level Session Cookie Check
     const sessionCookie = context.cookies.get('sahyak_admin_session')?.value;
+    const sessionSecret = env.ADMIN_SESSION_SECRET || env.ADMIN_SECRET;
 
-    if (sessionCookie && sessionCookie.startsWith('session_')) {
-      try {
-        const parts = sessionCookie.replace('session_', '').split(':');
-        const email = atob(parts[0]);
-        const expiry = parseInt(parts[1], 10);
+    if (sessionCookie) {
+      if (sessionSecret) {
+        const verification = await verifySessionToken(
+          sessionCookie,
+          sessionSecret,
+          adminEmailsConfig,
+          env.DB
+        );
 
-        if (expiry > Date.now() && adminEmailsConfig.includes(email.toLowerCase())) {
-          (context.locals as any).admin = {
-            email,
-            role: 'admin',
-            source: 'session'
-          };
+        if (verification.valid && verification.user) {
+          (context.locals as any).admin = verification.user;
           return next();
         }
-      } catch (e) {
-        // Invalid session format
       }
+
+      // If session is invalid, forged, or secret missing, purge cookie to prevent redirect loop
+      context.cookies.delete('sahyak_admin_session', { path: '/' });
     }
 
     // Access Denied

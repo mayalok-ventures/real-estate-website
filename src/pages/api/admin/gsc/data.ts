@@ -4,7 +4,15 @@ import { getSearchConsoleData } from '../../../../lib/googleSearchConsole';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
+  const admin = (locals as any)?.admin;
+  if (!admin || !admin.email) {
+    return new Response(JSON.stringify({ success: false, error: 'Unauthorized', message: 'Admin authentication required.' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
   try {
     const range = (url.searchParams.get('range') as '7d' | '28d' | '90d') || '28d';
     const forceRefresh = url.searchParams.get('refresh') === 'true';

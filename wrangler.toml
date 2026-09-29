@@ -10,5 +10,4 @@ database_id = "29ac8dce-f4f3-4878-aa36-53648608b38c"
 
 [vars]
 ADMIN_EMAILS = "admin@sahyak.com,team@sahyak.com"
-ADMIN_SECRET = "sahyak_admin_secure_key_2026"
 APP_ENV = "production"
