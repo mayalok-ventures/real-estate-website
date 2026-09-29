@@ -35,6 +35,45 @@ const { items } = Astro.props;
   </div>
 </nav>
 
+<style is:global>
+  /* Global reset for breadcrumbs ensuring no numbered list or vertical stack */
+  .sahyak-breadcrumb-list,
+  ol.sahyak-breadcrumb-list,
+  .breadcrumb-list,
+  ol.breadcrumb-list {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    list-style: none !important;
+    list-style-type: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sahyak-breadcrumb-item,
+  li.sahyak-breadcrumb-item,
+  .breadcrumb-item,
+  li.breadcrumb-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    list-style: none !important;
+    list-style-type: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sahyak-breadcrumb-item::marker,
+  li.sahyak-breadcrumb-item::marker,
+  .breadcrumb-item::marker,
+  li.breadcrumb-item::marker {
+    display: none !important;
+    content: '' !important;
+  }
+</style>
+
 <style>
   .sahyak-breadcrumb-nav {
     background: #081712;

@@ -3,27 +3,77 @@
 @tailwind utilities;
 
 @layer components {
-  /* Accessibility: Skip to Main Content */
-  .skip-link {
-    position: absolute;
-    top: 0;
-    left: 1.5rem;
-    transform: translateY(-100%);
-    background: #4ADE80;
-    color: #0A1C16;
-    padding: 0.65rem 1.25rem;
-    font-weight: 700;
-    font-size: 0.875rem;
-    text-decoration: none;
-    z-index: 100000;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Accessibility: Skip to Main Content (Guaranteed visually hidden until keyboard focus) */
+  .skip-link:not(:focus):not(:focus-visible) {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
   }
+
   .skip-link:focus,
   .skip-link:focus-visible {
-    transform: translateY(0);
-    outline: 2px solid #FFFFFF;
-    outline-offset: 2px;
+    position: fixed !important;
+    top: 1rem !important;
+    left: 1.5rem !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0.65rem 1.25rem !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+    z-index: 1000000 !important;
+    background: #4ADE80 !important;
+    color: #0A1C16 !important;
+    font-weight: 700 !important;
+    font-size: 0.875rem !important;
+    text-decoration: none !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+    outline: 2px solid #FFFFFF !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Breadcrumb Navigation Horizontal Flex & List Reset */
+  .sahyak-breadcrumb-list,
+  ol.sahyak-breadcrumb-list,
+  .breadcrumb-list,
+  ol.breadcrumb-list {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    list-style: none !important;
+    list-style-type: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sahyak-breadcrumb-item,
+  li.sahyak-breadcrumb-item,
+  .breadcrumb-item,
+  li.breadcrumb-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    list-style: none !important;
+    list-style-type: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sahyak-breadcrumb-item::marker,
+  li.sahyak-breadcrumb-item::marker,
+  .breadcrumb-item::marker,
+  li.breadcrumb-item::marker {
+    display: none !important;
+    content: '' !important;
   }
 }
