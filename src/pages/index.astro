@@ -78,7 +78,7 @@ const softwareSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
-    <link rel="canonical" href="https://sahyak.com" />
+    <link rel="canonical" href="https://sahyak.com/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
     <!-- GEO SEO Meta Tags -->
@@ -89,7 +89,7 @@ const softwareSchema = {
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://sahyak.com" />
+    <meta property="og:url" content="https://sahyak.com/" />
     <meta property="og:site_name" content="Sahyak Real Estate CRM" />
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={seoDesc} />
@@ -107,8 +107,8 @@ const softwareSchema = {
     <link rel="icon" type="image/png" href="/images/sahyak-logo.png" />
     <link rel="apple-touch-icon" href="/images/sahyak-logo.png" />
 
-    <!-- Tailwind CSS with is:inline to guarantee synchronous initialization -->
-    <script is:inline src="https://cdn.tailwindcss.com"></script>
+    <!-- Static compiled Tailwind CSS -->
+    <link rel="stylesheet" href="/css/tailwind.css" />
     <!-- Google Fonts: Playfair Display (Headings), Inter (Body), Caveat (Handwritten notes) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,27 +118,6 @@ const softwareSchema = {
     <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(webSiteSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
-    
-    <script is:inline>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        darkGreen: '#0A1C16', // Hero background
-                        lightBg: '#F4F6F4',   // Light section background
-                        brandGreen: '#4ADE80', // Accent green
-                        textDark: '#111827',   // Dark text
-                        textLight: '#F3F4F6'   // Light text
-                    },
-                    fontFamily: {
-                        serif: ['"Playfair Display"', 'serif'],
-                        sans: ['Inter', 'sans-serif'],
-                        handwriting: ['Caveat', 'cursive'],
-                    }
-                }
-            }
-        }
-    </script>
     <style is:global>
         .hero-bg-sketch {
             background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop');
@@ -152,30 +131,13 @@ const softwareSchema = {
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: #4ADE80;
-            color: #0A1C16;
-            padding: 8px 16px;
-            font-weight: 700;
-            z-index: 10000;
-            transition: top 0.2s ease;
-            text-decoration: none;
-        }
-        .skip-link:focus {
-            top: 0;
-        }
     </style>
 </head>
 <body class="font-sans antialiased text-textDark bg-lightBg overflow-x-hidden">
-    <a href="#hero-content" class="skip-link">Skip to main content</a>
-
-
     <!-- Global Navigation -->
     <Navbar active="home" />
 
+    <main id="main-content">
     <!-- ================= SECTION 1: HERO (DARK) ================= -->
     <section class="relative bg-darkGreen text-white min-h-screen flex items-center py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
         <!-- Background Sketch Overlay -->
@@ -204,7 +166,7 @@ const softwareSchema = {
                 </p>
 
                 <div class="flex flex-wrap items-center gap-4 pt-4">
-                    <a href="/contact" class="bg-brandGreen text-darkGreen px-8 py-3 rounded-full font-semibold hover:bg-green-400 transition flex items-center gap-2">
+                    <a href="https://crm.sahyak.com" class="bg-brandGreen text-darkGreen px-8 py-3 rounded-full font-semibold hover:bg-green-400 transition flex items-center gap-2">
                         Start free <span>&rarr;</span>
                     </a>
                     <a href="/features" class="border border-gray-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-800 transition flex items-center gap-2">
@@ -412,7 +374,7 @@ const softwareSchema = {
                 </p>
                 
                 <div class="flex flex-wrap items-center gap-4">
-                    <a href="/contact" class="bg-brandGreen text-darkGreen px-8 py-3 rounded-full font-semibold hover:bg-green-400 transition flex items-center gap-2">
+                    <a href="https://crm.sahyak.com" class="bg-brandGreen text-darkGreen px-8 py-3 rounded-full font-semibold hover:bg-green-400 transition flex items-center gap-2">
                         Start free now <span>&rarr;</span>
                     </a>
                     <a href="/pricing" class="border border-gray-400 text-darkGreen px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition">
@@ -476,6 +438,7 @@ const softwareSchema = {
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Universal Footer -->
     <Footer />

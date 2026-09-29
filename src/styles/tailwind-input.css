@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Accessibility: Skip to Main Content */
+  .skip-link {
+    position: absolute;
+    top: 0;
+    left: 1.5rem;
+    transform: translateY(-100%);
+    background: #4ADE80;
+    color: #0A1C16;
+    padding: 0.65rem 1.25rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-decoration: none;
+    z-index: 100000;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+  }
+}

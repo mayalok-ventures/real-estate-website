@@ -6,6 +6,8 @@ interface Props {
 const { active } = Astro.props;
 ---
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
 <header class="sahyak-site-header">
   <div class="sahyak-site-header-inner">
     <a href="/" class="sahyak-site-logo" aria-label="Sahyak CRM Home">
@@ -15,20 +17,20 @@ const { active } = Astro.props;
 
     <nav class="sahyak-site-nav" aria-label="Main Navigation">
       <a href="/" class={`sahyak-site-nav-link ${active === 'home' ? 'active' : ''}`}>Home</a>
-      <a href="/features" class={`sahyak-site-nav-link ${active === 'features' ? 'active' : ''}`}>Features</a>
-      <a href="/pricing" class={`sahyak-site-nav-link ${active === 'pricing' ? 'active' : ''}`}>Pricing</a>
-      <a href="/about" class={`sahyak-site-nav-link ${active === 'about' ? 'active' : ''}`}>About</a>
-      <a href="/resources" class={`sahyak-site-nav-link ${active === 'resources' ? 'active' : ''}`}>Resources</a>
-      <a href="/security" class={`sahyak-site-nav-link ${active === 'security' ? 'active' : ''}`}>Security</a>
-      <a href="/contact" class={`sahyak-site-nav-link ${active === 'contact' ? 'active' : ''}`}>Contact</a>
+      <a href="/features/" class={`sahyak-site-nav-link ${active === 'features' ? 'active' : ''}`}>Features</a>
+      <a href="/pricing/" class={`sahyak-site-nav-link ${active === 'pricing' ? 'active' : ''}`}>Pricing</a>
+      <a href="/about/" class={`sahyak-site-nav-link ${active === 'about' ? 'active' : ''}`}>About</a>
+      <a href="/resources/" class={`sahyak-site-nav-link ${active === 'resources' ? 'active' : ''}`}>Resources</a>
+      <a href="/security/" class={`sahyak-site-nav-link ${active === 'security' ? 'active' : ''}`}>Security</a>
+      <a href="/contact/" class={`sahyak-site-nav-link ${active === 'contact' ? 'active' : ''}`}>Contact</a>
     </nav>
 
     <div class="sahyak-site-header-actions">
-      <a href="/contact" class="sahyak-btn-nav-primary">Start free &rarr;</a>
+      <a href="https://crm.sahyak.com" class="sahyak-btn-nav-primary">Start free &rarr;</a>
     </div>
 
     <!-- Mobile Menu Hamburger -->
-    <button class="sahyak-mobile-hamburger" id="sahyak-hamburger-btn" aria-label="Open Navigation Menu" aria-expanded="false">
+    <button class="sahyak-mobile-hamburger" id="sahyak-hamburger-btn" aria-label="Open Navigation Menu" aria-expanded="false" aria-controls="sahyak-mobile-drawer">
       <span></span>
       <span></span>
       <span></span>
@@ -38,20 +40,44 @@ const { active } = Astro.props;
   <!-- Mobile Drawer -->
   <div class="sahyak-mobile-nav-drawer" id="sahyak-mobile-drawer">
     <a href="/" class={active === 'home' ? 'active' : ''}>Home</a>
-    <a href="/features" class={active === 'features' ? 'active' : ''}>Features</a>
-    <a href="/pricing" class={active === 'pricing' ? 'active' : ''}>Pricing</a>
-    <a href="/about" class={active === 'about' ? 'active' : ''}>About</a>
-    <a href="/resources" class={active === 'resources' ? 'active' : ''}>Resources</a>
-    <a href="/security" class={active === 'security' ? 'active' : ''}>Security</a>
-    <a href="/contact" class={active === 'contact' ? 'active' : ''}>Contact</a>
+    <a href="/features/" class={active === 'features' ? 'active' : ''}>Features</a>
+    <a href="/pricing/" class={active === 'pricing' ? 'active' : ''}>Pricing</a>
+    <a href="/about/" class={active === 'about' ? 'active' : ''}>About</a>
+    <a href="/resources/" class={active === 'resources' ? 'active' : ''}>Resources</a>
+    <a href="/security/" class={active === 'security' ? 'active' : ''}>Security</a>
+    <a href="/contact/" class={active === 'contact' ? 'active' : ''}>Contact</a>
 
     <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem;">
-      <a href="/contact" class="sahyak-btn-nav-primary" style="text-align: center; justify-content: center;">Start 14-Day Free Trial &rarr;</a>
+      <a href="https://crm.sahyak.com" class="sahyak-btn-nav-primary" style="text-align: center; justify-content: center;">Start 14-Day Free Trial &rarr;</a>
     </div>
   </div>
 </header>
 
 <style>
+  .skip-link {
+    position: absolute;
+    top: 0;
+    left: 1.5rem;
+    transform: translateY(-100%);
+    background: #4ADE80;
+    color: #0A1C16;
+    padding: 0.65rem 1.25rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-decoration: none;
+    z-index: 100000;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+  }
+
   .sahyak-site-header {
     position: sticky;
     top: 0;
@@ -138,6 +164,30 @@ const { active } = Astro.props;
 
   .sahyak-site-nav-link:hover, .sahyak-site-nav-link.active {
     color: #4ADE80;
+  }
+
+  .sahyak-site-nav-link:focus-visible {
+    color: #4ADE80;
+    outline: 2px solid #4ADE80;
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  .sahyak-site-logo:focus-visible {
+    outline: 2px solid #4ADE80;
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+
+  .sahyak-btn-nav-primary:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+  }
+
+  .sahyak-mobile-hamburger:focus-visible {
+    outline: 2px solid #4ADE80;
+    outline-offset: 4px;
+    border-radius: 4px;
   }
 
   .sahyak-site-nav-link.active::after {
@@ -237,10 +287,19 @@ const { active } = Astro.props;
     text-decoration: none;
     padding: 0.5rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: color 0.15s ease;
   }
 
+  .sahyak-mobile-nav-drawer a:hover,
   .sahyak-mobile-nav-drawer a.active {
     color: #4ADE80;
+  }
+
+  .sahyak-mobile-nav-drawer a:focus-visible {
+    color: #4ADE80;
+    outline: 2px solid #4ADE80;
+    outline-offset: 4px;
+    border-radius: 4px;
   }
 </style>
 
@@ -289,12 +348,12 @@ const { active } = Astro.props;
         if (tz.includes('Tokyo')) return 'JP';
       } catch (e) {}
 
-      // Universal standard default
-      return 'US';
+      // Universal standard default (Target market: India)
+      return 'IN';
     }
 
     const code = detectUserCountry();
-    const data = COUNTRIES[code] || COUNTRIES['US'];
+    const data = COUNTRIES[code] || COUNTRIES['IN'];
     try {
       localStorage.setItem('sahyak_country', code);
     } catch(e) {}
@@ -304,15 +363,32 @@ const { active } = Astro.props;
       detail: { country: code, ...data }
     }));
 
-    // Mobile Hamburger
+    // Mobile Hamburger with full accessibility & Escape key listener
     const hamburger = document.getElementById('sahyak-hamburger-btn');
     const drawer = document.getElementById('sahyak-mobile-drawer');
     if (hamburger && drawer) {
+      const toggleDrawer = (open) => {
+        const isOpen = typeof open === 'boolean' ? open : drawer.classList.toggle('open');
+        if (typeof open === 'boolean') {
+          drawer.classList.toggle('open', isOpen);
+        }
+        hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      };
+
       hamburger.addEventListener('click', () => {
-        drawer.classList.toggle('open');
+        const willOpen = !drawer.classList.contains('open');
+        toggleDrawer(willOpen);
       });
+
       drawer.querySelectorAll('a').forEach(l => {
-        l.addEventListener('click', () => drawer.classList.remove('open'));
+        l.addEventListener('click', () => toggleDrawer(false));
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && drawer.classList.contains('open')) {
+          toggleDrawer(false);
+          hamburger.focus();
+        }
       });
     }
   })();

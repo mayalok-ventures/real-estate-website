@@ -3,6 +3,7 @@ export const prerender = true;
 
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 
 const seoTitle = "Real Estate CRM Security & Data Compliance | Sahyak CRM";
 const seoDesc = "Enterprise-grade security, isolated multi-tenant architecture, bank-grade encryption and role-based access for real estate teams across 15+ countries.";
@@ -53,12 +54,12 @@ const securitySchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
-    <link rel="canonical" href="https://sahyak.com/security" />
+    <link rel="canonical" href="https://sahyak.com/security/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://sahyak.com/security" />
+    <meta property="og:url" content="https://sahyak.com/security/" />
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={seoDesc} />
     <meta property="og:image" content="https://sahyak.com/images/security/1.png" />
@@ -67,7 +68,7 @@ const securitySchema = {
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://sahyak.com/security" />
+    <meta property="twitter:url" content="https://sahyak.com/security/" />
     <meta property="twitter:title" content={seoTitle} />
     <meta property="twitter:description" content={seoDesc} />
     <meta property="twitter:image" content="https://sahyak.com/images/security/1.png" />
@@ -78,7 +79,8 @@ const securitySchema = {
     <meta name="geo.position" content="19.0657;72.8682" />
     <meta name="ICBM" content="19.0657, 72.8682" />
 
-    <script is:inline src="https://cdn.tailwindcss.com"></script>
+    <!-- Static compiled Tailwind CSS -->
+    <link rel="stylesheet" href="/css/tailwind.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     
     <script type="application/ld+json" set:html={JSON.stringify(securitySchema)} />
@@ -179,27 +181,15 @@ const securitySchema = {
     </style>
 </head>
 <body class="antialiased">
-    <a href="#commitment" class="skip-link">Skip to main content</a>
-
     <!-- Global Navigation -->
     <Navbar active="security" />
 
-    <!-- Breadcrumb Navigation -->
-    <div class="breadcrumb-container max-w-7xl mx-auto px-6 lg:px-8 pt-4">
-        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-            <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
-                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
-                    <meta itemprop="position" content="1" />
-                </li>
-                <li class="breadcrumb-separator" aria-hidden="true">/</li>
-                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <span class="breadcrumb-current" itemprop="name" aria-current="page">Security</span>
-                    <meta itemprop="position" content="2" />
-                </li>
-            </ol>
-        </nav>
-    </div>
+    <Breadcrumb items={[
+        { name: 'Home', url: '/' },
+        { name: 'Security' }
+    ]} />
+
+    <main id="main-content">
 
     <!-- ================= SECTION 1: HERO (Low-Angle Hero Shot) ================= -->
     <section class="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
@@ -643,7 +633,7 @@ const securitySchema = {
                     Whether you're a small team or a growing enterprise, we're committed to keeping your data safe so you can focus on what really matters — your business.
                 </p>
                 <div class="flex flex-wrap justify-center gap-4">
-                    <a href="/pricing" class="bg-neon text-black px-8 py-3 rounded-full font-semibold hover:bg-white transition-colors duration-300 flex items-center gap-2">
+                    <a href="https://crm.sahyak.com" class="bg-neon text-black px-8 py-3 rounded-full font-semibold hover:bg-white transition-colors duration-300 flex items-center gap-2">
                         Start free trial
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                     </a>
@@ -654,6 +644,7 @@ const securitySchema = {
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Global Footer -->
     <Footer />

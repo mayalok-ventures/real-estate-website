@@ -309,8 +309,8 @@ p {
 
 .btn-outline:hover {
   border-color: var(--brand-green);
-  color: var(--brand-green);
-  background-color: rgba(0, 230, 118, 0.06);
+  color: #FFFFFF;
+  background-color: rgba(0, 230, 118, 0.15);
   transform: translateY(-2px);
 }
 
@@ -1239,58 +1239,85 @@ p {
 /* Accessibility: Skip to Main Content */
 .skip-link {
   position: absolute;
-  top: -40px;
-  left: 0;
-  background: #00E676;
-  color: #0A1C16;
-  padding: 8px 16px;
-  font-weight: 700;
-  z-index: 10000;
-  transition: top 0.2s ease;
-  border-radius: 0 0 8px 0;
-  text-decoration: none;
-}
-.skip-link:focus {
   top: 0;
+  left: 1.5rem;
+  transform: translateY(-100%);
+  background: #4ADE80;
+  color: #0A1C16;
+  padding: 0.65rem 1.25rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-decoration: none;
+  z-index: 100000;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid #FFFFFF;
+  outline-offset: 2px;
 }
 
 /* SEO & Accessibility: Breadcrumbs Navigation */
 .breadcrumb-nav {
-  padding: 0.75rem 0;
+  padding: 0.65rem 0;
   background: #081712;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+  font-size: 0.825rem;
+  width: 100%;
 }
 .breadcrumb-list {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  gap: 0.5rem;
+  list-style: none !important;
+  list-style-type: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 .breadcrumb-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   color: #9CA3AF;
+  list-style: none !important;
+  list-style-type: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.breadcrumb-item::marker {
+  display: none !important;
+  content: '' !important;
 }
 .breadcrumb-item a {
   color: #9CA3AF;
   text-decoration: none;
+  font-weight: 500;
   transition: color 0.15s ease;
+  border-radius: 4px;
+  padding: 0.1rem 0.25rem;
 }
 .breadcrumb-item a:hover {
   color: #4ADE80;
+  text-decoration: none;
+}
+.breadcrumb-item a:focus-visible {
+  outline: 2px solid #4ADE80;
+  outline-offset: 2px;
+  color: #FFFFFF;
 }
 .breadcrumb-separator {
   color: #4B5563;
-  font-size: 0.7rem;
+  user-select: none;
+  font-size: 0.75rem;
 }
 .breadcrumb-current {
-  color: #FFFFFF;
+  color: #F3F4F6;
   font-weight: 600;
+  padding: 0.1rem 0.25rem;
 }
 
 

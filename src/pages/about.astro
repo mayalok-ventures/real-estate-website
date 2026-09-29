@@ -3,6 +3,7 @@ export const prerender = true;
 
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 
 const seoTitle = "About Sahyak CRM — Built for Modern Real Estate Teams";
 const seoDesc = "Learn about Sahyak CRM: our mission, leadership, broker-first innovation, and how we empower real estate developers across 15+ countries worldwide.";
@@ -69,12 +70,12 @@ const aboutSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
-    <link rel="canonical" href="https://sahyak.com/about" />
+    <link rel="canonical" href="https://sahyak.com/about/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://sahyak.com/about" />
+    <meta property="og:url" content="https://sahyak.com/about/" />
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={seoDesc} />
     <meta property="og:image" content="https://sahyak.com/images/about/1.png" />
@@ -83,7 +84,7 @@ const aboutSchema = {
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://sahyak.com/about" />
+    <meta property="twitter:url" content="https://sahyak.com/about/" />
     <meta property="twitter:title" content={seoTitle} />
     <meta property="twitter:description" content={seoDesc} />
     <meta property="twitter:image" content="https://sahyak.com/images/about/1.png" />
@@ -837,33 +838,21 @@ const aboutSchema = {
     </style>
 </head>
 <body>
-    <a href="#purpose" class="skip-link">Skip to main content</a>
-
     <Navbar active="about" />
 
-    <!-- Breadcrumb Navigation -->
-    <div class="breadcrumb-container" style="max-width: 1400px; width: 90%; margin: 0 auto; padding: 16px 0 0 0;">
-        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-            <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
-                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
-                    <meta itemprop="position" content="1" />
-                </li>
-                <li class="breadcrumb-separator" aria-hidden="true">/</li>
-                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <span class="breadcrumb-current" itemprop="name" aria-current="page">About Us</span>
-                    <meta itemprop="position" content="2" />
-                </li>
-            </ol>
-        </nav>
-    </div>
+    <Breadcrumb items={[
+        { name: 'Home', url: '/' },
+        { name: 'About Us' }
+    ]} />
+
+    <main id="main-content">
 
     <!-- HERO SECTION -->
     <section class="hero section-dark">
         <div class="container">
             <div class="hero-text reveal">
                 <div class="tagline">About Sahyak</div>
-                <h1>Built around the people who build <span>real estates.</span></h1>
+                <h1>Built around the people who build <span>real estate.</span></h1>
                 <p>Sahyak is a mobile-first CRM designed for real estate teams — to help you capture leads, follow up, coordinate site visits and close more deals, with less chaos.</p>
                 <div class="hero-cta">
                     <a href="#purpose" class="btn btn-primary">Our story &rarr;</a>
@@ -1006,7 +995,7 @@ const aboutSchema = {
                 <h2>Ready to experience a simpler way <span>to grow?</span></h2>
                 <p>Join real estate teams who use Sahyak to capture leads, stay organized and close more deals.</p>
                 <div class="hero-cta" style="margin-top: 2rem;">
-                    <a href="/contact" class="btn btn-primary">Start free &rarr;</a>
+                    <a href="https://crm.sahyak.com" class="btn btn-primary">Start free &rarr;</a>
                     <a href="/contact" class="btn btn-secondary">Talk to us</a>
                 </div>
             </div>
@@ -1017,6 +1006,7 @@ const aboutSchema = {
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Universal Footer -->
     <Footer />

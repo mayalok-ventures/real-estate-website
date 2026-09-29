@@ -1,0 +1,123 @@
+---
+export interface BreadcrumbItem {
+  name: string;
+  url?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="sahyak-breadcrumb-nav">
+  <div class="sahyak-breadcrumb-container">
+    <ol class="sahyak-breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+      {items.map((item, index) => {
+        const isLast = index === items.length - 1;
+        const position = index + 1;
+        return (
+          <li class="sahyak-breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            {index > 0 && <span class="sahyak-breadcrumb-separator" aria-hidden="true">/</span>}
+            {isLast ? (
+              <span class="sahyak-breadcrumb-current" itemprop="name" aria-current="page">{item.name}</span>
+            ) : (
+              <a href={item.url || '/'} class="sahyak-breadcrumb-link" itemprop="item">
+                <span itemprop="name">{item.name}</span>
+              </a>
+            )}
+            <meta itemprop="position" content={String(position)} />
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</nav>
+
+<style>
+  .sahyak-breadcrumb-nav {
+    background: #081712;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 0.825rem;
+    line-height: 1.5;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+  }
+
+  .sahyak-breadcrumb-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0.65rem 1.5rem;
+  }
+
+  .sahyak-breadcrumb-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none !important;
+    list-style-type: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sahyak-breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none !important;
+    list-style-type: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sahyak-breadcrumb-item::marker {
+    display: none !important;
+    content: '' !important;
+  }
+
+  .sahyak-breadcrumb-separator {
+    color: #4B5563;
+    user-select: none;
+    font-size: 0.75rem;
+    font-weight: 400;
+  }
+
+  .sahyak-breadcrumb-link {
+    color: #9CA3AF;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s ease, background-color 0.15s ease;
+    border-radius: 4px;
+    padding: 0.1rem 0.25rem;
+  }
+
+  .sahyak-breadcrumb-link:hover {
+    color: #4ADE80;
+    text-decoration: none;
+  }
+
+  .sahyak-breadcrumb-link:focus-visible {
+    outline: 2px solid #4ADE80;
+    outline-offset: 2px;
+    color: #FFFFFF;
+  }
+
+  .sahyak-breadcrumb-current {
+    color: #F3F4F6;
+    font-weight: 600;
+    padding: 0.1rem 0.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .sahyak-breadcrumb-container {
+      padding: 0.5rem 1.25rem;
+    }
+    .sahyak-breadcrumb-nav {
+      font-size: 0.8rem;
+    }
+  }
+</style>

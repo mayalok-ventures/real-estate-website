@@ -3,6 +3,7 @@ export const prerender = true;
 
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 
 const seoTitle = "Real Estate CRM Features — Leads & Site Visits | Sahyak";
 const seoDesc = "Explore Sahyak CRM features: automated lead capture, WhatsApp hub, real-time site visit tracking, multi-project inventory control, and agent sales analytics.";
@@ -38,7 +39,7 @@ const featuresSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
-    <link rel="canonical" href="https://sahyak.com/features" />
+    <link rel="canonical" href="https://sahyak.com/features/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
     <!-- GEO SEO Meta Tags -->
@@ -49,7 +50,7 @@ const featuresSchema = {
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://sahyak.com/features" />
+    <meta property="og:url" content="https://sahyak.com/features/" />
     <meta property="og:site_name" content="Sahyak Real Estate CRM" />
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={seoDesc} />
@@ -67,7 +68,8 @@ const featuresSchema = {
     <link rel="icon" type="image/png" href="/images/sahyak-logo.png" />
     <link rel="apple-touch-icon" href="/images/sahyak-logo.png" />
 
-    <script is:inline src="https://cdn.tailwindcss.com"></script>
+    <!-- Static compiled Tailwind CSS -->
+    <link rel="stylesheet" href="/css/tailwind.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -89,46 +91,6 @@ const featuresSchema = {
             background-color: var(--bg-dark);
             color: var(--text-light);
             overflow-x: hidden;
-        }
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: #a3e635;
-            color: #000;
-            padding: 8px 16px;
-            font-weight: 700;
-            z-index: 10000;
-            transition: top 0.2s ease;
-            text-decoration: none;
-        }
-        .skip-link:focus {
-            top: 0;
-        }
-        .breadcrumb-nav {
-            padding: 0.65rem 0;
-            background: #081712;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            font-size: 0.8rem;
-        }
-        .breadcrumb-list {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        .breadcrumb-list a {
-            color: #9CA3AF;
-            text-decoration: none;
-        }
-        .breadcrumb-list a:hover {
-            color: var(--accent-green);
-        }
-        .breadcrumb-current {
-            color: #FFFFFF;
-            font-weight: 600;
         }
 
         
@@ -209,20 +171,15 @@ const featuresSchema = {
     </style>
 </head>
 <body>
-
     <!-- Global Navigation -->
     <Navbar active="features" />
 
-    <!-- Breadcrumbs Navigation -->
-    <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-        <div class="max-w-7xl mx-auto px-4 md:px-10">
-            <ol class="breadcrumb-list">
-                <li><a href="/">Home</a></li>
-                <li class="text-gray-500">&rsaquo;</li>
-                <li class="breadcrumb-current" aria-current="page">Features</li>
-            </ol>
-        </div>
-    </nav>
+    <Breadcrumb items={[
+        { name: 'Home', url: '/' },
+        { name: 'Features' }
+    ]} />
+
+    <main id="main-content">
 
     <!-- Hero Section -->
     <section class="relative min-h-[90vh] flex items-center justify-center pt-16 pb-10 px-4 md:px-10 overflow-hidden">
@@ -248,7 +205,7 @@ const featuresSchema = {
                     <a href="#lead-management" class="btn-primary px-6 py-3 rounded-full font-semibold flex items-center gap-2">
                         Explore all features <span>&rarr;</span>
                     </a>
-                    <a href="/contact" class="border border-gray-500 hover:border-white text-white px-6 py-3 rounded-full font-semibold transition-all">
+                    <a href="https://crm.sahyak.com" class="border border-gray-500 hover:border-white text-white px-6 py-3 rounded-full font-semibold transition-all">
                         Start free
                     </a>
                 </div>
@@ -527,6 +484,7 @@ const featuresSchema = {
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Universal Footer -->
     <Footer />

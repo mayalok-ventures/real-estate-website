@@ -3,6 +3,7 @@ export const prerender = true;
 
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 
 const seoTitle = "Real Estate CRM Resources, Guides & Playbooks | Sahyak";
 const seoDesc = "Access practical real estate sales playbooks, WhatsApp templates, video walkthroughs, and buyer follow-up guides curated by top industry real estate experts.";
@@ -68,12 +69,12 @@ const resourcesSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
-    <link rel="canonical" href="https://sahyak.com/resources" />
+    <link rel="canonical" href="https://sahyak.com/resources/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://sahyak.com/resources" />
+    <meta property="og:url" content="https://sahyak.com/resources/" />
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={seoDesc} />
     <meta property="og:image" content="https://sahyak.com/images/resources/1.png" />
@@ -82,7 +83,7 @@ const resourcesSchema = {
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://sahyak.com/resources" />
+    <meta property="twitter:url" content="https://sahyak.com/resources/" />
     <meta property="twitter:title" content={seoTitle} />
     <meta property="twitter:description" content={seoDesc} />
     <meta property="twitter:image" content="https://sahyak.com/images/resources/1.png" />
@@ -93,31 +94,13 @@ const resourcesSchema = {
     <meta name="geo.position" content="19.0657;72.8682" />
     <meta name="ICBM" content="19.0657, 72.8682" />
 
-    <script is:inline src="https://cdn.tailwindcss.com"></script>
+    <!-- Static compiled Tailwind CSS -->
+    <link rel="stylesheet" href="/css/tailwind.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script type="application/ld+json" set:html={JSON.stringify(resourcesSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-    <script is:inline>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            dark: '#0A0A0A',
-                            light: '#F4F5F6',
-                            green: '#00E676', // Mint Green
-                            greenDark: '#00B359'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
     <style is:global>
         /* Custom Animations */
         @keyframes float {
@@ -153,21 +136,15 @@ const resourcesSchema = {
     </style>
 </head>
 <body class="bg-brand-dark text-white font-sans antialiased overflow-x-hidden">
-    <a href="#quick-start" class="skip-link">Skip to main content</a>
-
     <!-- Global Navigation -->
     <Navbar active="resources" />
 
-    <!-- Visual Breadcrumbs -->
-    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-        <div class="breadcrumb-container">
-            <ol class="breadcrumb-list">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-separator" aria-hidden="true">/</li>
-                <li class="breadcrumb-item"><span class="breadcrumb-current" aria-current="page">Resources & Playbooks</span></li>
-            </ol>
-        </div>
-    </nav>
+    <Breadcrumb items={[
+        { name: 'Home', url: '/' },
+        { name: 'Resources & Playbooks' }
+    ]} />
+
+    <main id="main-content">
 
     <!-- SECTION 1: HERO -->
     <section class="relative min-h-screen flex items-center pt-24 pb-12 px-6 lg:px-20 overflow-hidden">
@@ -705,6 +682,7 @@ const resourcesSchema = {
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Universal Footer -->
     <Footer />

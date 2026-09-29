@@ -3,6 +3,7 @@ export const prerender = true;
 
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 import { isCountrySupported, getCountryPricing, COUNTRY_PRICING, type SupportedCountryCode } from '../lib/pricingData';
 
 const seoTitle = "Real Estate CRM Pricing — ₹499 Base Access | Sahyak CRM";
@@ -101,12 +102,12 @@ const softwareSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{seoTitle}</title>
     <meta name="description" content={seoDesc} />
-    <link rel="canonical" href="https://sahyak.com/pricing" />
+    <link rel="canonical" href="https://sahyak.com/pricing/" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://sahyak.com/pricing" />
+    <meta property="og:url" content="https://sahyak.com/pricing/" />
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={seoDesc} />
     <meta property="og:image" content="https://sahyak.com/images/pricing/1.png" />
@@ -115,7 +116,7 @@ const softwareSchema = {
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://sahyak.com/pricing" />
+    <meta property="twitter:url" content="https://sahyak.com/pricing/" />
     <meta property="twitter:title" content={seoTitle} />
     <meta property="twitter:description" content={seoDesc} />
     <meta property="twitter:image" content="https://sahyak.com/images/pricing/1.png" />
@@ -618,26 +619,14 @@ const softwareSchema = {
     </style>
 </head>
 <body class={!serverIsSupported ? "unsupported-region" : ""}>
-    <a href="#calculator" class="skip-link">Skip to pricing calculator</a>
-
     <Navbar active="pricing" />
 
-    <!-- Breadcrumb Navigation -->
-    <div class="breadcrumb-container" style="max-width: 1200px; margin: 0 auto; padding: 16px 24px 0 24px;">
-        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-            <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
-                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
-                    <meta itemprop="position" content="1" />
-                </li>
-                <li class="breadcrumb-separator" aria-hidden="true">/</li>
-                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <span class="breadcrumb-current" itemprop="name" aria-current="page">Pricing</span>
-                    <meta itemprop="position" content="2" />
-                </li>
-            </ol>
-        </nav>
-    </div>
+    <Breadcrumb items={[
+        { name: 'Home', url: '/' },
+        { name: 'Pricing' }
+    ]} />
+
+    <main id="main-content">
 
     <!-- SECTION 1: HERO -->
     <section class="hero">
@@ -646,12 +635,12 @@ const softwareSchema = {
             <div class="hero-bg-overlay"></div>
         </div>
         <div class="container hero-content reveal reveal-left">
-            <h1>Your team grows.<br>Your CRM <span>scales with you.</span></h1>
+            <h1>Your team grows. <br>Your CRM <span>scales with you.</span></h1>
             <p>Choose the capacity you need — users, leads, storage and connected platforms. Transparent pricing for real estate teams.</p>
             <div class="hero-cta">
                 <a href="#calculator" class="btn btn-primary pricing-supported-only">Configure your plan &rarr;</a>
                 <a href="/contact?topic=pricing" class="btn btn-primary pricing-unsupported-only">Contact sales to purchase &rarr;</a>
-                <a href="/contact" class="btn btn-outline">Start free</a>
+                <a href="https://crm.sahyak.com" class="btn btn-outline">Start free</a>
             </div>
             <div class="trust-badge">
                 <img src="https://i.pravatar.cc/100?img=1" width="40" height="40" loading="lazy" decoding="async" alt="Real estate broker avatar">
@@ -857,7 +846,7 @@ const softwareSchema = {
                             <li>Global mobile and desktop access</li>
                         </ul>
                     </div>
-                    <a href="/contact?plan=starter" class="btn btn-dark-outline" style="width: 100%;">Start free &rarr;</a>
+                    <a href="https://crm.sahyak.com" class="btn btn-dark-outline" style="width: 100%;">Start free &rarr;</a>
                 </div>
                 
                 <div class="pricing-card popular reveal reveal-right">
@@ -999,6 +988,10 @@ const softwareSchema = {
                     <a href="#calculator" class="btn btn-primary pricing-supported-only">Configure your plan &rarr;</a>
                     <a href="/contact?topic=pricing" class="btn btn-primary pricing-unsupported-only">Contact sales to purchase &rarr;</a>
                     <a href="/contact" class="btn btn-outline">Talk to an expert</a>
+                    <a href="https://wa.me/918796475107?text=Hi%20Sahyak%20team%2C%20I%20have%20a%20question%20about%20pricing" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="border-color: #25D366; color: #25D366; display: inline-flex; align-items: center; gap: 8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.044-1.01-.069-.242-.073-.557-.189-.982-.373-1.756-.77-2.887-2.55-2.977-2.671-.087-.12-.713-.951-.713-1.809 0-.859.45-1.282.61-1.458.16-.176.35-.221.467-.221.115 0 .232.001.332.006.107.005.25-.04.39.297.145.351.494 1.206.538 1.295.044.089.073.193.015.309-.059.117-.089.19-.176.294-.088.103-.185.231-.264.31-.088.088-.18.184-.078.36.102.175.454.75 1.002 1.238.706.63 1.302.825 1.487.917.185.093.294.079.404-.047.11-.127.47-.547.595-.735.126-.188.251-.157.422-.094.17.062 1.085.512 1.272.605.187.094.312.141.358.219.046.078.046.452-.098.857z"/></svg>
+                        Chat on WhatsApp
+                    </a>
                 </div>
             </div>
             <div class="cta-visual reveal reveal-right">
@@ -1010,6 +1003,7 @@ const softwareSchema = {
             </div>
         </div>
     </section>
+    </main>
 
     <Footer />
 
