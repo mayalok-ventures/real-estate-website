@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getAnalyticsSummary } from '../../../lib/analytics';
+import { getRuntimeEnv } from '../../../lib/env';
 
 export const prerender = false;
 
@@ -14,7 +15,8 @@ export const GET: APIRoute = async ({ url, locals }) => {
 
   try {
     const range = (url.searchParams.get('range') as '24h' | '7d' | '30d') || '24h';
-    const summary = getAnalyticsSummary(range);
+    const env = await getRuntimeEnv();
+    const summary = await getAnalyticsSummary(env?.DB, range);
 
     return new Response(JSON.stringify({
       success: true,

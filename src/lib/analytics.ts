@@ -91,7 +91,7 @@ export function parseDevice(ua: string | undefined): { device: 'Desktop' | 'Mobi
   return { device, browser };
 }
 
-// Track real client-side event into analytics store
+// Track real client-side event into analytics store with durable D1 persistence and idempotency
 export async function trackEvent(
   db: D1Database | undefined,
   payload: TrackPayload,
@@ -101,7 +101,7 @@ export async function trackEvent(
   let existing = memorySessions.find(s => s.session_id === payload.session_id);
 
   if (existing) {
-    // Update existing session
+    // Update existing session in memory
     if (payload.duration_seconds && payload.duration_seconds > existing.duration_seconds) {
       existing.duration_seconds = payload.duration_seconds;
     }
@@ -114,6 +114,26 @@ export async function trackEvent(
     existing.last_active_at = now;
     if (payload.page) existing.page = payload.page;
     if (payload.page_title) existing.page_title = payload.page_title;
+
+    // Persist update into D1
+    if (db) {
+      try {
+        await db.prepare(`
+          UPDATE analytics_sessions SET
+            duration_seconds = MAX(duration_seconds, ?),
+            active_section = COALESCE(?, active_section),
+            last_active_at = ?
+          WHERE session_id = ?
+        `).bind(
+          existing.duration_seconds,
+          existing.active_section || null,
+          now,
+          existing.session_id
+        ).run();
+      } catch (e) {
+        // Non-blocking log
+      }
+    }
 
     return { success: true, session_id: existing.session_id };
   }
@@ -152,8 +172,9 @@ export async function trackEvent(
   };
 
   memorySessions.unshift(newSession);
+  if (memorySessions.length > 500) memorySessions.pop();
 
-  // If D1 is available, asynchronously persist
+  // If D1 is available, asynchronously persist with idempotency
   if (db) {
     try {
       await db.prepare(`
@@ -163,8 +184,8 @@ export async function trackEvent(
           browser, duration_seconds, active_section, created_at, last_active_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(session_id) DO UPDATE SET
-          duration_seconds = excluded.duration_seconds,
-          active_section = excluded.active_section,
+          duration_seconds = MAX(analytics_sessions.duration_seconds, excluded.duration_seconds),
+          active_section = COALESCE(excluded.active_section, analytics_sessions.active_section),
           last_active_at = excluded.last_active_at
       `).bind(
         newSession.session_id, newSession.visitor_id, newSession.ip_hash,
@@ -181,41 +202,120 @@ export async function trackEvent(
   return { success: true, session_id: newSession.session_id };
 }
 
-// Generate complete analytics summary strictly from real visitor sessions
-export function getAnalyticsSummary(timeRange: '24h' | '7d' | '30d' = '24h'): AnalyticsSummary {
+// Generate complete analytics summary backed durably by D1 database with memory fallback
+export async function getAnalyticsSummary(
+  dbOrRange?: D1Database | '24h' | '7d' | '30d',
+  maybeRange?: '24h' | '7d' | '30d'
+): Promise<AnalyticsSummary> {
+  let db: D1Database | undefined;
+  let timeRange: '24h' | '7d' | '30d' = '24h';
+
+  if (typeof dbOrRange === 'string') {
+    timeRange = dbOrRange;
+  } else if (dbOrRange) {
+    db = dbOrRange;
+    if (maybeRange) timeRange = maybeRange;
+  }
+
   const now = Date.now();
+  const days = timeRange === '7d' ? 7 : (timeRange === '30d' ? 30 : 1);
+  const cutoffMs = now - (days * 24 * 3600 * 1000);
+  const cutoffIso = new Date(cutoffMs).toISOString();
+
+  let dbSessions: VisitorSession[] = [];
+
+  // Query durable D1 storage if available
+  if (db) {
+    try {
+      const { results } = await db.prepare(`
+        SELECT session_id, visitor_id, ip_hash, country, country_code, city, region,
+               page, page_title, referrer, traffic_source, referrer_domain, device,
+               browser, duration_seconds, active_section, created_at, last_active_at
+        FROM analytics_sessions
+        WHERE created_at >= ?
+        ORDER BY created_at DESC
+        LIMIT 5000
+      `).bind(cutoffIso).all<any>();
+
+      if (results && Array.isArray(results)) {
+        dbSessions = results.map(r => ({
+          session_id: r.session_id,
+          visitor_id: r.visitor_id,
+          ip_hash: r.ip_hash || '',
+          country: r.country || 'India',
+          country_code: r.country_code || 'IN',
+          city: r.city || 'Direct',
+          region: r.region || 'Web',
+          page: r.page || '/',
+          page_title: r.page_title || 'Sahyak CRM',
+          referrer: r.referrer || 'direct',
+          traffic_source: r.traffic_source || 'Direct',
+          referrer_domain: r.referrer_domain || 'direct',
+          device: r.device || 'Desktop',
+          browser: r.browser || 'Chrome',
+          duration_seconds: r.duration_seconds || 0,
+          active_section: r.active_section || 'hero',
+          sections_viewed: { [r.active_section || 'hero']: r.duration_seconds || 0 },
+          is_new_today: true,
+          created_at: r.created_at,
+          last_active_at: r.last_active_at
+        }));
+      }
+    } catch (e) {
+      console.warn('[Analytics] Failed to query analytics_sessions from D1:', e);
+    }
+  }
+
+  // Merge DB sessions and memorySessions with deduplication
+  const sessionMap = new Map<string, VisitorSession>();
+  for (const s of dbSessions) {
+    sessionMap.set(s.session_id, s);
+  }
+  for (const s of memorySessions) {
+    const t = new Date(s.created_at).getTime();
+    if (t >= cutoffMs) {
+      const existing = sessionMap.get(s.session_id);
+      if (!existing || new Date(s.last_active_at).getTime() >= new Date(existing.last_active_at).getTime()) {
+        sessionMap.set(s.session_id, s);
+      }
+    }
+  }
+
+  const allSessions = Array.from(sessionMap.values()).sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
 
   // 1. Real-time active users (active in the last 2 minutes)
   const activeCutoff = now - (2 * 60 * 1000);
-  const realtimeActiveUsers = memorySessions.filter(s => new Date(s.last_active_at).getTime() >= activeCutoff).length;
+  const realtimeActiveUsers = allSessions.filter(s => new Date(s.last_active_at).getTime() >= activeCutoff).length;
 
   // 2. New visitors today (created today in UTC/local day)
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
-  const todaySessions = memorySessions.filter(s => new Date(s.created_at).getTime() >= startOfToday.getTime());
+  const todaySessions = allSessions.filter(s => new Date(s.created_at).getTime() >= startOfToday.getTime());
   const todayNewVisitors = todaySessions.length;
 
   // 3. Total unique visitors count
-  const uniqueVisitorIds = new Set(memorySessions.map(s => s.visitor_id));
+  const uniqueVisitorIds = new Set(allSessions.map(s => s.visitor_id));
   const totalVisitors = uniqueVisitorIds.size;
 
   // 4. Average stay duration
-  const totalDuration = memorySessions.reduce((acc, s) => acc + s.duration_seconds, 0);
-  const avgStayDurationSeconds = memorySessions.length > 0 ? Math.round(totalDuration / memorySessions.length) : 0;
-  const totalPageViews = memorySessions.length;
+  const totalDuration = allSessions.reduce((acc, s) => acc + s.duration_seconds, 0);
+  const avgStayDurationSeconds = allSessions.length > 0 ? Math.round(totalDuration / allSessions.length) : 0;
+  const totalPageViews = allSessions.length;
 
   // 5. Time series charts for 24h, 7d, 30d (strictly real data)
   const timeSeries = {
-    '24h': generate24hSeries(memorySessions, now),
-    '7d': generateDailySeries(memorySessions, 7, now),
-    '30d': generateDailySeries(memorySessions, 30, now)
+    '24h': generate24hSeries(allSessions, now),
+    '7d': generateDailySeries(allSessions, 7, now),
+    '30d': generateDailySeries(allSessions, 30, now)
   };
 
   // 6. Page insights & Section dwell times
-  const pages = computePageInsights(memorySessions);
+  const pages = computePageInsights(allSessions);
 
   // 7. Traffic Sources (Channels & Domains)
-  const { channels, domains } = computeTrafficSources(memorySessions);
+  const { channels, domains } = computeTrafficSources(allSessions);
 
   return {
     realtimeActiveUsers,
@@ -227,7 +327,7 @@ export function getAnalyticsSummary(timeRange: '24h' | '7d' | '30d' = '24h'): An
     pages,
     trafficChannels: channels,
     trafficDomains: domains,
-    visitorLogs: memorySessions.slice(0, 50) // top 50 recent live sessions
+    visitorLogs: allSessions.slice(0, 50) // top 50 recent live sessions
   };
 }
 
@@ -526,9 +626,22 @@ export function formatDuration(seconds: number): string {
   return `${m}m ${s}s`;
 }
 
-// Generate CSV Exports for all analytics dimensions
-export function exportAnalyticsToCsv(type: 'visitors' | 'pages' | 'sources' | 'all'): string {
-  const summary = getAnalyticsSummary('30d');
+// Generate CSV Exports for all analytics dimensions from durable D1 dataset
+export async function exportAnalyticsToCsv(
+  dbOrType?: D1Database | 'visitors' | 'pages' | 'sources' | 'all',
+  maybeType?: 'visitors' | 'pages' | 'sources' | 'all'
+): Promise<string> {
+  let db: D1Database | undefined;
+  let type: 'visitors' | 'pages' | 'sources' | 'all' = 'all';
+
+  if (typeof dbOrType === 'string') {
+    type = dbOrType;
+  } else if (dbOrType) {
+    db = dbOrType;
+    if (maybeType) type = maybeType;
+  }
+
+  const summary = await getAnalyticsSummary(db, '30d');
 
   if (type === 'visitors') {
     const headers = ['Session ID', 'Visitor ID', 'Country', 'City', 'Region', 'Page Visited', 'Traffic Source', 'Referrer Domain', 'Device', 'Browser', 'Stay Duration (Sec)', 'Stay Duration (Formatted)', 'Last Active'];

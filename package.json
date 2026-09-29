@@ -12,6 +12,8 @@
     "preview": "astro preview",
     "test:security": "node tests/p0-auth-security.test.mjs",
     "test:gsc": "node tests/p1-gsc.test.mjs",
+    "test:analytics": "node tests/p1-analytics.test.mjs",
+    "test:all": "node tests/p0-auth-security.test.mjs && node tests/p1-gsc.test.mjs && node tests/p1-analytics.test.mjs",
     "astro": "astro"
   },
   "dependencies": {

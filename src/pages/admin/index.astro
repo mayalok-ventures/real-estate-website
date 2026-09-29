@@ -43,7 +43,7 @@ try {
 }
 
 try {
-  analytics = getAnalyticsSummary('24h');
+  analytics = await getAnalyticsSummary(env?.DB, '24h');
 } catch (e) {
   console.warn('[Admin] Failed to load analytics summary:', e);
 }

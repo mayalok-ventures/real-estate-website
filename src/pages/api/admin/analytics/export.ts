@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { exportAnalyticsToCsv } from '../../../../lib/analytics';
+import { getRuntimeEnv } from '../../../../lib/env';
 
 export const prerender = false;
 
@@ -14,7 +15,8 @@ export const GET: APIRoute = async ({ url, locals }) => {
 
   try {
     const type = (url.searchParams.get('type') || 'all') as 'visitors' | 'pages' | 'sources' | 'all';
-    const csvContent = exportAnalyticsToCsv(type);
+    const env = await getRuntimeEnv();
+    const csvContent = await exportAnalyticsToCsv(env?.DB, type);
 
     const timestamp = new Date().toISOString().slice(0, 10);
     const filename = `sahyak_${type}_analytics_${timestamp}.csv`;
