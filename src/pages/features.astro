@@ -72,7 +72,9 @@ const featuresSchema = {
     <link rel="stylesheet" href="/css/tailwind.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
 
     <!-- Schema Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
@@ -80,11 +82,12 @@ const featuresSchema = {
 
     <style is:global>
         :root {
-            --bg-dark: #0a1f15;
-            --bg-cream: #f4f4f0;
-            --accent-green: #a3e635;
-            --text-dark: #1a1a1a;
-            --text-light: #e0e0e0;
+            --bg-dark: #0A1C16;
+            --bg-cream: #F4F6F4;
+            --accent-green: #4ADE80;
+            --accent-green-dark: #22c55e;
+            --text-dark: #111827;
+            --text-light: #F3F4F6;
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -93,12 +96,15 @@ const featuresSchema = {
             overflow-x: hidden;
         }
 
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
         
         /* Animations */
         .fade-up {
             opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(30px);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .fade-up.visible {
             opacity: 1;
@@ -107,12 +113,12 @@ const featuresSchema = {
         
         @keyframes float {
             0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(2deg); }
+            50% { transform: translateY(-10px) rotate(1.5deg); }
             100% { transform: translateY(0px) rotate(0deg); }
         }
         @keyframes float-reverse {
             0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(15px) rotate(-2deg); }
+            50% { transform: translateY(10px) rotate(-1.5deg); }
             100% { transform: translateY(0px) rotate(0deg); }
         }
         .floating-card {
@@ -145,11 +151,11 @@ const featuresSchema = {
         
         /* Editorial Collage Effects */
         .collage-img {
-            filter: grayscale(100%) contrast(1.2) sepia(20%) hue-rotate(90deg);
+            filter: grayscale(100%) contrast(1.1) sepia(10%);
             transition: all 0.5s ease;
         }
         .collage-img:hover {
-            filter: grayscale(0%) contrast(1) sepia(0%) hue-rotate(0deg);
+            filter: grayscale(0%) contrast(1) sepia(0%);
         }
         
         /* Custom Scrollbar */
@@ -160,13 +166,13 @@ const featuresSchema = {
         /* Button Hover */
         .btn-primary {
             background-color: var(--accent-green);
-            color: #000;
-            transition: all 0.3s ease;
+            color: #0A1C16;
+            transition: all 0.25s ease;
         }
         .btn-primary:hover {
-            background-color: #86c02e;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(163, 230, 53, 0.4);
+            background-color: var(--accent-green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 222, 128, 0.25);
         }
     </style>
 </head>
@@ -190,22 +196,22 @@ const featuresSchema = {
         
         <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <!-- Left Content -->
-            <div class="fade-up">
+            <div class="fade-up hero-reveal">
                 <div class="flex items-center gap-2 mb-6">
-                    <div class="w-8 h-8 bg-[var(--accent-green)] rounded-md flex items-center justify-center text-black font-bold">S</div>
+                    <div class="w-8 h-8 bg-[var(--accent-green)] rounded-md flex items-center justify-center text-darkGreen font-bold">S</div>
                     <span class="text-xl font-bold tracking-wider">Sahyak</span>
                 </div>
-                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                <h1 class="text-4xl md:text-6xl font-serif font-bold leading-tight mb-6">
                     Everything your real estate team needs, <span class="text-[var(--accent-green)] italic">in one place.</span>
                 </h1>
                 <p class="text-lg text-gray-300 mb-8 max-w-lg">
                     From lead capture to deal closure, Sahyak CRM gives you all the tools to manage your sales, follow-ups, site visits, inventory and team — right from your mobile.
                 </p>
                 <div class="flex flex-wrap gap-4">
-                    <a href="#lead-management" class="btn-primary px-6 py-3 rounded-full font-semibold flex items-center gap-2">
+                    <a href="#lead-management" class="btn btn-primary px-8 py-3">
                         Explore all features <span>&rarr;</span>
                     </a>
-                    <a href="https://crm.sahyak.com" class="border border-gray-500 hover:border-white text-white px-6 py-3 rounded-full font-semibold transition-all">
+                    <a href="https://crm.sahyak.com" class="btn btn-outline px-8 py-3">
                         Start free
                     </a>
                 </div>
@@ -278,14 +284,14 @@ const featuresSchema = {
             <!-- Left Text -->
             <div class="fade-up">
                 <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">01 Lead Management</span>
-                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                <h2 class="text-3xl md:text-5xl font-serif font-bold mt-4 mb-6 leading-tight">
                     Capture every opportunity. <br><span class="text-[var(--accent-green)] italic">Never miss a follow-up.</span>
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
                     Collect leads from multiple sources, organize them in one place and stay on top of follow-ups with reminders, notes and smart filters.
                 </p>
-                <a href="/contact" class="inline-flex bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition-all items-center gap-2">
-                    Explore lead management <span>&rarr;</span>
+                <a href="/contact/?topic=lead-management" class="btn btn-primary px-8 py-3">
+                    Request lead management demo <span>&rarr;</span>
                 </a>
             </div>
             
@@ -313,12 +319,12 @@ const featuresSchema = {
                 
                 <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[var(--accent-green)] p-4 rounded-xl shadow-xl floating-card z-20 w-56">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center text-[var(--accent-green)]">
+                        <div class="w-10 h-10 bg-darkGreen rounded-full flex items-center justify-center text-[var(--accent-green)]">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         </div>
                         <div>
-                            <p class="text-sm font-bold text-black">Smart Follow-ups</p>
-                            <p class="text-xs text-black/80">Auto reminders</p>
+                            <p class="text-sm font-bold text-darkGreen">Smart Follow-ups</p>
+                            <p class="text-xs text-darkGreen/80">Auto reminders</p>
                         </div>
                     </div>
                 </div>
@@ -327,45 +333,45 @@ const featuresSchema = {
     </section>
 
     <!-- Feature 2: Property & Inventory (Isometric 3D Diorama) -->
-    <section class="bg-[var(--bg-dark)] py-20 px-4 md:px-10 relative overflow-hidden">
+    <section id="inventory" class="bg-[var(--bg-dark)] py-20 px-4 md:px-10 relative overflow-hidden">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Text -->
             <div class="fade-up">
                 <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">02 Property & Inventory</span>
-                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                <h2 class="text-3xl md:text-5xl font-serif font-bold mt-4 mb-6 leading-tight">
                     Show the right properties to the <span class="text-[var(--accent-green)] italic">right buyers.</span>
                 </h2>
                 <p class="text-gray-400 mb-8 text-lg">
                     Manage your projects, towers, units and inventory with rich details, images and availability — and share with buyers in seconds.
                 </p>
-                <a href="/contact" class="btn-primary inline-flex px-6 py-3 rounded-full font-semibold items-center gap-2">
-                    Explore inventory features <span>&rarr;</span>
+                <a href="/contact/?topic=inventory" class="btn btn-primary px-8 py-3">
+                    Request inventory demo <span>&rarr;</span>
                 </a>
             </div>
             
             <!-- Right Visual (Isometric 3D Diorama) -->
             <div class="relative flex justify-center items-center fade-up" style="transition-delay: 200ms;">
                 <!-- Background Glow -->
-                <div class="absolute inset-0 bg-[var(--accent-green)] opacity-20 blur-[100px] rounded-full pointer-events-none"></div>
+                <div class="absolute inset-0 bg-[var(--accent-green)] opacity-15 blur-[100px] rounded-full pointer-events-none"></div>
                 <img src="/images/features/3.png" width="800" height="550" loading="lazy" decoding="async" alt="Sahyak Real Estate Inventory management with towers, floor plans, and unit pricing" class="w-full h-auto max-h-[550px] object-contain drop-shadow-2xl rounded-2xl relative z-10 transition-transform duration-500 hover:scale-[1.02]">
             </div>
         </div>
     </section>
 
     <!-- Feature 3: Site Visits (Minimalist Negative Space) -->
-    <section class="bg-[var(--bg-cream)] text-[var(--text-dark)] py-20 px-4 md:px-10 overflow-hidden">
+    <section id="site-visits" class="bg-[var(--bg-cream)] text-[var(--text-dark)] py-20 px-4 md:px-10 overflow-hidden">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Text -->
             <div class="fade-up">
                 <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">03 Site Visits & Field Operations</span>
-                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                <h2 class="text-3xl md:text-5xl font-serif font-bold mt-4 mb-6 leading-tight">
                     Plan. Coordinate. <br><span class="text-[var(--accent-green)] italic">Close more deals.</span>
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
                     Schedule site visits, assign to your team, track updates on the go and keep buyers engaged through every step.
                 </p>
-                <a href="/contact" class="inline-flex bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition-all items-center gap-2">
-                    Explore site visit tools <span>&rarr;</span>
+                <a href="/contact/?topic=site-visits" class="btn btn-primary px-8 py-3">
+                    Request site visit demo <span>&rarr;</span>
                 </a>
             </div>
             
@@ -385,27 +391,27 @@ const featuresSchema = {
                 </div>
                 
                 <div class="absolute bottom-10 right-10 bg-[var(--accent-green)] p-4 rounded-xl shadow-xl floating-card-reverse z-20 w-48">
-                    <p class="text-sm font-bold text-black">Role-based access</p>
-                    <p class="text-xs text-black/70">Right data for the right people</p>
+                    <p class="text-sm font-bold text-darkGreen">Role-based access</p>
+                    <p class="text-xs text-darkGreen/70">Right data for the right people</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Feature 4: Team Collaboration (High-Contrast Duotone Neo-Noir) -->
-    <section class="bg-[var(--bg-dark)] py-20 px-4 md:px-10 relative overflow-hidden">
+    <section id="team" class="bg-[var(--bg-dark)] py-20 px-4 md:px-10 relative overflow-hidden">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Text -->
             <div class="fade-up">
                 <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">04 Team Collaboration</span>
-                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                <h2 class="text-3xl md:text-5xl font-serif font-bold mt-4 mb-6 leading-tight">
                     A stronger team. <br><span class="text-[var(--accent-green)] italic">Better results.</span>
                 </h2>
                 <p class="text-gray-400 mb-8 text-lg">
                     Manage your sales team, set roles and permissions, track performance and keep everyone aligned — in real time.
                 </p>
-                <a href="/contact" class="btn-primary inline-flex px-6 py-3 rounded-full font-semibold items-center gap-2">
-                    Explore team features <span>&rarr;</span>
+                <a href="/contact/?topic=team" class="btn btn-primary px-8 py-3">
+                    Request team access demo <span>&rarr;</span>
                 </a>
             </div>
             
@@ -435,19 +441,19 @@ const featuresSchema = {
     </section>
 
     <!-- Feature 5: WhatsApp & Communication (Split-Screen Contrast) -->
-    <section class="bg-[var(--bg-cream)] text-[var(--text-dark)] py-20 px-4 md:px-10 overflow-hidden">
+    <section id="whatsapp" class="bg-[var(--bg-cream)] text-[var(--text-dark)] py-20 px-4 md:px-10 overflow-hidden">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Text -->
             <div class="fade-up">
                 <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">05 WhatsApp & Communication</span>
-                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                <h2 class="text-3xl md:text-5xl font-serif font-bold mt-4 mb-6 leading-tight">
                     Engage buyers <br><span class="text-[var(--accent-green)] italic">where they are.</span>
                 </h2>
                 <p class="text-gray-600 mb-8 text-lg">
                     Connect with buyers on WhatsApp, use verified templates, send bulk messages and keep conversations organized.
                 </p>
-                <a href="/contact" class="inline-flex bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition-all items-center gap-2">
-                    Explore communication tools <span>&rarr;</span>
+                <a href="/contact/?topic=whatsapp" class="btn btn-primary px-8 py-3">
+                    Request WhatsApp demo <span>&rarr;</span>
                 </a>
             </div>
             
@@ -460,19 +466,19 @@ const featuresSchema = {
     </section>
 
     <!-- Feature 6: Analytics & Reports (Dynamic Action Splash) -->
-    <section class="bg-[var(--bg-dark)] py-20 px-4 md:px-10 relative overflow-hidden">
+    <section id="analytics" class="bg-[var(--bg-dark)] py-20 px-4 md:px-10 relative overflow-hidden">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Text -->
             <div class="fade-up">
                 <span class="text-sm font-bold text-[var(--accent-green)] uppercase tracking-wider">06 Analytics & Reports</span>
-                <h2 class="text-3xl md:text-5xl font-bold mt-4 mb-6 leading-tight">
+                <h2 class="text-3xl md:text-5xl font-serif font-bold mt-4 mb-6 leading-tight">
                     Clear insights. <br><span class="text-[var(--accent-green)] italic">Smarter decisions.</span>
                 </h2>
                 <p class="text-gray-400 mb-8 text-lg">
                     Get real-time insights on leads, follow-ups, site visits, team performance and deal progress to make better decisions, every day.
                 </p>
-                <a href="/contact" class="btn-primary inline-flex px-6 py-3 rounded-full font-semibold items-center gap-2">
-                    Explore analytics <span>&rarr;</span>
+                <a href="/contact/?topic=analytics" class="btn btn-primary px-8 py-3">
+                    Request analytics demo <span>&rarr;</span>
                 </a>
             </div>
             

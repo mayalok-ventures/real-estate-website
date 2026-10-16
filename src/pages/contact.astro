@@ -22,7 +22,7 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       "position": 2,
       "name": "Contact",
-      "item": "https://sahyak.com/contact"
+      "item": "https://sahyak.com/contact/"
     }
   ]
 };
@@ -32,12 +32,12 @@ const contactPageSchema = {
   "@type": "ContactPage",
   "name": seoTitle,
   "description": seoDesc,
-  "url": "https://sahyak.com/contact",
+  "url": "https://sahyak.com/contact/",
   "mainEntity": {
     "@type": "Organization",
     "name": "Sahyak CRM",
     "url": "https://sahyak.com",
-    "logo": "https://sahyak.com/images/logo.png",
+    "logo": "https://sahyak.com/images/sahyak-logo.png",
     "email": "support@sahyak.com",
     "telephone": "+91 87964 75107",
     "address": {
@@ -156,7 +156,7 @@ const faqSchema = {
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     
     <script type="application/ld+json" set:html={JSON.stringify(contactPageSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
@@ -171,7 +171,7 @@ const faqSchema = {
             --text-light: #ffffff;
             --text-gray: #666666;
             --font-serif: 'Playfair Display', serif;
-            --font-sans: 'DM Sans', sans-serif;
+            --font-sans: 'Inter', sans-serif;
         }
 
         * {
@@ -535,6 +535,7 @@ const faqSchema = {
             outline: none;
             border-color: var(--accent-green);
             background-color: white;
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
         }
 
         .form-group textarea {
@@ -545,18 +546,20 @@ const faqSchema = {
         .form-submit {
             width: 100%;
             padding: 14px;
-            background-color: var(--accent-green-dark);
-            color: white;
+            background-color: var(--accent-green);
+            color: var(--bg-dark);
             border: none;
-            border-radius: 8px;
+            border-radius: 9999px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.25s ease;
         }
 
         .form-submit:hover {
-            background-color: #22c55e;
+            background-color: var(--accent-green-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(74, 222, 128, 0.25);
         }
 
         .form-note {
@@ -635,17 +638,18 @@ const faqSchema = {
         }
 
         .contact-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0E271F;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             padding: 2rem;
-            border-radius: 12px;
+            border-radius: 16px;
             transition: all 0.3s ease;
         }
 
         .contact-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-5px);
+            background: #133329;
+            transform: translateY(-4px);
             border-color: var(--accent-green);
+            box-shadow: 0 10px 25px rgba(74, 222, 128, 0.15);
         }
 
         .contact-card svg {
@@ -914,7 +918,7 @@ const faqSchema = {
     <!-- HERO SECTION -->
     <header class="hero">
         <div class="container hero-grid">
-            <div class="hero-text reveal">
+            <div class="hero-text hero-reveal">
                 <div class="section-tag">Contact Us</div>
                 <h1>Let's build a stronger <span>real estate</span> tomorrow.</h1>
                 <p>Have a question, need a demo or want to know more about Sahyak? We're here to help you and your team grow with a smarter, simpler CRM.</p>

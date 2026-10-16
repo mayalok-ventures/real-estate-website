@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    /* Brand Core Palette (Derived from Homepage Source of Truth) */
+    --color-dark-green: #0A1C16;
+    --color-dark-surface: #0E271F;
+    --color-dark-card: #133329;
+    --color-light-bg: #F4F6F4;
+    --color-light-surface: #FFFFFF;
+    
+    --color-brand-green: #4ADE80;
+    --color-brand-green-hover: #22c55e;
+    --color-brand-green-dark: #16a34a;
+    --color-brand-green-glow: rgba(74, 222, 128, 0.2);
+
+    --color-text-dark: #111827;
+    --color-text-dark-muted: #4B5563;
+    --color-text-light: #F3F4F6;
+    --color-text-light-muted: #9CA3AF;
+
+    --color-border-dark: rgba(255, 255, 255, 0.1);
+    --color-border-light: rgba(0, 0, 0, 0.08);
+
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-handwriting: 'Caveat', cursive, sans-serif;
+
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
+
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-smooth: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
 @layer components {
   /* Accessibility: Skip to Main Content (Guaranteed visually hidden until keyboard focus) */
   .skip-link:not(:focus):not(:focus-visible) {
@@ -75,5 +112,202 @@
   li.breadcrumb-item::marker {
     display: none !important;
     content: '' !important;
+  }
+
+  /* --- Unified Buttons System --- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.25;
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition-base);
+    border: 1px solid transparent;
+  }
+
+  .btn-primary {
+    background-color: var(--color-brand-green);
+    color: var(--color-dark-green);
+    border-color: transparent;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-brand-green-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(74, 222, 128, 0.25);
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    color: var(--color-text-light);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  .btn-outline:hover {
+    border-color: var(--color-brand-green);
+    color: var(--color-brand-green);
+    background-color: rgba(74, 222, 128, 0.06);
+    transform: translateY(-1px);
+  }
+
+  .btn-dark-outline {
+    background-color: transparent;
+    color: var(--color-text-dark);
+    border-color: rgba(17, 24, 39, 0.2);
+  }
+  .btn-dark-outline:hover {
+    background-color: rgba(17, 24, 39, 0.04);
+    border-color: var(--color-text-dark);
+    transform: translateY(-1px);
+  }
+
+  /* --- Unified Cards & Surface Styling --- */
+  .sahyak-card-dark,
+  .glass-card {
+    background: rgba(14, 39, 31, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    transition: var(--transition-base);
+  }
+  .sahyak-card-dark:hover,
+  .glass-card:hover {
+    border-color: rgba(74, 222, 128, 0.25);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .sahyak-card-light,
+  .glass-card-light {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    transition: var(--transition-base);
+  }
+  .sahyak-card-light:hover,
+  .glass-card-light:hover {
+    border-color: rgba(74, 222, 128, 0.35);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  /* Badges & Section Tags */
+  .section-tag, .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--color-brand-green);
+    margin-bottom: 0.75rem;
+  }
+  .badge-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: var(--color-brand-green);
+    display: inline-block;
+  }
+
+  /* Focus visible accessibility outline */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-brand-green) !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Form controls focus standard */
+  .form-control-focus:focus {
+    border-color: var(--color-brand-green) !important;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2) !important;
+  }
+
+  /* Restrained Animations & Scroll Reveal */
+  @keyframes heroFadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hero-reveal {
+    animation: heroFadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .hero-reveal-delay-1 {
+    animation: heroFadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    opacity: 0;
+  }
+  .hero-reveal-delay-2 {
+    animation: heroFadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    opacity: 0;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.active, .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @keyframes subtleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .animate-float {
+    animation: subtleFloat 5s ease-in-out infinite;
+  }
+  .animate-float-delayed {
+    animation: subtleFloat 5s ease-in-out 2.5s infinite;
+  }
+
+  /* Prefers Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+    .hero-reveal, .hero-reveal-delay-1, .hero-reveal-delay-2 {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .animate-float, .animate-float-delayed {
+      animation: none !important;
+    }
+    .sahyak-card-dark:hover,
+    .glass-card:hover,
+    .sahyak-card-light:hover,
+    .glass-card-light:hover,
+    .btn-primary:hover,
+    .btn-outline:hover,
+    .btn-dark-outline:hover {
+      transform: none !important;
+    }
   }
 }

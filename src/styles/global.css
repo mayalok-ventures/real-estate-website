@@ -8,10 +8,10 @@
   --dark-green: #0A1C16;
   --dark-green-surface: #0e271f;
   --dark-green-card: #133329;
-  --brand-green: #00E676;
-  --brand-green-hover: #00C853;
-  --brand-green-light: #4ADE80;
-  --brand-green-glow: rgba(0, 230, 118, 0.25);
+  --brand-green: #4ADE80;
+  --brand-green-hover: #22c55e;
+  --brand-green-light: #86efac;
+  --brand-green-glow: rgba(74, 222, 128, 0.25);
   
   --light-bg: #F4F6F4;
   --light-surface: #FFFFFF;
@@ -37,7 +37,7 @@
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.16);
-  --shadow-glow: 0 0 30px rgba(0, 230, 118, 0.3);
+  --shadow-glow: 0 0 30px rgba(74, 222, 128, 0.25);
   
   --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   --max-width: 1280px;
@@ -199,9 +199,9 @@ p {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  background-color: rgba(0, 230, 118, 0.12);
+  background-color: rgba(74, 222, 128, 0.12);
   color: var(--brand-green);
-  border: 1px solid rgba(0, 230, 118, 0.25);
+  border: 1px solid rgba(74, 222, 128, 0.25);
   margin-bottom: 1.25rem;
   width: fit-content;
 }
@@ -292,13 +292,13 @@ p {
   background-color: var(--brand-green);
   color: var(--dark-green);
   border-color: var(--brand-green);
-  box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+  box-shadow: 0 4px 15px rgba(74, 222, 128, 0.25);
 }
 
 .btn-primary:hover {
   background-color: #22c55e;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 230, 118, 0.45);
+  box-shadow: 0 8px 25px rgba(74, 222, 128, 0.35);
 }
 
 .btn-outline {
@@ -310,7 +310,7 @@ p {
 .btn-outline:hover {
   border-color: var(--brand-green);
   color: #FFFFFF;
-  background-color: rgba(0, 230, 118, 0.15);
+  background-color: rgba(74, 222, 128, 0.15);
   transform: translateY(-2px);
 }
 
@@ -439,14 +439,14 @@ p {
 .feature-box:hover {
   transform: translateY(-6px);
   border-color: var(--brand-green);
-  box-shadow: 0 12px 30px rgba(0, 230, 118, 0.15);
+  box-shadow: 0 12px 30px rgba(74, 222, 128, 0.15);
 }
 
 .feature-icon-circle {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background-color: rgba(0, 230, 118, 0.12);
+  background-color: rgba(74, 222, 128, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -502,7 +502,7 @@ p {
   background: var(--dark-green);
   color: var(--text-light);
   border-color: var(--brand-green);
-  box-shadow: 0 20px 45px rgba(0, 230, 118, 0.2);
+  box-shadow: 0 20px 45px rgba(74, 222, 128, 0.2);
 }
 
 .pricing-card.featured .price-num {
@@ -664,7 +664,7 @@ p {
   outline: none;
   border-color: var(--brand-green);
   background-color: white;
-  box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.2);
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
 }
 
 .form-textarea {

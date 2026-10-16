@@ -9,15 +9,18 @@ module.exports = {
         textDark: '#111827',
         textLight: '#F3F4F6',
         brand: {
-          dark: '#0A0A0A',
-          light: '#F4F5F6',
-          green: '#00E676',
-          greenDark: '#00B359'
+          dark: '#0A1C16',
+          darkSurface: '#0E271F',
+          darkCard: '#133329',
+          light: '#F4F6F4',
+          green: '#4ADE80',
+          greenDark: '#22c55e',
+          greenHover: '#22c55e'
         }
       },
       fontFamily: {
-        serif: ['"Playfair Display"', 'serif'],
-        sans: ['Inter', '"Plus Jakarta Sans"', 'sans-serif'],
+        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
         handwriting: ['Caveat', 'cursive'],
       }
     }

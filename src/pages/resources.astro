@@ -44,12 +44,10 @@ const resourcesSchema = {
         "description": "Get your real estate agency up and running in minutes with contact imports and WhatsApp configuration."
       },
       {
-        "@type": "VideoObject",
+        "@type": "Article",
         "position": 2,
         "name": "Sahyak CRM Platform Walkthrough & Feature Masterclass",
-        "description": "Full video tutorial covering lead management, automated site visit tracking, and sales analytics.",
-        "thumbnailUrl": "https://sahyak.com/images/resources/3.png",
-        "uploadDate": "2026-01-15T08:00:00+05:30"
+        "description": "Illustrated guide and platform walkthrough covering lead management, automated site visit tracking, and sales analytics."
       },
       {
         "@type": "DigitalDocument",
@@ -96,8 +94,9 @@ const resourcesSchema = {
 
     <!-- Static compiled Tailwind CSS -->
     <link rel="stylesheet" href="/css/tailwind.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
     
     <script type="application/ld+json" set:html={JSON.stringify(resourcesSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
@@ -116,7 +115,7 @@ const resourcesSchema = {
         
         /* Duotone Overlay */
         .duotone-overlay {
-            background: linear-gradient(45deg, rgba(0, 230, 118, 0.4), rgba(0, 0, 0, 0.9));
+            background: linear-gradient(45deg, rgba(74, 222, 128, 0.35), rgba(10, 28, 22, 0.9));
             mix-blend-mode: multiply;
         }
 
@@ -156,7 +155,7 @@ const resourcesSchema = {
 
         <div class="relative z-10 grid lg:grid-cols-2 gap-12 w-full max-w-7xl mx-auto">
             <!-- Left Text -->
-            <div class="flex flex-col justify-center space-y-8 reveal">
+            <div class="flex flex-col justify-center space-y-8 hero-reveal">
                 <div class="flex items-center space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-brand-green flex items-center justify-center text-brand-dark font-bold">S</div>
                     <span class="text-xl font-bold tracking-wide">Sahyak</span>
@@ -167,8 +166,8 @@ const resourcesSchema = {
                     <span>RESOURCES</span>
                 </div>
 
-                <h1 class="text-5xl lg:text-7xl font-bold leading-tight">
-                    Learn.<br>Use.<br><span class="text-brand-green">Get Results.</span>
+                <h1 class="font-serif text-5xl lg:text-7xl font-bold leading-tight">
+                    Learn.<br>Use.<br><span class="text-brand-green italic">Get Results.</span>
                 </h1>
                 
                 <p class="text-gray-400 text-lg max-w-md">
@@ -176,10 +175,10 @@ const resourcesSchema = {
                 </p>
 
                 <div class="flex flex-wrap gap-4">
-                    <a href="#quick-start" class="bg-brand-green text-brand-dark px-8 py-4 rounded-full font-semibold hover:bg-white transition-all duration-300 flex items-center gap-2">
-                        Browse all resources <i class="fas fa-arrow-right"></i>
+                    <a href="#quick-start" class="btn btn-primary px-8 py-3.5 flex items-center gap-2">
+                        Browse all resources <span>&rarr;</span>
                     </a>
-                    <a href="#tutorials" class="border border-gray-600 hover:border-brand-green text-white px-8 py-4 rounded-full font-semibold transition-all duration-300">
+                    <a href="#tutorials" class="btn btn-outline px-8 py-3.5">
                         Watch video guides
                     </a>
                 </div>
@@ -198,13 +197,13 @@ const resourcesSchema = {
             <div class="relative hidden lg:flex items-center justify-center">
                 <div class="absolute -top-10 right-0 text-brand-green font-handwriting text-2xl rotate-12">
                     EVERYTHING<br>YOU NEED<br>TO GET<br>STARTED
-                    <i class="fas fa-arrow-down block text-xl mt-1"></i>
+                    <span class="block text-xl mt-1">&darr;</span>
                 </div>
 
                 <!-- Floating Card 1 -->
                 <div class="absolute top-10 left-10 w-64 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl animate-float shadow-2xl z-20">
                     <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 rounded-lg bg-brand-green/20 flex items-center justify-center text-brand-green"><i class="fas fa-play"></i></div>
+                        <div class="w-10 h-10 rounded-lg bg-brand-green/20 flex items-center justify-center text-brand-green"><svg class="w-4 h-4 inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
                         <div>
                             <h4 class="font-bold text-sm">Getting Started</h4>
                             <p class="text-xs text-gray-400">5-minute guide</p>
@@ -218,7 +217,7 @@ const resourcesSchema = {
                 <!-- Floating Card 2 -->
                 <div class="absolute bottom-10 right-10 w-64 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl animate-float-delayed shadow-2xl z-30">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-brand-green/20 flex items-center justify-center text-brand-green"><i class="fab fa-whatsapp"></i></div>
+                        <div class="w-10 h-10 rounded-lg bg-brand-green/20 flex items-center justify-center text-brand-green"><svg class="w-5 h-5 text-green-500 inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.23 8.23 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 01-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24z"/></svg></div>
                         <div>
                             <h4 class="font-bold text-sm">WhatsApp Templates</h4>
                             <p class="text-xs text-gray-400">12 ready templates</p>
@@ -244,8 +243,8 @@ const resourcesSchema = {
                     <span class="w-2 h-2 rounded-full bg-brand-greenDark"></span>
                     <span>GET STARTED QUICKLY</span>
                 </div>
-                <h2 class="text-4xl lg:text-5xl font-bold leading-tight">
-                    Up and running in <span class="text-brand-greenDark">5 simple steps.</span>
+                <h2 class="font-serif text-4xl lg:text-5xl font-bold leading-tight">
+                    Up and running in <span class="text-brand-greenDark italic">5 simple steps.</span>
                 </h2>
                 <p class="text-gray-600 text-lg max-w-md">
                     Follow this quick guide to set up your team, import leads and start managing your sales process immediately.
@@ -280,7 +279,7 @@ const resourcesSchema = {
                 <div class="relative z-10 bg-brand-dark text-white rounded-3xl p-6 shadow-2xl border border-gray-800 w-72 mx-auto animate-float">
                     <div class="flex justify-between items-center mb-6">
                         <span class="font-bold text-sm">Sahyak</span>
-                        <i class="fas fa-user-circle text-gray-400"></i>
+                        <svg class="w-5 h-5 text-gray-400 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     </div>
                     <h3 class="font-bold text-lg mb-2">Set up your workspace</h3>
                     <div class="w-full bg-gray-700 h-2 rounded-full mb-4">
@@ -290,23 +289,23 @@ const resourcesSchema = {
                     
                     <div class="space-y-3">
                         <div class="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
-                            <i class="fas fa-check-circle text-brand-green"></i>
+                            <svg class="w-4 h-4 text-brand-green inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             <span class="text-sm">Create organization</span>
                         </div>
                         <div class="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
-                            <i class="fas fa-check-circle text-brand-green"></i>
+                            <svg class="w-4 h-4 text-brand-green inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             <span class="text-sm">Add team members</span>
                         </div>
                         <div class="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
-                            <i class="fas fa-circle text-gray-500"></i>
+                            <svg class="w-3 h-3 text-gray-500 inline-block" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/></svg>
                             <span class="text-sm text-gray-400">Import or add leads</span>
                         </div>
                         <div class="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
-                            <i class="fas fa-circle text-gray-500"></i>
+                            <svg class="w-3 h-3 text-gray-500 inline-block" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/></svg>
                             <span class="text-sm text-gray-400">Connect WhatsApp</span>
                         </div>
                         <div class="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/10">
-                            <i class="fas fa-circle text-gray-500"></i>
+                            <svg class="w-3 h-3 text-gray-500 inline-block" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/></svg>
                             <span class="text-sm text-gray-400">Start follow-ups</span>
                         </div>
                     </div>
@@ -324,14 +323,14 @@ const resourcesSchema = {
                     <span class="w-2 h-2 rounded-full bg-brand-green"></span>
                     <span>VIDEO TUTORIALS</span>
                 </div>
-                <h2 class="text-4xl lg:text-5xl font-bold leading-tight">
-                    Watch. Learn.<br><span class="text-brand-green">Do it yourself.</span>
+                <h2 class="font-serif text-4xl lg:text-5xl font-bold leading-tight">
+                    Watch. Learn.<br><span class="text-brand-green italic">Do it yourself.</span>
                 </h2>
                 <p class="text-gray-400 text-lg max-w-md">
                     Short, practical video guides to help you use every feature of Sahyak CRM — from lead management to WhatsApp outreach.
                 </p>
-                <a href="#guides" class="inline-flex bg-brand-green text-brand-dark px-8 py-4 rounded-full font-semibold hover:bg-white transition-all duration-300 items-center gap-2">
-                    Explore video tutorials <i class="fas fa-arrow-right"></i>
+                <a href="#guides" class="btn btn-primary px-8 py-3.5 inline-flex items-center gap-2">
+                    Explore video tutorials <span>&rarr;</span>
                 </a>
             </div>
 
@@ -342,7 +341,7 @@ const resourcesSchema = {
                     <img src="/images/resources/3.png" alt="Video Tutorial Thumbnail for Sahyak CRM Setup and Walkthrough" class="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-700" width="800" height="400" loading="lazy" decoding="async">
                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
                         <div class="w-20 h-20 bg-brand-green rounded-full flex items-center justify-center text-brand-dark text-2xl group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-play ml-1"></i>
+                            <svg class="w-6 h-6 ml-0.5 inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     </div>
                     <div class="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm px-4 py-2 rounded-lg">
@@ -355,21 +354,21 @@ const resourcesSchema = {
                 <div class="mt-6 space-y-3">
                     <div class="flex items-center justify-between bg-white/5 border border-white/10 p-3 rounded-xl hover:bg-white/10 transition-colors cursor-pointer">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-brand-green/20 flex items-center justify-center text-brand-green"><i class="fas fa-play text-xs"></i></div>
+                            <div class="w-10 h-10 rounded-lg bg-brand-green/20 flex items-center justify-center text-brand-green"><svg class="w-3 h-3 text-brand-green inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
                             <span class="font-semibold text-sm">Add & Manage Leads</span>
                         </div>
                         <span class="text-xs text-gray-400">3:18</span>
                     </div>
                     <div class="flex items-center justify-between bg-white/5 border border-white/10 p-3 rounded-xl hover:bg-white/10 transition-colors cursor-pointer">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-brand-green/20 flex items-center justify-center text-brand-green"><i class="fas fa-play text-xs"></i></div>
+                            <div class="w-10 h-10 rounded-lg bg-brand-green/20 flex items-center justify-center text-brand-green"><svg class="w-3 h-3 text-brand-green inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
                             <span class="font-semibold text-sm">WhatsApp Integration</span>
                         </div>
                         <span class="text-xs text-gray-400">4:26</span>
                     </div>
                     <div class="flex items-center justify-between bg-white/5 border border-white/10 p-3 rounded-xl hover:bg-white/10 transition-colors cursor-pointer">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-brand-green/20 flex items-center justify-center text-brand-green"><i class="fas fa-play text-xs"></i></div>
+                            <div class="w-10 h-10 rounded-lg bg-brand-green/20 flex items-center justify-center text-brand-green"><svg class="w-3 h-3 text-brand-green inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
                             <span class="font-semibold text-sm">Schedule Follow-ups</span>
                         </div>
                         <span class="text-xs text-gray-400">3:52</span>
@@ -392,14 +391,14 @@ const resourcesSchema = {
                     <span class="w-2 h-2 rounded-full bg-brand-greenDark"></span>
                     <span>STEP-BY-STEP GUIDES</span>
                 </div>
-                <h2 class="text-4xl lg:text-5xl font-bold leading-tight">
-                    Detailed guides<br>for every <span class="text-brand-greenDark">feature.</span>
+                <h2 class="font-serif text-4xl lg:text-5xl font-bold leading-tight">
+                    Detailed guides<br>for every <span class="text-brand-greenDark italic">feature.</span>
                 </h2>
                 <p class="text-gray-600 text-lg max-w-md">
                     Follow easy, illustrated guides to learn how to use Sahyak's features in real-world scenarios.
                 </p>
-                <a href="#templates" class="inline-flex bg-brand-dark text-white px-8 py-4 rounded-full font-semibold hover:bg-brand-green hover:text-brand-dark transition-all duration-300 items-center gap-2">
-                    Browse all guides <i class="fas fa-arrow-right"></i>
+                <a href="#templates" class="btn btn-dark-outline px-8 py-3.5 inline-flex items-center gap-2">
+                    Browse all guides <span>&rarr;</span>
                 </a>
             </div>
 
@@ -407,7 +406,7 @@ const resourcesSchema = {
             <div class="relative reveal h-[400px] lg:h-[500px]">
                 <div class="absolute top-0 left-0 text-brand-greenDark font-handwriting text-xl rotate-6">
                     CLEAR STEPS.<br>REAL SCREENSHOTS.<br>EASY TO FOLLOW.
-                    <i class="fas fa-arrow-down block text-lg mt-1"></i>
+                    <span class="block text-lg mt-1">&darr;</span>
                 </div>
 
                 <!-- Card 1 -->
@@ -415,11 +414,11 @@ const resourcesSchema = {
                     <div class="text-4xl font-bold text-brand-greenDark mb-4">01</div>
                     <h4 class="font-bold text-lg mb-2">Add Your First Leads</h4>
                     <ul class="text-sm text-gray-500 space-y-2 mb-6">
-                        <li class="flex items-center gap-2"><i class="fas fa-check text-brand-greenDark"></i> Step 1: Go to Leads</li>
-                        <li class="flex items-center gap-2"><i class="fas fa-check text-brand-greenDark"></i> Step 2: Add manually or import</li>
-                        <li class="flex items-center gap-2"><i class="fas fa-check text-brand-greenDark"></i> Step 3: Organize with tags</li>
+                        <li class="flex items-center gap-2"><span class="text-brand-greenDark font-bold">&#10003;</span> Step 1: Go to Leads</li>
+                        <li class="flex items-center gap-2"><span class="text-brand-greenDark font-bold">&#10003;</span> Step 2: Add manually or import</li>
+                        <li class="flex items-center gap-2"><span class="text-brand-greenDark font-bold">&#10003;</span> Step 3: Organize with tags</li>
                     </ul>
-                    <a href="/contact" class="text-sm font-semibold flex items-center gap-2 text-brand-dark">View guide <i class="fas fa-arrow-right"></i></a>
+                    <a href="/contact/" class="text-sm font-semibold flex items-center gap-2 text-brand-dark">View guide <span>&rarr;</span></a>
                 </div>
 
                 <!-- Card 2 -->
@@ -427,9 +426,9 @@ const resourcesSchema = {
                     <div class="text-4xl font-bold text-brand-greenDark mb-4">02</div>
                     <h4 class="font-bold text-lg mb-2">WhatsApp Setup & Templates</h4>
                     <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-2xl mb-6">
-                        <i class="fab fa-whatsapp"></i>
+                        <svg class="w-5 h-5 text-green-500 inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.23 8.23 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 01-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24z"/></svg>
                     </div>
-                    <a href="/contact" class="text-sm font-semibold flex items-center gap-2 text-brand-dark">View guide <i class="fas fa-arrow-right"></i></a>
+                    <a href="/contact/" class="text-sm font-semibold flex items-center gap-2 text-brand-dark">View guide <span>&rarr;</span></a>
                 </div>
 
                 <!-- Card 3 -->
@@ -437,9 +436,9 @@ const resourcesSchema = {
                     <div class="text-4xl font-bold text-brand-greenDark mb-4">03</div>
                     <h4 class="font-bold text-lg mb-2">Manage Site Visits</h4>
                     <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-2xl mb-6">
-                        <i class="fas fa-calendar-check"></i>
+                        <svg class="w-5 h-5 text-blue-500 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     </div>
-                    <a href="/contact" class="text-sm font-semibold flex items-center gap-2 text-brand-dark">View guide <i class="fas fa-arrow-right"></i></a>
+                    <a href="/contact/" class="text-sm font-semibold flex items-center gap-2 text-brand-dark">View guide <span>&rarr;</span></a>
                 </div>
             </div>
         </div>
@@ -458,14 +457,14 @@ const resourcesSchema = {
                     <span class="w-2 h-2 rounded-full bg-brand-green"></span>
                     <span>TEMPLATES & DOWNLOADS</span>
                 </div>
-                <h2 class="text-4xl lg:text-5xl font-bold leading-tight">
-                    Ready-to-use<br><span class="text-brand-green">templates</span> for your team.
+                <h2 class="font-serif text-4xl lg:text-5xl font-bold leading-tight">
+                    Ready-to-use<br><span class="text-brand-green italic">templates</span> for your team.
                 </h2>
                 <p class="text-gray-400 text-lg max-w-md">
                     Save time with practical templates designed for real estate teams.
                 </p>
-                <a href="#help-articles" class="inline-flex bg-brand-green text-brand-dark px-8 py-4 rounded-full font-semibold hover:bg-white transition-all duration-300 items-center gap-2">
-                    View all templates <i class="fas fa-arrow-right"></i>
+                <a href="#help-articles" class="btn btn-primary px-8 py-3.5 inline-flex items-center gap-2">
+                    View all templates <span>&rarr;</span>
                 </a>
             </div>
 
@@ -473,12 +472,12 @@ const resourcesSchema = {
             <div class="relative reveal h-[400px] flex items-center justify-center">
                 <div class="absolute top-0 right-0 text-brand-green font-handwriting text-2xl rotate-6 text-right">
                     TEMPLATES<br>THAT HELP<br>YOU CLOSE<br>FASTER
-                    <i class="fas fa-arrow-down block text-xl mt-1"></i>
+                    <span class="block text-xl mt-1">&darr;</span>
                 </div>
 
                 <div class="absolute top-10 left-10 w-56 bg-white text-brand-dark p-4 rounded-xl shadow-2xl animate-float z-30">
                     <div class="flex items-center gap-3 mb-2">
-                        <i class="fas fa-file-pdf text-red-500 text-2xl"></i>
+                        <svg class="w-6 h-6 text-red-500 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                         <h4 class="font-bold text-sm">Property Brochure Template</h4>
                     </div>
                     <p class="text-xs text-gray-500">(PDF)</p>
@@ -486,7 +485,7 @@ const resourcesSchema = {
 
                 <div class="absolute top-40 right-10 w-56 bg-white text-brand-dark p-4 rounded-xl shadow-2xl animate-float-delayed z-20">
                     <div class="flex items-center gap-3 mb-2">
-                        <i class="fas fa-file-word text-blue-500 text-2xl"></i>
+                        <svg class="w-6 h-6 text-blue-500 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                         <h4 class="font-bold text-sm">Follow-up Message Templates</h4>
                     </div>
                     <p class="text-xs text-gray-500">(DOCX)</p>
@@ -494,7 +493,7 @@ const resourcesSchema = {
 
                 <div class="absolute bottom-10 left-20 w-56 bg-white text-brand-dark p-4 rounded-xl shadow-2xl animate-float z-10">
                     <div class="flex items-center gap-3 mb-2">
-                        <i class="fas fa-file-excel text-green-500 text-2xl"></i>
+                        <svg class="w-6 h-6 text-green-500 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                         <h4 class="font-bold text-sm">Site Visit Checklist</h4>
                     </div>
                     <p class="text-xs text-gray-500">(XLSX)</p>
@@ -512,14 +511,14 @@ const resourcesSchema = {
                     <span class="w-2 h-2 rounded-full bg-brand-greenDark"></span>
                     <span>HELP ARTICLES</span>
                 </div>
-                <h2 class="text-4xl lg:text-5xl font-bold leading-tight">
-                    Find answers<br>in <span class="text-brand-greenDark">seconds.</span>
+                <h2 class="font-serif text-4xl lg:text-5xl font-bold leading-tight">
+                    Find answers<br>in <span class="text-brand-greenDark italic">seconds.</span>
                 </h2>
                 <p class="text-gray-600 text-lg max-w-md">
                     Browse our help center for step-by-step articles, troubleshooting guides and best practices.
                 </p>
-                <a href="/contact" class="inline-flex bg-brand-dark text-white px-8 py-4 rounded-full font-semibold hover:bg-brand-green hover:text-brand-dark transition-all duration-300 items-center gap-2">
-                    Explore help center <i class="fas fa-arrow-right"></i>
+                <a href="/contact/" class="btn btn-dark-outline px-8 py-3.5 inline-flex items-center gap-2">
+                    Explore help center <span>&rarr;</span>
                 </a>
             </div>
 
@@ -527,63 +526,55 @@ const resourcesSchema = {
             <div class="space-y-6 reveal">
                 <!-- Search Bar -->
                 <div class="relative">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" placeholder="Search for a topic..." class="w-full bg-white border border-gray-200 rounded-full py-4 pl-12 pr-4 focus:outline-none focus:border-brand-greenDark focus:ring-1 focus:ring-brand-greenDark transition-all">
-                    <button class="absolute right-2 top-1/2 -translate-y-1/2 bg-brand-dark text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-greenDark transition-colors">
-                        <i class="fas fa-arrow-right"></i>
+                    <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="help-search-input" aria-label="Search help topics and documentation" placeholder="Search for a topic..." class="w-full bg-white border border-gray-200 rounded-full py-4 pl-12 pr-4 focus:outline-none focus:border-brand-greenDark focus:ring-1 focus:ring-brand-greenDark transition-all">
+                    <button aria-label="Search topics" class="absolute right-2 top-1/2 -translate-y-1/2 bg-brand-dark text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-greenDark transition-colors">
+                        <span>&rarr;</span>
                     </button>
                 </div>
 
                 <!-- Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all cursor-pointer text-center group">
+                <div id="help-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <a href="/contact/?topic=setup" class="help-topic-card bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all block text-center group text-inherit no-underline">
                         <div class="w-10 h-10 mx-auto bg-gray-100 rounded-full flex items-center justify-center text-gray-600 group-hover:bg-brand-green/20 group-hover:text-brand-greenDark transition-colors mb-2">
-                            <i class="fas fa-user-cog"></i>
+                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         </div>
-                        <span class="text-xs font-semibold">Account & Setup</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all cursor-pointer text-center group">
+                        <span class="text-xs font-semibold text-gray-800">Account & Setup</span></a>
+                    <a href="/features/#lead-management" class="help-topic-card bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all block text-center group text-inherit no-underline">
                         <div class="w-10 h-10 mx-auto bg-gray-100 rounded-full flex items-center justify-center text-gray-600 group-hover:bg-brand-green/20 group-hover:text-brand-greenDark transition-colors mb-2">
-                            <i class="fas fa-users"></i>
+                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         </div>
-                        <span class="text-xs font-semibold">Leads & Contacts</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all cursor-pointer text-center group">
+                        <span class="text-xs font-semibold text-gray-800">Leads & Contacts</span></a>
+                    <a href="/features/#whatsapp" class="help-topic-card bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all block text-center group text-inherit no-underline">
                         <div class="w-10 h-10 mx-auto bg-gray-100 rounded-full flex items-center justify-center text-gray-600 group-hover:bg-brand-green/20 group-hover:text-brand-greenDark transition-colors mb-2">
-                            <i class="fab fa-whatsapp"></i>
+                            <svg class="w-5 h-5 text-green-500 inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.23 8.23 0 012.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 01-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24z"/></svg>
                         </div>
-                        <span class="text-xs font-semibold">WhatsApp Hub</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all cursor-pointer text-center group">
+                        <span class="text-xs font-semibold text-gray-800">WhatsApp Hub</span></a>
+                    <a href="/features/#lead-management" class="help-topic-card bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all block text-center group text-inherit no-underline">
                         <div class="w-10 h-10 mx-auto bg-gray-100 rounded-full flex items-center justify-center text-gray-600 group-hover:bg-brand-green/20 group-hover:text-brand-greenDark transition-colors mb-2">
-                            <i class="fas fa-clock"></i>
+                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
-                        <span class="text-xs font-semibold">Follow-ups</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all cursor-pointer text-center group">
+                        <span class="text-xs font-semibold text-gray-800">Follow-ups</span></a>
+                    <a href="/features/#inventory" class="help-topic-card bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all block text-center group text-inherit no-underline">
                         <div class="w-10 h-10 mx-auto bg-gray-100 rounded-full flex items-center justify-center text-gray-600 group-hover:bg-brand-green/20 group-hover:text-brand-greenDark transition-colors mb-2">
-                            <i class="fas fa-home"></i>
+                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                         </div>
-                        <span class="text-xs font-semibold">Properties</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all cursor-pointer text-center group">
+                        <span class="text-xs font-semibold text-gray-800">Properties</span></a>
+                    <a href="/features/#site-visits" class="help-topic-card bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all block text-center group text-inherit no-underline">
                         <div class="w-10 h-10 mx-auto bg-gray-100 rounded-full flex items-center justify-center text-gray-600 group-hover:bg-brand-green/20 group-hover:text-brand-greenDark transition-colors mb-2">
-                            <i class="fas fa-building"></i>
+                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                         </div>
-                        <span class="text-xs font-semibold">Site Visits</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all cursor-pointer text-center group">
+                        <span class="text-xs font-semibold text-gray-800">Site Visits</span></a>
+                    <a href="/features/#team" class="help-topic-card bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all block text-center group text-inherit no-underline">
                         <div class="w-10 h-10 mx-auto bg-gray-100 rounded-full flex items-center justify-center text-gray-600 group-hover:bg-brand-green/20 group-hover:text-brand-greenDark transition-colors mb-2">
-                            <i class="fas fa-user-shield"></i>
+                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                         </div>
-                        <span class="text-xs font-semibold">Team & Permissions</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all cursor-pointer text-center group">
+                        <span class="text-xs font-semibold text-gray-800">Team & Permissions</span></a>
+                    <a href="/pricing/" class="help-topic-card bg-white p-4 rounded-xl border border-gray-100 hover:shadow-lg hover:border-brand-green transition-all block text-center group text-inherit no-underline">
                         <div class="w-10 h-10 mx-auto bg-gray-100 rounded-full flex items-center justify-center text-gray-600 group-hover:bg-brand-green/20 group-hover:text-brand-greenDark transition-colors mb-2">
-                            <i class="fas fa-credit-card"></i>
+                            <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                         </div>
-                        <span class="text-xs font-semibold">Billing & Plans</span>
-                    </div>
+                        <span class="text-xs font-semibold text-gray-800">Billing & Plans</span></a>
                 </div>
             </div>
         </div>
@@ -598,7 +589,7 @@ const resourcesSchema = {
                 <div class="absolute inset-0 duotone-overlay"></div>
                 <div class="absolute bottom-6 left-6 text-brand-green font-handwriting text-3xl rotate-[-10deg]">
                     STILL<br>NEED<br>HELP?
-                    <i class="fas fa-arrow-down block text-2xl mt-1"></i>
+                    <span class="block text-2xl mt-1">&darr;</span>
                 </div>
             </div>
 
@@ -608,35 +599,35 @@ const resourcesSchema = {
                     <span class="w-2 h-2 rounded-full bg-brand-green"></span>
                     <span>ADDITIONAL SUPPORT</span>
                 </div>
-                <h2 class="text-4xl lg:text-5xl font-bold leading-tight">
-                    Can't find what you're<br>looking for?
+                <h2 class="font-serif text-4xl lg:text-5xl font-bold leading-tight">
+                    Can't find what you're<br><span class="text-brand-green italic">looking for?</span>
                 </h2>
                 <p class="text-gray-400 text-lg max-w-md">
                     Our team is here to help. Get in touch and we'll make sure you get the support you need.
                 </p>
                 
                 <div class="flex flex-wrap gap-4 pt-4">
-                    <a href="/contact" class="bg-brand-green text-brand-dark px-8 py-4 rounded-full font-semibold hover:bg-white transition-all duration-300 flex items-center gap-2">
-                        Contact support <i class="fas fa-arrow-right"></i>
+                    <a href="/contact/" class="btn btn-primary px-8 py-3.5 flex items-center gap-2">
+                        Contact support <span>&rarr;</span>
                     </a>
-                    <a href="/contact" class="border border-gray-600 hover:border-brand-green text-white px-8 py-4 rounded-full font-semibold transition-all duration-300">
+                    <a href="/contact/" class="btn btn-outline px-8 py-3.5">
                         Book a demo
                     </a>
                 </div>
 
                 <div class="grid grid-cols-3 gap-4 pt-8">
                     <div class="flex flex-col items-center text-center space-y-2">
-                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brand-green"><i class="fas fa-envelope"></i></div>
+                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brand-green"><svg class="w-5 h-5 text-brand-green inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
                         <span class="text-xs font-semibold">Email support</span>
                         <span class="text-[10px] text-gray-500">Quick responses</span>
                     </div>
                     <div class="flex flex-col items-center text-center space-y-2">
-                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brand-green"><i class="fas fa-video"></i></div>
+                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brand-green"><svg class="w-5 h-5 text-brand-green inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></div>
                         <span class="text-xs font-semibold">Live demo</span>
                         <span class="text-[10px] text-gray-500">See Sahyak CRM in action</span>
                     </div>
                     <div class="flex flex-col items-center text-center space-y-2">
-                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brand-green"><i class="fas fa-comment-dots"></i></div>
+                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-brand-green"><svg class="w-5 h-5 text-brand-green inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>
                         <span class="text-xs font-semibold">Product feedback</span>
                         <span class="text-[10px] text-gray-500">Help us improve</span>
                     </div>
@@ -646,11 +637,11 @@ const resourcesSchema = {
     </section>
 
     <!-- SECTION 8: FOOTER / CTA -->
-    <section class="relative bg-black py-24 px-6 lg:px-20 overflow-hidden">
+    <section class="relative bg-brand-dark py-24 px-6 lg:px-20 overflow-hidden">
         <!-- Background with Surrealist Portal Effect -->
         <div class="absolute inset-0 z-0">
             <img src="/images/resources/7.png" alt="Sahyak Real Estate CRM Knowledge Base Portal" class="w-full h-full object-cover opacity-30 grayscale" width="1920" height="800" loading="lazy" decoding="async">
-            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/80 to-transparent"></div>
             <!-- Portal Effect -->
             <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[400px] border-4 border-brand-green/30 rounded-t-[100px] bg-brand-green/5 backdrop-blur-sm z-0 hidden lg:block"></div>
         </div>
@@ -662,14 +653,14 @@ const resourcesSchema = {
                     <span class="w-2 h-2 rounded-full bg-brand-green"></span>
                     <span>KEEP LEARNING, KEEP GROWING</span>
                 </div>
-                <h2 class="text-4xl lg:text-6xl font-bold leading-tight">
-                    Turn knowledge<br>into more <span class="text-brand-green">deals.</span>
+                <h2 class="font-serif text-4xl lg:text-6xl font-bold leading-tight">
+                    Turn knowledge<br>into more <span class="text-brand-green italic">deals.</span>
                 </h2>
                 <p class="text-gray-400 text-lg max-w-md mx-auto lg:mx-0">
                     Explore our resources, master Sahyak CRM and help your real estate business grow faster.
                 </p>
-                <a href="#quick-start" class="bg-brand-green text-brand-dark px-8 py-4 rounded-full font-semibold hover:bg-white transition-all duration-300 inline-flex items-center gap-2 mx-auto lg:mx-0">
-                    Browse all resources <i class="fas fa-arrow-right"></i>
+                <a href="#quick-start" class="btn btn-primary px-8 py-3.5 inline-flex items-center gap-2 mx-auto lg:mx-0">
+                    Browse all resources <span>&rarr;</span>
                 </a>
             </div>
 
@@ -677,11 +668,30 @@ const resourcesSchema = {
             <div class="hidden lg:block text-right reveal">
                 <div class="text-brand-green font-handwriting text-3xl rotate-6">
                     SAME GOAL.<br>A BRIGHTER<br>REAL ESTATE<br>TOMORROW.
-                    <i class="fas fa-arrow-down block text-2xl mt-2 ml-auto"></i>
+                    <span class="block text-2xl mt-2 ml-auto">&darr;</span>
                 </div>
             </div>
         </div>
     </section>
+    
+    <!-- Video Walkthrough Accessible Notice Modal -->
+    <div id="video-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-brand-surface border border-brand-green/20 rounded-2xl max-w-md w-full p-6 text-white text-center shadow-2xl relative sahyak-card-dark">
+            <h3 class="font-serif text-xl font-bold mb-2">Video Tutorial Update</h3>
+            <p class="text-gray-300 text-sm mb-6 leading-relaxed">
+                Our platform video masterclass is currently being updated with the latest version. In the meantime, explore our illustrated step-by-step guides or schedule a live 1-on-1 walkthrough with our specialists.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="/contact/?topic=demo" class="btn btn-primary px-6 py-2.5">
+                    Book live demo &rarr;
+                </a>
+                <button id="close-video-modal" class="btn btn-outline px-6 py-2.5">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     </main>
 
     <!-- Universal Footer -->
@@ -708,5 +718,48 @@ const resourcesSchema = {
             revealOnScroll(); // Trigger on load
         });
     </script>
+
+    <script is:inline>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Live Search Filter for Help Topics
+            const searchInput = document.getElementById('help-search-input');
+            const topicCards = document.querySelectorAll('.help-topic-card');
+            
+            if (searchInput && topicCards.length) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    topicCards.forEach(card => {
+                        const text = card.textContent.toLowerCase();
+                        card.style.display = text.includes(query) ? 'block' : 'none';
+                    });
+                });
+            }
+
+            // Video Player Modal Notice
+            const videoTrigger = document.querySelector('#tutorials .cursor-pointer');
+            const videoModal = document.getElementById('video-modal');
+            const closeBtn = document.getElementById('close-video-modal');
+
+            if (videoTrigger && videoModal) {
+                videoTrigger.addEventListener('click', () => {
+                    videoModal.classList.remove('hidden');
+                });
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', () => {
+                        videoModal.classList.add('hidden');
+                    });
+                }
+                videoModal.addEventListener('click', (e) => {
+                    if (e.target === videoModal) videoModal.classList.add('hidden');
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && !videoModal.classList.contains('hidden')) {
+                        videoModal.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+
 </body>
 </html>

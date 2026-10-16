@@ -135,7 +135,7 @@ const softwareSchema = {
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     
     <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
@@ -153,7 +153,7 @@ const softwareSchema = {
             --text-gray: #6B7280;
             --text-light-gray: #9CA3AF;
             --border-radius: 12px;
-            --transition: all 0.3s ease;
+            --transition: all 0.25s ease;
         }
 
         * {
@@ -171,8 +171,8 @@ const softwareSchema = {
         }
 
         h1, h2, h3, h4 {
-            font-family: 'DM Serif Display', serif;
-            font-weight: 400;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
             line-height: 1.2;
         }
 
@@ -191,15 +191,15 @@ const softwareSchema = {
         /* ANIMATIONS */
         .reveal {
             opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
-        .reveal-left { transform: translateX(-40px); }
-        .reveal-right { transform: translateX(40px); }
+        .reveal-left { transform: translateX(-30px); }
+        .reveal-right { transform: translateX(30px); }
         .reveal-left.active, .reveal-right.active { transform: translateX(0); }
 
         @keyframes float {
@@ -640,12 +640,12 @@ const softwareSchema = {
             <img src="/images/pricing/1.png" width="1920" height="1080" fetchpriority="high" loading="eager" alt="Sahyak Real Estate CRM pricing plans and modular calculator background" class="hero-bg-img">
             <div class="hero-bg-overlay"></div>
         </div>
-        <div class="container hero-content reveal reveal-left">
+        <div class="container hero-content hero-reveal reveal reveal-left">
             <h1>Your team grows. <br>Your CRM <span>scales with you.</span></h1>
             <p>Choose the capacity you need — users, leads, storage and connected platforms. Transparent pricing for real estate teams.</p>
             <div class="hero-cta">
                 <a href="#calculator" class="btn btn-primary pricing-supported-only">Configure your plan &rarr;</a>
-                <a href="/contact?topic=pricing" class="btn btn-primary pricing-unsupported-only">Contact sales to purchase &rarr;</a>
+                <a href="/contact/?topic=pricing" class="btn btn-primary pricing-unsupported-only">Contact sales to purchase &rarr;</a>
                 <a href="https://crm.sahyak.com" class="btn btn-outline">Start free</a>
             </div>
             <div class="trust-badge">
@@ -655,7 +655,7 @@ const softwareSchema = {
                 <span>Trusted by real estate teams<br>across 15+ countries worldwide</span>
             </div>
         </div>
-        <div class="container hero-visual reveal reveal-right">
+        <div class="container hero-visual hero-reveal-delay-1 reveal reveal-right">
             <div class="phone-mockup floating">
                 <div class="phone-screen">
                     <div>
@@ -693,7 +693,7 @@ const softwareSchema = {
                             <p style="font-size: 0.75rem; color: #888;">Regional License</p>
                             <h3 style="font-size: 1.1rem; color: #166534;">Custom Quote</h3>
                         </div>
-                        <a href="/contact?topic=pricing" class="btn btn-primary" style="padding: 10px 18px; font-size: 0.85rem;">Purchase &rarr;</a>
+                        <a href="/contact/?topic=pricing" class="btn btn-primary" style="padding: 10px 18px; font-size: 0.85rem;">Purchase &rarr;</a>
                     </div>
                 </div>
             </div>
@@ -732,12 +732,12 @@ const softwareSchema = {
 
                 <!-- Billing Frequency Switcher -->
                 <div class="billing-toggle-wrapper pricing-supported-only">
-                    <span class="billing-toggle-label active" id="btn-monthly">Monthly</span>
+                    <span class="billing-toggle-label active" id="btn-monthly" role="button" tabindex="0" aria-label="Select monthly billing">Monthly</span>
                     <label class="billing-switch">
-                        <input type="checkbox" id="billing-toggle">
+                        <input type="checkbox" id="billing-toggle" role="switch" aria-checked="false" aria-label="Toggle annual billing discount (save 10%)">
                         <span class="billing-slider"></span>
                     </label>
-                    <span class="billing-toggle-label" id="btn-annual">Annual <span class="discount-pill">Save 10%</span></span>
+                    <span class="billing-toggle-label" id="btn-annual" role="button" tabindex="0" aria-label="Select annual billing with 10% discount">Annual <span class="discount-pill">Save 10%</span></span>
                 </div>
 
                 <p style="color: var(--green-primary); font-weight: 600; font-style: italic;">PAY FOR SCALE — NOT LOCKED FEATURES.</p>
@@ -897,7 +897,7 @@ const softwareSchema = {
                         Ready to activate Sahyak CRM for your team? Get in touch directly via our contact page to discuss your requirements and complete your purchase.
                     </p>
 
-                    <a href="/contact?topic=pricing" class="btn btn-primary" style="padding: 16px 36px; font-size: 1.05rem;">
+                    <a href="/contact/?topic=pricing" class="btn btn-primary" style="padding: 16px 36px; font-size: 1.05rem;">
                         Get in touch directly via the contact page to make a purchase &rarr;
                     </a>
                 </div>
@@ -912,7 +912,7 @@ const softwareSchema = {
             <div class="features-text reveal reveal-left">
                 <h2>Everything you need to run your <span>real estate business.</span></h2>
                 <p>Base Access includes all core CRM features. Scale users, leads, storage or connected portals seamlessly as your transactions grow.</p>
-                <a href="/features" class="btn btn-primary">See all features &rarr;</a>
+                <a href="/features/" class="btn btn-primary">See all features &rarr;</a>
             </div>
             <div class="features-visual reveal reveal-right">
                 <!-- Ambient Background (Dynamic Action Splash 3.png) -->
@@ -1198,6 +1198,7 @@ const softwareSchema = {
             if (billingToggle) {
                 billingToggle.addEventListener('change', () => {
                     isAnnual = billingToggle.checked;
+                    billingToggle.setAttribute('aria-checked', isAnnual ? 'true' : 'false');
                     if (btnMonthly && btnAnnual) {
                         if (isAnnual) {
                             btnAnnual.classList.add('active');
@@ -1211,26 +1212,48 @@ const softwareSchema = {
                 });
             }
 
-            if (btnMonthly) {
-                btnMonthly.addEventListener('click', () => {
-                    if (billingToggle) {
-                        billingToggle.checked = false;
-                        isAnnual = false;
+            const activateMonthly = () => {
+                if (billingToggle) {
+                    billingToggle.checked = false;
+                    billingToggle.setAttribute('aria-checked', 'false');
+                    isAnnual = false;
+                    if (btnMonthly && btnAnnual) {
                         btnMonthly.classList.add('active');
                         btnAnnual.classList.remove('active');
-                        renderPricing();
+                    }
+                    renderPricing();
+                }
+            };
+
+            const activateAnnual = () => {
+                if (billingToggle) {
+                    billingToggle.checked = true;
+                    billingToggle.setAttribute('aria-checked', 'true');
+                    isAnnual = true;
+                    if (btnMonthly && btnAnnual) {
+                        btnAnnual.classList.add('active');
+                        btnMonthly.classList.remove('active');
+                    }
+                    renderPricing();
+                }
+            };
+
+            if (btnMonthly) {
+                btnMonthly.addEventListener('click', activateMonthly);
+                btnMonthly.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        activateMonthly();
                     }
                 });
             }
 
             if (btnAnnual) {
-                btnAnnual.addEventListener('click', () => {
-                    if (billingToggle) {
-                        billingToggle.checked = true;
-                        isAnnual = true;
-                        btnAnnual.classList.add('active');
-                        btnMonthly.classList.remove('active');
-                        renderPricing();
+                btnAnnual.addEventListener('click', activateAnnual);
+                btnAnnual.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        activateAnnual();
                     }
                 });
             }
