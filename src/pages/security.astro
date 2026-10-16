@@ -649,25 +649,41 @@ const securitySchema = {
     <section id="legal" class="bg-[#0E271F] border-t border-white/10 py-16 px-6 lg:px-8 relative z-10">
         <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div id="privacy" class="p-8 rounded-2xl sahyak-card-dark">
-                    <span class="text-xs font-bold uppercase tracking-wider text-neon">Compliance & Trust</span>
-                    <h3 class="text-2xl font-serif font-bold mt-2 mb-4 text-white">Privacy Policy</h3>
-                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
-                        Sahyak CRM is committed to customer data privacy and lawful processing under applicable data protection frameworks including the Digital Personal Data Protection Act (DPDPA) and GDPR principles. We process personal and business data solely for delivering platform CRM services, authenticated access, and authorized communications.
-                    </p>
-                    <p class="text-xs text-gray-400">
-                        Formal master policy documentation is currently being finalized with legal counsel. For specific Data Processing Agreements (DPA), deletion requests, or compliance inquiries, contact our Privacy Desk at <a href="mailto:support@sahyak.com" class="text-neon underline">support@sahyak.com</a>.
-                    </p>
+                <div id="privacy" class="p-8 rounded-2xl sahyak-card-dark flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-neon">Compliance & Trust</span>
+                        <h3 class="text-2xl font-serif font-bold mt-2 mb-4 text-white">Privacy Policy</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                            Sahyak CRM is committed to customer data privacy and lawful processing under applicable data protection frameworks including India's Digital Personal Data Protection Act (DPDP Act 2023) and GDPR principles. We process personal and business data solely for delivering platform CRM services, authenticated access, and authorized communications.
+                        </p>
+                        <p class="text-xs text-gray-400 mb-6">
+                            For specific Data Processing Agreements (DPA), deletion requests, or compliance inquiries, contact our Privacy Desk at <a href="mailto:support@sahyak.com" class="text-neon underline">support@sahyak.com</a>.
+                        </p>
+                    </div>
+                    <div>
+                        <a href="/privacy/" class="inline-flex items-center gap-2 text-sm font-semibold text-neon hover:text-white transition-colors">
+                            <span>Read Complete Privacy Policy</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
                 </div>
-                <div id="terms" class="p-8 rounded-2xl sahyak-card-dark">
-                    <span class="text-xs font-bold uppercase tracking-wider text-neon">Terms of Use</span>
-                    <h3 class="text-2xl font-serif font-bold mt-2 mb-4 text-white">Terms of Service</h3>
-                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
-                        Use of the Sahyak CRM platform is subject to authorized workspace registration, subscription terms, and acceptable usage standards. Organizations retain complete ownership and rights to their uploaded customer lead records, property inventory, and deal records.
-                    </p>
-                    <p class="text-xs text-gray-400">
-                        Our updated Master Services Agreement and SLA documentation are currently being finalized with legal counsel. For enterprise licensing or terms clarification, contact our legal desk at <a href="mailto:support@sahyak.com" class="text-neon underline">support@sahyak.com</a>.
-                    </p>
+                <div id="terms" class="p-8 rounded-2xl sahyak-card-dark flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-neon">Terms of Use</span>
+                        <h3 class="text-2xl font-serif font-bold mt-2 mb-4 text-white">Terms &amp; Conditions</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                            Use of the Sahyak CRM platform is subject to authorized workspace registration, subscription terms, and acceptable usage standards. Subscribing organizations retain complete ownership and title to their uploaded customer lead records, property inventory, and commercial deal notes.
+                        </p>
+                        <p class="text-xs text-gray-400 mb-6">
+                            For enterprise licensing, custom SLAs, or multi-seat procurement terms, contact our legal desk at <a href="mailto:support@sahyak.com" class="text-neon underline">support@sahyak.com</a>.
+                        </p>
+                    </div>
+                    <div>
+                        <a href="/terms/" class="inline-flex items-center gap-2 text-sm font-semibold text-neon hover:text-white transition-colors">
+                            <span>Read Master Subscription Terms</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

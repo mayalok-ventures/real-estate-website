@@ -1,0 +1,790 @@
+---
+export const prerender = true;
+
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+
+const seoTitle = "Privacy Policy | Sahyak Real Estate CRM";
+const seoDesc = "Read the Sahyak CRM Privacy Policy. Learn how we handle website visitor information, contact requests, customer account authentication, and multi-tenant CRM data.";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://sahyak.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Privacy Policy",
+      "item": "https://sahyak.com/privacy/"
+    }
+  ]
+};
+
+const webpageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": seoTitle,
+  "description": seoDesc,
+  "url": "https://sahyak.com/privacy/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sahyak CRM",
+    "url": "https://sahyak.com",
+    "logo": "https://sahyak.com/images/sahyak-logo.png"
+  }
+};
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{seoTitle}</title>
+    <meta name="description" content={seoDesc} />
+    <link rel="canonical" href="https://sahyak.com/privacy/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://sahyak.com/privacy/" />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={seoDesc} />
+    <meta property="og:image" content="https://sahyak.com/images/sahyak-logo.png" />
+    <meta property="og:site_name" content="Sahyak CRM" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary" />
+    <meta property="twitter:url" content="https://sahyak.com/privacy/" />
+    <meta property="twitter:title" content={seoTitle} />
+    <meta property="twitter:description" content={seoDesc} />
+
+    <!-- Favicon & Brand -->
+    <link rel="icon" type="image/png" href="/images/sahyak-logo.png" />
+    <link rel="apple-touch-icon" href="/images/sahyak-logo.png" />
+    <meta name="theme-color" content="#0A1C16" />
+
+    <!-- Compiled Tailwind CSS & Unified Fonts -->
+    <link rel="stylesheet" href="/css/tailwind.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+    <script type="application/ld+json" set:html={JSON.stringify(webpageSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+    <style>
+        .legal-prose h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.75rem;
+            line-height: 1.3;
+            color: #0A1C16;
+            margin-top: 2.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #E5E7EB;
+            scroll-margin-top: 6.5rem;
+        }
+        .legal-prose h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.25rem;
+            line-height: 1.4;
+            color: #111827;
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+            scroll-margin-top: 6.5rem;
+        }
+        .legal-prose p {
+            color: #374151;
+            font-size: 1rem;
+            line-height: 1.75;
+            margin-bottom: 1.25rem;
+        }
+        .legal-prose ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+            color: #374151;
+        }
+        .legal-prose ul li {
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+        }
+        .legal-prose ol {
+            list-style-type: decimal;
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+            color: #374151;
+        }
+        .legal-prose ol li {
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+        }
+        .toc-link.active {
+            color: #16a34a;
+            font-weight: 600;
+            border-left-color: #4ADE80;
+        }
+        .legal-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .legal-watermark-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='170' viewBox='0 0 340 170'%3E%3Ctext transform='rotate(-25 170 85)' x='50%25' y='50%25' text-anchor='middle' font-family='Inter, sans-serif' font-size='10' font-weight='800' fill='%230A1C16' letter-spacing='3'%3ESAHYAK CRM %E2%80%A2 PROPRIETARY%3C/text%3E%3C/svg%3E");
+            background-repeat: repeat;
+            z-index: 0;
+        }
+        .legal-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .legal-prose { width: 100% !important; max-width: none !important; }
+            .legal-card { box-shadow: none !important; border: none !important; padding: 0 !important; }
+            .legal-watermark-bg { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-attribution-header {
+                display: block !important;
+                border-bottom: 2px solid #0A1C16;
+                padding-bottom: 8px;
+                margin-bottom: 24px;
+                font-size: 8pt;
+                color: #4B5563;
+            }
+        }
+    </style>
+</head>
+<body class="bg-brand-light text-textDark font-sans antialiased selection:bg-brand-green selection:text-brand-dark">
+
+    <!-- Global Header -->
+    <Navbar />
+
+    <!-- Breadcrumb Visual Trail -->
+    <Breadcrumb items={[
+        { name: 'Home', url: '/' },
+        { name: 'Privacy Policy' }
+    ]} />
+
+    <main id="main-content">
+
+        <!-- HERO SECTION -->
+        <section class="bg-brand-dark text-white pt-20 pb-16 px-6 lg:px-12 border-b border-white/10 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto relative z-10 hero-reveal">
+                <div class="inline-flex items-center space-x-2 bg-white/10 px-3 py-1 rounded-full text-xs font-semibold tracking-wider text-brand-green mb-6">
+                    <span class="w-2 h-2 rounded-full bg-brand-green"></span>
+                    <span>LEGAL &amp; PRIVACY DOCUMENTATION</span>
+                </div>
+                
+                <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                    Sahyak CRM <span class="text-brand-green italic">Privacy Policy</span>
+                </h1>
+                
+                <p class="text-gray-300 text-lg max-w-3xl leading-relaxed mb-8">
+                    This Privacy Policy details how Sahyak CRM handles personal data across our marketing website, customer communication channels, administrative portals, and cloud infrastructure. We are committed to transparency, data protection by design, and strict separation between website analytics, prospective customer records, and customer-controlled CRM data.
+                </p>
+
+                <!-- Document Metadata Pill Strip -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-white/5 border border-white/10 text-xs text-gray-300 max-w-4xl">
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-[10px] font-semibold mb-1">Effective Date</span>
+                        <span class="font-medium text-white">October 16, 2026</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-[10px] font-semibold mb-1">Document Version</span>
+                        <span class="font-medium text-brand-green">Version 2.1 (Current)</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-[10px] font-semibold mb-1">Operating Entity</span>
+                        <span class="font-medium text-white">Sahyak Real Estate Technologies</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-[10px] font-semibold mb-1">Primary Jurisdiction</span>
+                        <span class="font-medium text-white">Mumbai, Maharashtra, India</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN CONTENT SECTION -->
+        <section class="py-16 px-6 lg:px-12 bg-brand-light">
+            <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-start">
+
+                <!-- SIDEBAR NAVIGATION (Table of Contents) -->
+                <aside class="lg:col-span-4 lg:sticky lg:top-24 space-y-6 no-print">
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm sahyak-card-light">
+                        <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
+                            <h3 class="font-serif font-bold text-lg text-brand-dark flex items-center gap-2">
+                                <svg class="w-4 h-4 text-brand-greenDark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+                                Contents
+                            </h3>
+                            <button onclick="window.print()" class="text-xs font-semibold text-gray-500 hover:text-brand-greenDark flex items-center gap-1 transition-colors" title="Print document">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                Print / PDF
+                            </button>
+                        </div>
+
+                        <nav id="privacy-toc" class="space-y-1 text-xs max-h-[60vh] overflow-y-auto pr-1">
+                            <a href="#section-1" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">1. Scope &amp; Overview</a>
+                            <a href="#section-2" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">2. Operating Entity Identity</a>
+                            <a href="#section-3" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">3. Categories of Individuals</a>
+                            <a href="#section-4" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">4. Information Collected Directly</a>
+                            <a href="#section-5" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">5. Account &amp; Authentication</a>
+                            <a href="#section-6" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">6. Contact Form Processing</a>
+                            <a href="#section-7" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">7. Customer CRM Data &amp; Leads</a>
+                            <a href="#section-8" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">8. Real Estate Data Handling</a>
+                            <a href="#section-9" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">9. Technical Logs &amp; IP Hashes</a>
+                            <a href="#section-10" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">10. Cookies &amp; Local Storage</a>
+                            <a href="#section-11" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">11. Lawful Grounds for Processing</a>
+                            <a href="#section-12" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">12. Service Operation Purposes</a>
+                            <a href="#section-13" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">13. Controller vs Processor</a>
+                            <a href="#section-14" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">14. Verified Subprocessors</a>
+                            <a href="#section-15" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">15. Legal Disclosures</a>
+                            <a href="#section-16" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">16. Cross-Border Transfers</a>
+                            <a href="#section-17" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">17. Data Retention Periods</a>
+                            <a href="#section-18" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">18. Account Closure &amp; Deletion</a>
+                            <a href="#section-19" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">19. Security Architecture</a>
+                            <a href="#section-20" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">20. Security Disclaimers</a>
+                            <a href="#section-21" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">21. Data Subject Rights (DPDP)</a>
+                            <a href="#section-22" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">22. Consent Withdrawal</a>
+                            <a href="#section-23" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">23. Customer Lead Responsibilities</a>
+                            <a href="#section-24" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">24. Children's Privacy</a>
+                            <a href="#section-25" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">25. External Links</a>
+                            <a href="#section-26" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">26. Policy Amendments</a>
+                            <a href="#section-27" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">27. Contact &amp; Grievance Desk</a>
+                            <a href="#section-28" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent text-gray-600 hover:text-brand-greenDark hover:border-brand-green transition-all">28. Legal Approval Status</a>
+                        </nav>
+                    </div>
+
+                    <!-- Quick Support & Verification Card -->
+                    <div class="bg-brand-dark text-white p-6 rounded-2xl shadow-sm border border-white/10 sahyak-card-dark">
+                        <span class="text-xs uppercase tracking-wider text-brand-green font-bold block mb-2">Privacy Desk</span>
+                        <h4 class="font-serif text-lg font-bold mb-2">Have privacy inquiries?</h4>
+                        <p class="text-xs text-gray-300 mb-4 leading-relaxed">
+                            For data export requests, deletion verification, or Data Processing Addendum (DPA) execution, contact our operational privacy desk directly:
+                        </p>
+                        <div class="space-y-2 text-xs">
+                            <a href="mailto:support@sahyak.com" class="flex items-center gap-2 text-brand-green hover:underline">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                support@sahyak.com
+                            </a>
+                            <a href="tel:+918796475107" class="flex items-center gap-2 text-gray-300 hover:text-white">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                                +91 87964 75107
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- MAIN DOCUMENT BODY -->
+                <article class="lg:col-span-8 bg-white p-8 md:p-12 rounded-3xl border border-gray-200 shadow-sm legal-prose legal-card">
+
+                    <!-- Subtle Digital Repeating Watermark Background -->
+                    <div class="legal-watermark-bg" aria-hidden="true"></div>
+
+                    <!-- Print-Only Official Attribution Header -->
+                    <div class="hidden print-attribution-header">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>Sahyak CRM &bull; Official Legal Documentation</strong>
+                            <span>https://sahyak.com/privacy/</span>
+                        </div>
+                        <div>Copyright &copy; 2026 Sahyak Real Estate Technologies Private Limited. All rights reserved. Archival copy.</div>
+                    </div>
+
+                    <!-- PROPRIETARY WORK PRODUCT & COPYRIGHT NOTICE -->
+                    <div class="mb-10 p-5 rounded-2xl bg-gray-50 border border-gray-200 text-xs text-gray-700 relative overflow-hidden not-prose">
+                        <div class="flex items-start gap-3">
+                            <div class="p-2 rounded-xl bg-brand-dark text-brand-green flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </div>
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                    <h3 class="font-bold text-gray-900 text-xs uppercase tracking-wider font-sans m-0">Proprietary Legal Work Product &amp; Copyright Notice</h3>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">Protected Legal Document</span>
+                                </div>
+                                <p class="text-gray-600 mb-1 leading-relaxed">
+                                    The structure, bespoke contractual covenants, technical data-flow disclosures, and privacy policies published herein are the exclusive intellectual property of <strong>Sahyak Real Estate Technologies Private Limited (&copy; 2026)</strong>.
+                                </p>
+                                <p class="text-gray-500 mb-0 leading-relaxed text-[11px]">
+                                    <strong>Permitted Use:</strong> Sahyak subscribers, authorized real estate agents, prospective buyers, and retained legal counsel are expressly licensed to review, download, print, and archive this policy for compliance and due diligence. Unlicensed commercial reproduction, competitive adoption, or publication by competing software entities is strictly prohibited under the Copyright Act, 1957.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 1 -->
+                    <section id="section-1">
+                        <h2>1. Introduction and Scope</h2>
+                        <p>
+                            Welcome to Sahyak CRM ("Sahyak", "we", "our", or "us"). We provide an enterprise, mobile-first Customer Relationship Management platform purpose-built for real estate brokers, property developers, sales agents, and channel partners across 15 priority global markets.
+                        </p>
+                        <p>
+                            This Privacy Policy sets out the principles and operational rules governing the collection, processing, storage, protection, and disclosure of information when you interact with our marketing website (<a href="https://sahyak.com" class="text-brand-greenDark underline font-medium">https://sahyak.com</a>), submit contact or sales inquiries, access downloadable resources, request product walkthroughs, or communicate with our team via email, telephone, or authorized messaging integrations.
+                        </p>
+                        <p>
+                            This policy does not govern third-party platforms that you may choose to link to or integrate with Sahyak CRM, which remain subject to their respective independent privacy notices.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 2 -->
+                    <section id="section-2">
+                        <h2>2. Identity of the Operating Entity</h2>
+                        <p>
+                            The Sahyak CRM website, intellectual property, brand assets, and platform services are developed and operated by <strong>Sahyak Real Estate Technologies Private Limited</strong>.
+                        </p>
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm mb-4">
+                            <p class="font-semibold text-brand-dark mb-1">Corporate &amp; Operational Address:</p>
+                            <p class="text-gray-600 mb-2">Bandra Kurla Complex (BKC), Bandra East, Mumbai, Maharashtra 400051, India.</p>
+                            <p class="font-semibold text-brand-dark mb-1">Electronic Inquiries:</p>
+                            <p class="text-gray-600 mb-0"><a href="mailto:support@sahyak.com" class="text-brand-greenDark underline">support@sahyak.com</a> | Telephone: <a href="tel:+918796475107" class="text-brand-greenDark underline">+91 87964 75107</a></p>
+                        </div>
+                        <p class="text-xs text-gray-500 italic">
+                            * Note: Specific statutory corporate filing numbers (CIN and GSTIN) are maintained within verified internal business records and are formally provided on commercial contracts and service invoices.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 3 -->
+                    <section id="section-3">
+                        <h2>3. Categories of Individuals Covered</h2>
+                        <p>This Privacy Policy distinguishes between four distinct categories of individuals whose information may be processed:</p>
+                        <ul>
+                            <li><strong>Website Visitors:</strong> Individuals who browse public web pages, review feature descriptions, compare multi-currency pricing plans, or read educational guides on <a href="https://sahyak.com" class="text-brand-greenDark underline">sahyak.com</a>.</li>
+                            <li><strong>Prospective Customers &amp; Enquirers:</strong> Individuals who voluntarily complete our contact forms, request live platform demonstrations, ask pricing questions, or initiate communication via our verified WhatsApp hotline.</li>
+                            <li><strong>Customer Account Users &amp; Administrators:</strong> Licensed brokers, developers, sales managers, and telecallers who are provisioned with authorized user accounts to access administrative and operational workspaces on the Sahyak CRM platform (<a href="https://crm.sahyak.com" class="text-brand-greenDark underline">crm.sahyak.com</a>).</li>
+                            <li><strong>Third-Party Real Estate Leads &amp; Prospects:</strong> Home buyers, property investors, tenants, and site visit attendees whose names, phone numbers, or property preferences are entered into a customer's private workspace. (See Section 7 for the legal distinction regarding this category).</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 4 -->
+                    <section id="section-4">
+                        <h2>4. Information Collected Directly from You</h2>
+                        <p>We collect personal information directly when you choose to provide it through web forms or direct electronic communications:</p>
+                        <ul>
+                            <li><strong>Full Name:</strong> To address you professionally and establish identity during inquiries.</li>
+                            <li><strong>Work Email Address:</strong> Used to respond to your questions, provide platform proposals, and deliver scheduled trial information.</li>
+                            <li><strong>Phone Number:</strong> Used to arrange scheduled product demonstrations, provide telephonic assistance, or respond via WhatsApp when requested.</li>
+                            <li><strong>Company / Brokerage Name:</strong> To understand your business context, team structure, and applicable real estate market.</li>
+                            <li><strong>Inquiry Type &amp; Message Contents:</strong> Specific information regarding your requirements, such as requested team seats, integration needs, or feature questions.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 5 -->
+                    <section id="section-5">
+                        <h2>5. Account, Authentication and Workspace Information</h2>
+                        <p>For authorized customer users and platform administrators accessing management interfaces:</p>
+                        <ul>
+                            <li><strong>Administrative Authentication:</strong> Credentials are verified against server-side authorization controls. Successful login generates a cryptographically signed HMAC-SHA256 session token stored in an essential, secure, <code>HttpOnly</code> cookie named <code>sahyak_admin_session</code> with a strict 24-hour expiration lifetime.</li>
+                            <li><strong>Role-Based Access Control (RBAC):</strong> We record assigned organizational roles (such as Superadmin, Administrator, Team Lead, Telecaller, or Viewer) to enforce strict boundary checks and prevent unauthorized data modifications.</li>
+                            <li><strong>Session Revocation:</strong> Active sessions are tracked in our Cloudflare D1 database (<code>admin_sessions</code> table). Logout actions immediately invalidate session records.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 6 -->
+                    <section id="section-6">
+                        <h2>6. Contact Form Processing &amp; Anti-Abuse Defenses</h2>
+                        <p>
+                            When you submit our contact form (processed by the <code>/api/contact</code> backend endpoint):
+                        </p>
+                        <ol>
+                            <li><strong>Honeypot Anti-Bot Filter:</strong> Submissions contain a hidden anti-spam field (<code>website_url</code>). Automated spambots that populate this field are silently dropped without writing data to our database.</li>
+                            <li><strong>IP Hash Rate Limiting:</strong> To safeguard our infrastructure against Denial of Service (DoS) and form flooding, client IP addresses are immediately transformed into an irreversible one-way SHA-256 cryptographic hash (<code>ip_hash</code>). Rate limits allow up to 5 inquiries per 10-minute window per IP hash. Raw IP addresses are discarded from volatile memory.</li>
+                            <li><strong>D1 SQL Database Storage:</strong> Validated inquiries are stored in our secure Cloudflare D1 <code>contacts</code> table with status markers (e.g. <code>new</code>, <code>in-progress</code>, <code>resolved</code>).</li>
+                        </ol>
+                    </section>
+
+                    <!-- SECTION 7 -->
+                    <section id="section-7">
+                        <h2>7. Customer CRM Data &amp; Third-Party Lead Information</h2>
+                        <div class="bg-emerald-50 border-l-4 border-brand-greenDark p-4 rounded-r-xl mb-4 text-sm">
+                            <p class="font-bold text-brand-dark mb-1">Fundamental Legal Separation: Controller vs. Processor</p>
+                            <p class="text-gray-700 mb-0">
+                                When a real estate agency or developer uses Sahyak CRM to manage their property buyers, leads, and transaction records, the <strong>Customer Organization is the Data Controller (or Data Fiduciary under the Indian DPDP Act 2023)</strong>. Sahyak operates exclusively as a <strong>Data Processor</strong> providing cloud software infrastructure.
+                            </p>
+                        </div>
+                        <p>
+                            Sahyak does <strong>not</strong> own, sell, rent, monetize, or use customer lead data for our own marketing purposes, nor do we cross-profile leads between separate customer workspaces. All customer-uploaded CRM records remain confidential to the subscribing organization.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 8 -->
+                    <section id="section-8">
+                        <h2>8. Real Estate Operational Data Handling</h2>
+                        <p>
+                            Within the operational scope of Sahyak CRM, customers may manage specific categories of real estate operational data:
+                        </p>
+                        <ul>
+                            <li><strong>Property Inventory &amp; Listings:</strong> Project names, unit configurations, floor areas, pricing sheets, and unit availability statuses.</li>
+                            <li><strong>Site Visit Coordination:</strong> Scheduled tour dates, site visit attendance verification, agent assignments, and client feedback notes.</li>
+                            <li><strong>Communication Timestamps:</strong> Automated follow-up reminders, call schedules, and WhatsApp dispatch logs initiated by sales representatives.</li>
+                            <li><strong>Deal Pipeline Statuses:</strong> Negotiation stages, booking forms, token payment confirmations, and sales cycle progress.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 9 -->
+                    <section id="section-9">
+                        <h2>9. Technical Logs, Geolocation, and Pseudonymized Identifiers</h2>
+                        <p>
+                            To optimize site performance and deliver localized pricing across 15 priority real estate markets, our serverless edge handlers collect technical metadata:
+                        </p>
+                        <ul>
+                            <li><strong>Edge Geolocation:</strong> Derived at the Cloudflare network edge via HTTP headers (<code>cf-ipcountry</code>, <code>cf-ipcity</code>, <code>cf-region</code>). This allows our multi-currency engine to suggest appropriate local currencies (e.g. INR for India, AED for UAE, USD for United States, GBP for United Kingdom).</li>
+                            <li><strong>Device &amp; Browser Diagnostics:</strong> Cleaned User-Agent metadata (browser family, operating system, screen width) to ensure responsive rendering across mobile and desktop devices.</li>
+                            <li><strong>Irreversible IP Hashing:</strong> Raw IP addresses are processed in volatile memory only to generate a 16-character SHA-256 hash slice (<code>ip_hash</code>) for fraud prevention, rate limiting, and unique session aggregation. Raw IP addresses are not stored in database tables.</li>
+                            <li><strong>Dwell Time Tracking:</strong> Dwell durations and section view counts are recorded via client-side <code>IntersectionObserver</code> to analyze feature interest and optimize documentation readability.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 10 -->
+                    <section id="section-10">
+                        <h2>10. Cookies, Local Storage, and Client Storage Practices</h2>
+                        <p>Sahyak CRM adheres to a minimal, privacy-first storage architecture on our public website:</p>
+                        <div class="overflow-x-auto mb-4">
+                            <table class="w-full text-left text-xs border border-gray-200 rounded-lg overflow-hidden">
+                                <thead class="bg-gray-100 text-gray-700 font-semibold uppercase">
+                                    <tr>
+                                        <th class="p-3">Identifier</th>
+                                        <th class="p-3">Type</th>
+                                        <th class="p-3">Duration</th>
+                                        <th class="p-3">Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 text-gray-600">
+                                    <tr>
+                                        <td class="p-3 font-mono">sahyak_vid</td>
+                                        <td class="p-3">localStorage</td>
+                                        <td class="p-3">Persistent (until cleared)</td>
+                                        <td class="p-3">First-party random UUID (e.g. <code>v_...</code>) to distinguish unique visitors without tracking across external sites.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-mono">sahyak_sid</td>
+                                        <td class="p-3">sessionStorage</td>
+                                        <td class="p-3">Browser tab session</td>
+                                        <td class="p-3">Maintains temporary session continuity while navigating between marketing pages.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-mono">sahyak_admin_session</td>
+                                        <td class="p-3">Cookie (HttpOnly, Secure)</td>
+                                        <td class="p-3">24 Hours</td>
+                                        <td class="p-3">Cryptographically signed HMAC-SHA256 authorization token strictly for authenticated administrators.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="font-medium text-brand-dark">
+                            <strong>Zero Third-Party Advertising Trackers:</strong> We do NOT inject Google AdSense, Meta/Facebook tracking pixels, Hotjar, or third-party behavioral tracking cookies on our marketing site.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 11 -->
+                    <section id="section-11">
+                        <h2>11. Lawful Grounds for Processing</h2>
+                        <p>Under applicable data protection frameworks (including the Digital Personal Data Protection Act, 2023 in India, and the General Data Protection Regulation in the EU/UK), we process personal data under the following legal bases:</p>
+                        <ul>
+                            <li><strong>Consent:</strong> When you voluntarily submit a contact form, request a demo, or message us via WhatsApp, you provide explicit affirmative consent for us to respond to your specific request.</li>
+                            <li><strong>Contractual Performance:</strong> Processing required to establish your customer workspace, deliver licensed software functionality, and fulfill subscription agreements.</li>
+                            <li><strong>Legitimate Interests:</strong> Securing our network infrastructure, mitigating spam and automated brute-force attacks, debugging edge errors, and measuring aggregate platform reliability.</li>
+                            <li><strong>Legal Obligation:</strong> Retaining mandatory financial and billing records as required under applicable tax and commercial legislation.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 12 -->
+                    <section id="section-12">
+                        <h2>12. How Information is Used to Operate and Improve the Service</h2>
+                        <p>We use collected data solely for legitimate business operations:</p>
+                        <ul>
+                            <li>Responding promptly to sales, pricing, and enterprise demo inquiries.</li>
+                            <li>Managing customer onboarding, account setup, and user provisioning.</li>
+                            <li>Providing 24/7 technical customer support via verified electronic channels.</li>
+                            <li>Preventing automated bot abuse, scraping, and unauthorized penetration attempts.</li>
+                            <li>Evaluating which real estate sales playbooks and resources deliver the highest utility to brokers and property developers.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 13 -->
+                    <section id="section-13">
+                        <h2>13. Customer Instructions &amp; Workspace Boundaries</h2>
+                        <p>
+                            For all customer CRM workspaces, Sahyak processes data strictly under the customer's instruction. Subscribing organizations maintain autonomous control over:
+                        </p>
+                        <ul>
+                            <li>Which team members are invited and what role permissions they possess.</li>
+                            <li>What lead databases and contact records are imported into the workspace.</li>
+                            <li>When lead records are updated, archived, or deleted.</li>
+                        </ul>
+                        <p>
+                            Customers are strictly prohibited from attempting to bypass logical workspace boundaries or access data belonging to other tenant organizations.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 14 -->
+                    <section id="section-14">
+                        <h2>14. Data Sharing and Verified Subprocessors</h2>
+                        <p>
+                            We do <strong>not</strong> sell, rent, trade, or broker your personal information. We share data only with verified infrastructure subprocessors strictly necessary to deliver the Sahyak CRM service:
+                        </p>
+                        <ul>
+                            <li><strong>Cloudflare, Inc. (Cloudflare Pages, Workers, &amp; D1 Database):</strong> Provides global Content Delivery Network (CDN) caching, serverless edge compute runtimes, DDoS mitigation, and distributed serverless SQL database storage.</li>
+                            <li><strong>Google LLC (Google Fonts):</strong> Static typeface stylesheets (Playfair Display, Inter, Caveat) are retrieved from Google CDN to render visual typography. Google does not receive personal contact records.</li>
+                            <li><strong>Meta Platforms, Inc. (WhatsApp):</strong> When you click our direct WhatsApp communication links (e.g. <code>wa.me/918796475107</code>), communication occurs directly through Meta's WhatsApp infrastructure subject to Meta's privacy policy.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 15 -->
+                    <section id="section-15">
+                        <h2>15. Disclosures for Legal Obligations &amp; Rights Protection</h2>
+                        <p>
+                            We may disclose personal data only if required to do so by applicable law, or in the good-faith belief that such action is necessary to:
+                        </p>
+                        <ul>
+                            <li>Comply with valid judicial warrants, court orders, or enforceable statutory orders issued by competent government authorities.</li>
+                            <li>Enforce our Terms of Service and investigate suspected security incidents or unauthorized platform abuse.</li>
+                            <li>Protect the vital safety, rights, and property of Sahyak CRM, our customers, or the public from fraudulent or malicious activities.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 16 -->
+                    <section id="section-16">
+                        <h2>16. Cross-Border Data Processing &amp; International Transfers</h2>
+                        <p>
+                            Sahyak CRM utilizes Cloudflare's globally distributed edge network, spanning data centers in over 300 cities across 100+ countries, to terminate TLS connections near the end user and minimize latency.
+                        </p>
+                        <p>
+                            Where data is transferred across international borders in connection with our 15 global priority markets (including India, UAE, United States, United Kingdom, Australia, and European nations), we ensure that appropriate technical, administrative, and contractual protections are applied in accordance with applicable data privacy regulations.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 17 -->
+                    <section id="section-17">
+                        <h2>17. Retention Periods and Deletion Practices</h2>
+                        <p>We adhere to purposeful data minimization and defined retention cycles:</p>
+                        <ul>
+                            <li><strong>Contact Form Inquiries:</strong> Retained in our D1 <code>contacts</code> database for the duration of the active business conversation and up to 24 months thereafter for prospective client follow-up, after which records are archived or deleted.</li>
+                            <li><strong>Visitor Analytics Sessions:</strong> Session telemetry in <code>analytics_sessions</code> is retained for operational metrics and aggregate traffic reporting, with periodic pruning.</li>
+                            <li><strong>Administrative Authentication Sessions:</strong> Expire automatically after 24 hours and are purged from <code>admin_sessions</code> upon logout or expiry.</li>
+                            <li><strong>Customer CRM Workspace Data:</strong> Retained for the active duration of the customer's subscription agreement. Upon account cancellation, data is subject to export and deletion procedures as set out in Section 18.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 18 -->
+                    <section id="section-18">
+                        <h2>18. Account Closure, Deletion Requests, and Data Portability</h2>
+                        <p>
+                            Customers and individual enquirers may exercise data management rights at any time:
+                        </p>
+                        <ul>
+                            <li><strong>Data Export:</strong> Customer organizations may export their contacts, properties, and lead records in standard machine-readable formats (e.g. CSV).</li>
+                            <li><strong>Deletion Requests:</strong> If you wish to delete your contact inquiry or request the erasure of your personal data from our marketing databases, submit an email to <a href="mailto:support@sahyak.com" class="text-brand-greenDark underline font-medium">support@sahyak.com</a>. We verify requester identity before processing deletion.</li>
+                            <li><strong>Post-Termination Purge:</strong> Following account closure, customer workspace records are scheduled for complete deletion, subject only to records required to be preserved under statutory tax, financial, or dispute resolution requirements.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 19 -->
+                    <section id="section-19">
+                        <h2>19. Technical and Organizational Security Architecture</h2>
+                        <p>
+                            Sahyak CRM enforces substantiated, modern software engineering defenses to safeguard all managed information:
+                        </p>
+                        <ul>
+                            <li><strong>In-Transit Encryption:</strong> Enforced modern TLS 1.3 encryption across all public web and API endpoints, preventing network eavesdropping.</li>
+                            <li><strong>Cryptographic Token Signatures:</strong> Administrative session tokens use HMAC-SHA256 signatures generated via the native WebCrypto API.</li>
+                            <li><strong>Timing-Attack Defenses:</strong> Security credentials and session components are compared using constant-time string equality algorithms (<code>timingSafeEqual</code>) to prevent timing side-channel attacks.</li>
+                            <li><strong>Cross-Site Request Forgery (CSRF) Defenses:</strong> State-mutating administrative APIs enforce strict <code>Origin</code> verification and <code>Sec-Fetch-Site</code> header inspection.</li>
+                            <li><strong>Cloudflare Edge WAF &amp; DDoS Protection:</strong> Edge firewalls and rate limiters actively mitigate brute-force attempts and anomalous traffic floods.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 20 -->
+                    <section id="section-20">
+                        <h2>20. Security Limitations &amp; Inherent Internet Risks</h2>
+                        <p>
+                            While we deploy rigorous technical and organizational controls, no electronic transmission over the internet and no automated database system can be guaranteed as 100% immune from security breaches, zero-day vulnerabilities, or unauthorized interception.
+                        </p>
+                        <p>
+                            Users and customers are responsible for maintaining the confidentiality of their credentials, utilizing strong passwords, and notifying us immediately at <a href="mailto:support@sahyak.com" class="text-brand-greenDark underline">support@sahyak.com</a> if they suspect any unauthorized access to their workspace.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 21 -->
+                    <section id="section-21">
+                        <h2>21. Data Subject Rights (India DPDP Act, GDPR, and Global Rights)</h2>
+                        <p>Depending on your jurisdiction, you possess specific statutory rights regarding your personal information:</p>
+                        <ul>
+                            <li><strong>Right of Access &amp; Summary:</strong> You have the right to request a summary of the personal data we hold about you and the processing activities undertaken.</li>
+                            <li><strong>Right to Correction &amp; Updating:</strong> You have the right to request correction of inaccurate, outdated, or incomplete personal data.</li>
+                            <li><strong>Right to Erasure:</strong> You have the right to request deletion of your personal data where continued retention is no longer necessary for the purpose collected or required by law.</li>
+                            <li><strong>Right to Grievance Redressal:</strong> You have the right to readily accessible grievance redressal mechanisms regarding our data processing.</li>
+                            <li><strong>Right to Nominate (DPDP Act 2023):</strong> Under Indian law, individuals have the right to nominate another individual who shall, in the event of death or incapacity, exercise data rights on their behalf.</li>
+                        </ul>
+                        <p>To exercise any of these rights, contact us at <a href="mailto:support@sahyak.com" class="text-brand-greenDark underline font-medium">support@sahyak.com</a> with the subject line <em>"Data Subject Rights Request"</em>.</p>
+                    </section>
+
+                    <!-- SECTION 22 -->
+                    <section id="section-22">
+                        <h2>22. Consent Withdrawal and Practical Implications</h2>
+                        <p>
+                            Where processing is based upon your consent (such as voluntary contact form submissions or demo bookings), you have the right to withdraw your consent at any time.
+                        </p>
+                        <p>
+                            Withdrawal of consent does not affect the lawfulness of processing undertaken prior to the withdrawal. If consent is withdrawn, we will cease communications, which may mean we cannot proceed with scheduling your requested demo or providing customized proposals.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 23 -->
+                    <section id="section-23">
+                        <h2>23. Customer Responsibilities Concerning Uploaded Lead Data</h2>
+                        <p>
+                            Customer organizations utilizing Sahyak CRM bear sole legal responsibility for the personal data they collect and import into the system. Customers represent and warrant that:
+                        </p>
+                        <ul>
+                            <li>They have acquired prospective buyer and client records through lawful, compliant means (e.g. voluntary real estate portal inquiries, website forms, site visit registrations).</li>
+                            <li>They have obtained all requisite consents and comply with telemarketing regulations, including National Do Not Call (DND) registries under Telecom Commercial Communications Customer Preference Regulations (TCCCPR) in India, or equivalent regulations in their operating jurisdictions.</li>
+                            <li>They will not upload scraped, stolen, or illicitly aggregated personal data into Sahyak CRM.</li>
+                            <li>They comply with applicable Real Estate Regulatory Authority (RERA) disclosure and record-keeping mandates.</li>
+                        </ul>
+                    </section>
+
+                    <!-- SECTION 24 -->
+                    <section id="section-24">
+                        <h2>24. Children's Privacy</h2>
+                        <p>
+                            Sahyak CRM is exclusively an enterprise, business-to-business (B2B) real estate software service. Our marketing website and platform applications are neither directed at nor intended for individuals under the age of 18.
+                        </p>
+                        <p>
+                            We do not knowingly solicit or collect personal information from minors. If you believe that a minor has provided us with personal information, please notify us immediately at <a href="mailto:support@sahyak.com" class="text-brand-greenDark underline">support@sahyak.com</a> so we can investigate and promptly delete such records.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 25 -->
+                    <section id="section-25">
+                        <h2>25. Third-Party Links and External Platforms</h2>
+                        <p>
+                            Our website may contain links to external third-party platforms, such as WhatsApp click-to-chat links, LinkedIn company profiles, or educational real estate references.
+                        </p>
+                        <p>
+                            We do not control and are not responsible for the privacy practices, content, or policies of third-party websites. We encourage you to review the privacy notices of any third-party service you visit.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 26 -->
+                    <section id="section-26">
+                        <h2>26. Amendments and Updates to this Privacy Policy</h2>
+                        <p>
+                            We may periodically update this Privacy Policy to reflect enhancements in our platform features, adjustments in our infrastructure subprocessors, or evolutions in applicable data protection legislation.
+                        </p>
+                        <p>
+                            When updates occur, we will revise the "Effective Date" and "Document Version" at the top of this page. We encourage you to review this page periodically to stay informed regarding how we protect your information.
+                        </p>
+                    </section>
+
+                    <!-- SECTION 27 -->
+                    <section id="section-27">
+                        <h2>27. Contact Information and Grievance Procedures</h2>
+                        <p>
+                            If you have questions, concerns, comments, or grievances regarding this Privacy Policy or our data protection practices, please reach out through our verified contact points:
+                        </p>
+                        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6 text-sm space-y-3">
+                            <p class="font-bold text-brand-dark text-base">Sahyak Privacy &amp; Grievance Desk</p>
+                            <p><strong>Entity:</strong> Sahyak Real Estate Technologies Private Limited</p>
+                            <p><strong>Address:</strong> Bandra Kurla Complex (BKC), Bandra East, Mumbai, Maharashtra 400051, India</p>
+                            <p><strong>Direct Email:</strong> <a href="mailto:support@sahyak.com" class="text-brand-greenDark underline font-semibold">support@sahyak.com</a></p>
+                            <p><strong>Telephone / Hotline:</strong> <a href="tel:+918796475107" class="text-brand-greenDark underline font-semibold">+91 87964 75107</a></p>
+                            <p class="text-xs text-gray-500 pt-2 border-t border-gray-200">
+                                We endeavor to acknowledge all formal privacy and grievance inquiries within 48 business hours and investigate matters expeditiously.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 28 -->
+                    <section id="section-28">
+                        <h2>28. Regulatory Notice &amp; Legal Approval Status</h2>
+                        <div class="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-r-xl text-xs text-amber-900 leading-relaxed">
+                            <p class="font-bold text-sm text-amber-950 mb-1">Corporate &amp; Legal Disclosure Notice</p>
+                            <p class="mb-2">
+                                This Privacy Policy articulates the actual, substantiated technical and operational architecture currently implemented within the Sahyak CRM codebase and infrastructure.
+                            </p>
+                            <p class="mb-0">
+                                Formal legal entity registration documentation (including final Corporate Identification Number, Goods and Services Tax Identification Number, and formal appointment of a statutory Data Protection Officer under Section 10 of India's Digital Personal Data Protection Act, 2023) is currently undergoing final administrative finalization with retained corporate legal counsel. Until formal notification is gazetted, all compliance inquiries are managed centrally through our designated operational desk at <a href="mailto:support@sahyak.com" class="underline font-semibold">support@sahyak.com</a>.
+                            </p>
+                        </div>
+                    </section>
+
+                </article>
+
+            </div>
+        </section>
+
+        <!-- BOTTOM CTA STRIP -->
+        <section class="bg-brand-dark text-white py-12 px-6 lg:px-12 border-t border-white/10 no-print">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <h2 class="font-serif text-2xl font-bold text-white mb-2">Questions About Our Privacy Practices?</h2>
+                    <p class="text-gray-300 text-sm max-w-xl">
+                        Our data protection team is available to assist you with compliance inquiries, Data Processing Addenda (DPA), or tenant boundary questions.
+                    </p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="/contact/" class="bg-brand-green text-brand-dark font-semibold px-6 py-3 rounded-xl hover:bg-brand-green/90 transition-colors text-sm shadow-md">
+                        Contact Privacy Desk
+                    </a>
+                    <a href="/terms/" class="bg-white/10 text-white font-medium px-6 py-3 rounded-xl hover:bg-white/20 transition-colors text-sm">
+                        View Terms &amp; Conditions
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Global Footer -->
+    <Footer />
+
+    <!-- Table of Contents Active Link Highlight Script -->
+    <script is:inline>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('article section[id]');
+            const navLinks = document.querySelectorAll('.toc-link');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-10% 0px -75% 0px' });
+
+            sections.forEach(sec => observer.observe(sec));
+
+            // Anti-Plagiarism Clipboard Attribution Appender
+            document.addEventListener('copy', (e) => {
+                const sel = window.getSelection();
+                if (!sel || sel.rangeCount === 0 || sel.toString().trim().length < 35) return;
+                const text = sel.toString();
+                const notice = '\n\n[Source: Sahyak CRM Privacy Policy — https://sahyak.com/privacy/ | Copyright © 2026 Sahyak Real Estate Technologies Private Limited. All rights reserved. Commercial reproduction or unauthorized competitor adoption prohibited.]';
+                if (e.clipboardData) {
+                    e.clipboardData.setData('text/plain', text + notice);
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

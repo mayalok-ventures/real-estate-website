@@ -17,6 +17,8 @@ const pages = [
   { route: '/security/', file: 'security/index.html', title: 'Security' },
   { route: '/contact/', file: 'contact/index.html', title: 'Contact' },
   { route: '/resources/', file: 'resources/index.html', title: 'Resources' },
+  { route: '/privacy/', file: 'privacy/index.html', title: 'Privacy' },
+  { route: '/terms/', file: 'terms/index.html', title: 'Terms' },
   { route: '/404.html', file: '404.html', title: '404' }
 ];
 

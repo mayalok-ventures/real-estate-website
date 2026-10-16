@@ -1,0 +1,770 @@
+---
+export const prerender = true;
+
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+
+const seoTitle = "Terms & Conditions | Sahyak Real Estate CRM";
+const seoDesc = "Read the Sahyak CRM Terms and Conditions. Understand your rights, responsibilities, workspace boundaries, acceptable use policies, subscription terms, and data ownership.";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://sahyak.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Terms & Conditions",
+      "item": "https://sahyak.com/terms/"
+    }
+  ]
+};
+
+const webpageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": seoTitle,
+  "description": seoDesc,
+  "url": "https://sahyak.com/terms/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sahyak CRM",
+    "url": "https://sahyak.com",
+    "logo": "https://sahyak.com/images/sahyak-logo.png"
+  }
+};
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{seoTitle}</title>
+    <meta name="description" content={seoDesc} />
+    <link rel="canonical" href="https://sahyak.com/terms/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://sahyak.com/terms/" />
+    <meta property="og:title" content={seoTitle} />
+    <meta property="og:description" content={seoDesc} />
+    <meta property="og:image" content="https://sahyak.com/images/sahyak-logo.png" />
+    <meta property="og:site_name" content="Sahyak CRM" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary" />
+    <meta property="twitter:url" content="https://sahyak.com/terms/" />
+    <meta property="twitter:title" content={seoTitle} />
+    <meta property="twitter:description" content={seoDesc} />
+
+    <!-- Favicon & Brand -->
+    <link rel="icon" type="image/png" href="/images/sahyak-logo.png" />
+    <link rel="apple-touch-icon" href="/images/sahyak-logo.png" />
+    <meta name="theme-color" content="#0A1C16" />
+
+    <!-- Compiled Tailwind CSS & Unified Fonts -->
+    <link rel="stylesheet" href="/css/tailwind.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+    <script type="application/ld+json" set:html={JSON.stringify(webpageSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+    <style>
+        .legal-prose h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.75rem;
+            line-height: 1.3;
+            color: #0A1C16;
+            margin-top: 2.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #E5E7EB;
+            scroll-margin-top: 6.5rem;
+        }
+        .legal-prose h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.25rem;
+            line-height: 1.4;
+            color: #111827;
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+            scroll-margin-top: 6.5rem;
+        }
+        .legal-prose p {
+            color: #374151;
+            font-size: 1rem;
+            line-height: 1.75;
+            margin-bottom: 1.25rem;
+        }
+        .legal-prose ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+            color: #374151;
+        }
+        .legal-prose ul li {
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+        }
+        .legal-prose ol {
+            list-style-type: decimal;
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+            color: #374151;
+        }
+        .legal-prose ol li {
+            margin-bottom: 0.5rem;
+            line-height: 1.7;
+        }
+        .toc-link.active {
+            color: #16a34a;
+            font-weight: 600;
+            border-left-color: #4ADE80;
+        }
+        .legal-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .legal-watermark-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='170' viewBox='0 0 340 170'%3E%3Ctext transform='rotate(-25 170 85)' x='50%25' y='50%25' text-anchor='middle' font-family='Inter, sans-serif' font-size='10' font-weight='800' fill='%230A1C16' letter-spacing='3'%3ESAHYAK CRM %E2%80%A2 PROPRIETARY%3C/text%3E%3C/svg%3E");
+            background-repeat: repeat;
+            z-index: 0;
+        }
+        .legal-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .legal-prose { width: 100% !important; max-width: none !important; }
+            .legal-card { box-shadow: none !important; border: none !important; padding: 0 !important; }
+            .legal-watermark-bg { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-attribution-header {
+                display: block !important;
+                border-bottom: 2px solid #0A1C16;
+                padding-bottom: 8px;
+                margin-bottom: 24px;
+                font-size: 8pt;
+                color: #4B5563;
+            }
+        }
+    </style>
+</head>
+<body class="bg-brand-light text-textDark font-sans antialiased selection:bg-brand-green selection:text-brand-dark">
+
+    <!-- Global Header -->
+    <Navbar />
+
+    <!-- Breadcrumb Visual Trail -->
+    <Breadcrumb items={[
+        { name: 'Home', url: '/' },
+        { name: 'Terms & Conditions' }
+    ]} />
+
+    <main id="main-content">
+
+        <!-- HERO SECTION -->
+        <section class="bg-brand-dark text-white pt-20 pb-16 px-6 lg:px-12 border-b border-white/10 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto relative z-10 hero-reveal">
+                <div class="inline-flex items-center space-x-2 bg-white/10 px-3 py-1 rounded-full text-xs font-semibold tracking-wider text-brand-green mb-6">
+                    <span class="w-2 h-2 rounded-full bg-brand-green"></span>
+                    <span>SAAS MASTER SUBSCRIPTION AGREEMENT</span>
+                </div>
+                
+                <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                    Sahyak CRM <span class="text-brand-green italic">Terms &amp; Conditions</span>
+                </h1>
+                
+                <p class="text-gray-300 text-lg max-w-3xl leading-relaxed mb-8">
+                    These Terms &amp; Conditions govern access to and use of the Sahyak real estate customer relationship management platform, including our web application, marketing portals, multi-tenant workspace environments, communication integrations, and related software services.
+                </p>
+
+                <!-- Document Metadata Pill Strip -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-white/5 border border-white/10 text-xs text-gray-300 max-w-4xl">
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-[10px] font-semibold mb-1">Effective Date</span>
+                        <span class="font-medium text-white">October 16, 2026</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-[10px] font-semibold mb-1">Agreement Version</span>
+                        <span class="font-medium text-white">Version 2.4 (Production)</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-[10px] font-semibold mb-1">Application Portal</span>
+                        <span class="font-medium text-white">crm.sahyak.com</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-[10px] font-semibold mb-1">Contracting Entity</span>
+                        <span class="font-medium text-white">Sahyak Real Estate Technologies</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Background Decorative Glow -->
+            <div class="absolute -right-32 -bottom-32 w-96 h-96 bg-brand-green/10 rounded-full blur-3xl pointer-events-none"></div>
+        </section>
+
+        <!-- MAIN LAYOUT: STICKY TOC + ARTICLE PROSE -->
+        <section class="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                
+                <!-- STICKY TABLE OF CONTENTS (DESKTOP) -->
+                <aside class="no-print lg:col-span-4 hidden lg:block">
+                    <div class="sticky top-28 bg-white border border-gray-200 rounded-2xl p-6 shadow-sm max-h-[calc(100vh-8rem)] overflow-y-auto">
+                        <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-100">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 font-sans">Document Navigation</h3>
+                            <button onclick="window.print()" class="text-xs text-brand-dark hover:text-brand-green font-medium inline-flex items-center gap-1 transition-colors" title="Print Terms">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                Print
+                            </button>
+                        </div>
+                        <nav id="terms-toc" class="space-y-1 text-xs text-gray-600 font-sans">
+                            <a href="#section-1" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">1. Contractual Scope</a>
+                            <a href="#section-2" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">2. Service Provider Identity</a>
+                            <a href="#section-3" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">3. Eligibility &amp; Authority</a>
+                            <a href="#section-4" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">4. Key Definitions</a>
+                            <a href="#section-5" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">5. Account Registration</a>
+                            <a href="#section-6" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">6. Workspace Admin Roles</a>
+                            <a href="#section-7" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">7. Multi-Tenant Boundaries</a>
+                            <a href="#section-8" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">8. Permitted SaaS Use</a>
+                            <a href="#section-9" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">9. Acceptable Use Policy (AUP)</a>
+                            <a href="#section-10" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">10. Customer Ownership of CRM Data</a>
+                            <a href="#section-11" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">11. Lead Consent &amp; TRAI / RERA</a>
+                            <a href="#section-12" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">12. WhatsApp &amp; Telephony</a>
+                            <a href="#section-13" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">13. Third-Party API Limits &amp; Fees</a>
+                            <a href="#section-14" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">14. Availability &amp; Maintenance</a>
+                            <a href="#section-15" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">15. Suspension &amp; Termination</a>
+                            <a href="#section-16" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">16. Data Export &amp; Closure</a>
+                            <a href="#section-17" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">17. Trials &amp; Subscription Plans</a>
+                            <a href="#section-18" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">18. Billing, Taxes &amp; Refunds</a>
+                            <a href="#section-19" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">19. Intellectual Property</a>
+                            <a href="#section-20" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">20. Limited Operating License</a>
+                            <a href="#section-21" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">21. Feedback Rights</a>
+                            <a href="#section-22" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">22. Mutual Confidentiality</a>
+                            <a href="#section-23" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">23. Privacy Policy Relationship</a>
+                            <a href="#section-24" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">24. Disclaimers &amp; No-Sales-Guarantee</a>
+                            <a href="#section-25" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">25. Limitation of Liability</a>
+                            <a href="#section-26" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">26. Indemnification</a>
+                            <a href="#section-27" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">27. Force Majeure</a>
+                            <a href="#section-28" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">28. Agreement Modifications</a>
+                            <a href="#section-29" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">29. Governing Law &amp; Jurisdiction</a>
+                            <a href="#section-30" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">30. Grievance Redressal</a>
+                            <a href="#section-31" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">31. General Provisions</a>
+                            <a href="#section-32" class="toc-link block py-1.5 pl-3 border-l-2 border-transparent hover:text-brand-dark hover:border-gray-300 transition-colors">32. Contact Details &amp; Legal Review</a>
+                        </nav>
+                    </div>
+                </aside>
+
+                <!-- LEGAL PROSE ARTICLE CONTENT -->
+                <article class="lg:col-span-8 bg-white border border-gray-200 rounded-3xl p-8 sm:p-12 shadow-sm legal-card legal-prose">
+
+                    <!-- Subtle Digital Repeating Watermark Background -->
+                    <div class="legal-watermark-bg" aria-hidden="true"></div>
+
+                    <!-- Print-Only Official Attribution Header -->
+                    <div class="hidden print-attribution-header">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>Sahyak CRM &bull; Master SaaS Terms &amp; Conditions</strong>
+                            <span>https://sahyak.com/terms/</span>
+                        </div>
+                        <div>Copyright &copy; 2026 Sahyak Real Estate Technologies Private Limited. All rights reserved. Archival copy.</div>
+                    </div>
+
+                    <!-- PROPRIETARY WORK PRODUCT & COPYRIGHT NOTICE -->
+                    <div class="mb-8 p-5 rounded-2xl bg-gray-50 border border-gray-200 text-xs text-gray-700 relative overflow-hidden not-prose">
+                        <div class="flex items-start gap-3">
+                            <div class="p-2 rounded-xl bg-brand-dark text-brand-green flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </div>
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                    <h3 class="font-bold text-gray-900 text-xs uppercase tracking-wider font-sans m-0">Proprietary Legal Work Product &amp; Copyright Notice</h3>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">Protected Legal Document</span>
+                                </div>
+                                <p class="text-gray-600 mb-1 leading-relaxed">
+                                    The contractual covenants, multi-tenant SaaS architecture clauses, telecommunications compliance requirements, and commercial terms herein are the proprietary intellectual property of <strong>Sahyak Real Estate Technologies Private Limited (&copy; 2026)</strong>.
+                                </p>
+                                <p class="text-gray-500 mb-0 leading-relaxed text-[11px]">
+                                    <strong>Permitted Use:</strong> Sahyak subscribers, authorized customer organizations, and their legal counsel are expressly licensed to review, print, and archive this Agreement for contractual and compliance purposes. Commercial replication, competitive appropriation, or scraping by competing CRM vendors without authorization is strictly prohibited under the Copyright Act, 1957.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CRITICAL NOTICE / SUMMARY CALLOUT -->
+                    <div class="mb-10 p-6 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-sm leading-relaxed">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <div>
+                                <h3 class="font-bold text-amber-950 font-serif text-base mb-1 mt-0">Important SaaS Agreement Notice</h3>
+                                <p class="text-amber-900 text-xs sm:text-sm mb-0">
+                                    By creating an account, launching a free trial, logging into <code>crm.sahyak.com</code>, or executing a subscription order form, you confirm that you have read, understood, and agreed to be legally bound by these Terms &amp; Conditions. Sahyak CRM is specialized productivity software for real estate professionals. It does not provide real estate brokerage services, legal counsel, or financial guarantees regarding property sales, lead conversion rates, or transactional revenues.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 1 -->
+                    <h2 id="section-1">1. Introduction and Contractual Scope</h2>
+                    <p>
+                        These Terms &amp; Conditions ("Terms", "Agreement", or "Master Subscription Agreement") constitute a binding legal agreement between the entity or individual subscribing to or accessing the software ("Customer", "Subscriber", "You", or "Your") and the operator of Sahyak CRM ("Sahyak", "Company", "We", "Us", or "Our").
+                    </p>
+                    <p>
+                        This Agreement governs Your access to and utilization of the Sahyak real estate customer relationship management software-as-a-service application hosted at <code>crm.sahyak.com</code>, the public informational web portal at <code>sahyak.com</code>, APIs, mobile web components, and any associated documentation, customer support, or communication integrations provided by Us (collectively, the "Service").
+                    </p>
+                    <p>
+                        If You register for an account on behalf of a company, partnership, brokerage firm, real estate consultancy, or developer entity, You represent and warrant that You possess full legal authority to bind that entity to these Terms. If You do not possess such legal authority, or if You do not agree with each term and condition herein, You must immediately cease accessing and using the Service.
+                    </p>
+
+                    <!-- SECTION 2 -->
+                    <h2 id="section-2">2. Identity of the Service Provider and Contracting Entity</h2>
+                    <p>
+                        The Service is developed, hosted, and operated by:
+                    </p>
+                    <div class="my-4 p-5 rounded-xl bg-gray-50 border border-gray-200 text-xs sm:text-sm">
+                        <p class="font-bold text-gray-900 mb-1">Sahyak CRM / Sahyak Real Estate Technologies Private Limited</p>
+                        <p class="text-gray-600 mb-1"><strong>Operating Headquarters:</strong> Bandra Kurla Complex (BKC), Bandra East, Mumbai, Maharashtra 400051, India</p>
+                        <p class="text-gray-600 mb-1"><strong>Support &amp; Operational Inquiries:</strong> <code>support@sahyak.com</code></p>
+                        <p class="text-gray-600 mb-0"><strong>Telephone Assistance:</strong> +91 87964 75107 (Mon&ndash;Fri, 10:00 AM &ndash; 6:00 PM IST)</p>
+                    </div>
+                    <p>
+                        <em>Corporate Structure Notice:</em> If Sahyak operates through an affiliated corporate vehicle, operating holding entity, or corporate reincorporation during the subscription period, this Agreement remains enforceable by and for the benefit of the applicable operating entity without interrupting Your active workspace.
+                    </p>
+
+                    <!-- SECTION 3 -->
+                    <h2 id="section-3">3. Eligibility and Authority to Accept Terms</h2>
+                    <p>
+                        The Service is designed exclusively for business and commercial use by real estate agents, property consultants, brokerages, construction firms, channel partners, and real estate developer marketing departments.
+                    </p>
+                    <p>
+                        To be eligible to subscribe to or access the Service, You must:
+                    </p>
+                    <ul>
+                        <li>Be at least eighteen (18) years of age and legally competent to enter into enforceable contracts under the Indian Contract Act, 1872, or the applicable laws of Your jurisdiction;</li>
+                        <li>Not be barred or disqualified from receiving services under Indian export laws, trade embargoes, or sanctions;</li>
+                        <li>Provide true, accurate, current, and complete corporate and contact details during account onboarding.</li>
+                    </ul>
+
+                    <!-- SECTION 4 -->
+                    <h2 id="section-4">4. Key Definitions</h2>
+                    <p>
+                        In these Terms, the following terms shall have the respective meanings assigned below:
+                    </p>
+                    <ul>
+                        <li><strong>"Account"</strong> means the administrative record and credentials established by Customer to access the Service.</li>
+                        <li><strong>"Workspace"</strong> or <strong>"Organization Tenant"</strong> means the isolated, multi-tenant digital environment provisioned for Customer's organization, within which Users manage real estate inventory, lead inquiries, client pipelines, and internal notes.</li>
+                        <li><strong>"User"</strong> or <strong>"Authorized User"</strong> means an employee, independent contractor, sales executive, or telecaller authorized by Customer to access Customer's Workspace under Customer's subscription credentials.</li>
+                        <li><strong>"Customer Data"</strong> or <strong>"CRM Data"</strong> means all electronic data, property listings, lead records, contact numbers, email addresses, site-visit schedules, communication logs, tags, and transaction notes submitted or imported into the Service by Customer or its Users.</li>
+                        <li><strong>"Lead"</strong> means an individual or entity whose contact or property interest information is uploaded, received, or maintained by Customer in the CRM.</li>
+                        <li><strong>"Third-Party Service"</strong> means external software, telecommunications providers, WhatsApp messaging networks, email relays, payment gateways, or API providers integrated with or accessed through the Service.</li>
+                    </ul>
+
+                    <!-- SECTION 5 -->
+                    <h2 id="section-5">5. Account Registration, Authentication, and Security Obligations</h2>
+                    <p>
+                        To activate a Workspace, Customer must register with an authentic business email address, legal business name, and secure password.
+                    </p>
+                    <p>
+                        Customer and its Users bear sole responsibility for:
+                    </p>
+                    <ul>
+                        <li>Maintaining the strict confidentiality of user account credentials, multi-factor tokens, and session identifiers;</li>
+                        <li>Ensuring that passwords meet robust complexity standards (minimum 8 characters, alphanumeric with special symbols);</li>
+                        <li>Restricting credential sharing among personnel. Each User must possess unique credentials; shared generic logins (e.g., <code>sales@broker.com</code>) are strictly prohibited;</li>
+                        <li>Promptly notifying Sahyak at <code>support@sahyak.com</code> upon detecting or suspecting any unauthorized access, compromised password, or security incident involving Customer's Workspace.</li>
+                    </ul>
+                    <p>
+                        Sahyak shall not be liable for any loss, unauthorized data modification, or damages arising from Customer's failure to safeguard authentication credentials.
+                    </p>
+
+                    <!-- SECTION 6 -->
+                    <h2 id="section-6">6. Organization Administrators, Team Members, Roles, and Permissions</h2>
+                    <p>
+                        The individual who first registers the Workspace acts as the primary Organization Administrator. Organization Administrators possess full administrative rights over the Workspace, including the authority to:
+                    </p>
+                    <ul>
+                        <li>Invite, reassign, suspend, or revoke access credentials for sales agents, team leaders, and administrative staff;</li>
+                        <li>Configure role-based access control (RBAC) boundaries (e.g., restricting agents from viewing leads assigned to colleagues, or withholding export permissions);</li>
+                        <li>Initiate subscription changes, plan upgrades, downgrades, or cancellation requests;</li>
+                        <li>Authorize data export archives or request total tenant deletion.</li>
+                    </ul>
+                    <p>
+                        Customer acknowledges that Sahyak relies entirely on the directives of designated Organization Administrators. In the event of internal corporate disputes regarding control of an organization, Sahyak will not arbitrate ownership but may suspend administrative privileges pending joint written instruction or an order of competent jurisdiction.
+                    </p>
+
+                    <!-- SECTION 7 -->
+                    <h2 id="section-7">7. Multi-Tenant Architecture and Workspace Isolation</h2>
+                    <p>
+                        Sahyak CRM is delivered as a multi-tenant cloud software service. The infrastructure utilizes strict logical separation, cryptographic tenant scoping, and relational query filters to guarantee that Customer Data in one Workspace is completely inaccessible to other subscribers.
+                    </p>
+                    <p>
+                        Customer covenants that neither Customer nor any User shall:
+                    </p>
+                    <ul>
+                        <li>Attempt to bypass tenant boundary controls or access data belonging to another Sahyak subscriber;</li>
+                        <li>Conduct penetration testing, vulnerability scanning, or automated fuzzing against the Service without prior written authorization from Sahyak's engineering leadership;</li>
+                        <li>Reverse engineer, decompile, or dissect the underlying Cloudflare Workers, Edge APIs, or SQLite D1 structures supporting the multi-tenant architecture.</li>
+                    </ul>
+
+                    <!-- SECTION 8 -->
+                    <h2 id="section-8">8. Permitted SaaS Use Cases</h2>
+                    <p>
+                        Customer is granted a non-exclusive, non-transferable, revocable, worldwide subscription license during the active term to access and utilize the Service strictly for:
+                    </p>
+                    <ul>
+                        <li>Managing genuine real estate prospect inquiries, buyer leads, and seller mandates;</li>
+                        <li>Organizing property inventories, project brochures, pricing sheets, and site-visit workflows;</li>
+                        <li>Logging follow-up phone calls, WhatsApp client communications, and negotiation timelines;</li>
+                        <li>Tracking sales agent productivity, lead distribution, and conversion pipelines within Customer's organization.</li>
+                    </ul>
+
+                    <!-- SECTION 9 -->
+                    <h2 id="section-9">9. Prohibited Conduct and Acceptable Use Policy (AUP)</h2>
+                    <p>
+                        Customer agrees to adhere strictly to this Acceptable Use Policy. Customer shall not, directly or through third parties:
+                    </p>
+                    <ol>
+                        <li><strong>Unsolicited Spam &amp; Telemarketing Abuse:</strong> Use the Service to dispatch unsolicited bulk communications, abusive SMS blasts, illegal cold-calling campaigns, or spam messages that violate applicable telemarketing laws;</li>
+                        <li><strong>Fraudulent or Deceptive Real Estate Listings:</strong> Upload fictitious property inventory, misleading pricing, forged project approvals, or fraudulent development schemes designed to deceive buyers or prospective tenants;</li>
+                        <li><strong>Malware and Cyber Threats:</strong> Inject trojans, ransomware, worms, malicious scripts, or payload links into document upload fields, lead notes, or client communication channels;</li>
+                        <li><strong>System Abuse &amp; Resource Exhaustion:</strong> Impose an unreasonable or disproportionately large load on our Cloudflare edge infrastructure, flood our APIs, or employ automated scrapers to extract platform data;</li>
+                        <li><strong>Resale and Sublicensing:</strong> Resell, rent, lease, white-label, or redistribute access to the Service to unaffiliated third parties without an executed Sahyak Partner Agreement;</li>
+                        <li><strong>Infringement of Third-Party Rights:</strong> Import, store, or transmit content that infringes upon any patent, trademark, trade secret, copyright, privacy right, or publicity right of any third party.</li>
+                    </ol>
+
+                    <!-- SECTION 10 -->
+                    <h2 id="section-10">10. Customer Ownership and Title to CRM Data</h2>
+                    <p>
+                        <strong>Customer retains exclusive ownership, title, and intellectual property rights in all Customer Data.</strong> Sahyak claims zero ownership interest in Your lead phone numbers, client histories, project inventory records, or confidential commercial transaction files.
+                    </p>
+                    <p>
+                        Customer represents and warrants that Customer has obtained all legally necessary rights, registrations, and authorizations to collect, upload, process, and retain Customer Data within the Service.
+                    </p>
+
+                    <!-- SECTION 11 -->
+                    <h2 id="section-11">11. Third-Party Lead Data, Consent, and Regulatory Compliance (TRAI / DND / RERA)</h2>
+                    <p>
+                        Customer acknowledges that the processing and telephonic contact of prospective property buyers is strictly regulated under Indian and international laws. Customer warrants and covenants that:
+                    </p>
+                    <ul>
+                        <li><strong>TRAI TCCCPR &amp; DND Compliance:</strong> Customer shall strictly respect National Do Not Call (NDNC / DND) registrations governed by the Telecom Regulatory Authority of India (TRAI). Customer shall scrub lead lists prior to telecalling campaigns and obtain verifiable consent before initiating promotional calls or SMS communications;</li>
+                        <li><strong>RERA Advertising Compliance:</strong> Customer warrants that all property projects promoted through communications orchestrated via the Service possess valid registration under the Real Estate (Regulation and Development) Act, 2016 (RERA) where mandatory, including the display of valid RERA registration numbers;</li>
+                        <li><strong>Digital Personal Data Protection Act (DPDP Act 2023):</strong> Customer acts as the Data Fiduciary regarding prospective homebuyer leads. Customer is solely responsible for issuing appropriate privacy notices, obtaining lawful consent, and processing lead deletion requests.</li>
+                    </ul>
+
+                    <!-- SECTION 12 -->
+                    <h2 id="section-12">12. WhatsApp, Telephony, and Third-Party Messaging Integrations</h2>
+                    <p>
+                        The Service provides automated triggers, deep links, and API integrations with third-party communication channels, notably Meta's WhatsApp Business Platform, telephony relays, and email delivery services.
+                    </p>
+                    <p>
+                        Customer expressly understands and agrees that:
+                    </p>
+                    <ul>
+                        <li>WhatsApp messaging is subject to Meta's WhatsApp Business Messaging Policy and Terms of Service;</li>
+                        <li>Sahyak does not guarantee message deliverability, carrier throughput, or non-blocking of Customer's phone numbers by telecommunications carriers or Meta;</li>
+                        <li>Customer must not send spam, unauthorized bulk promotions, or deceptive templates via WhatsApp. Account suspensions enacted by Meta are beyond Sahyak's control and shall not entitle Customer to subscription refunds.</li>
+                    </ul>
+
+                    <!-- SECTION 13 -->
+                    <h2 id="section-13">13. Third-Party API Limits, Provider Costs, and Carrier Charges</h2>
+                    <p>
+                        Where Customer connects external third-party communication accounts (such as WhatsApp Business API, Twilio, Exotel, or email relays), all third-party subscription fees, conversation charges, template verification costs, and carrier interchange fees are Customer's sole direct responsibility.
+                    </p>
+                    <p>
+                        Sahyak may impose reasonable API rate limits or concurrency throttles to prevent system degradation and preserve platform performance across all tenants.
+                    </p>
+
+                    <!-- SECTION 14 -->
+                    <h2 id="section-14">14. Service Availability, Maintenance, and Technical Limitations</h2>
+                    <p>
+                        Sahyak targets high availability across its globally distributed Cloudflare Pages edge deployment and D1 database layer. However, the Service is delivered on an "as-available" basis without an express SLA unless explicitly contracted under an Enterprise Service Level Agreement.
+                    </p>
+                    <p>
+                        Customer acknowledges that scheduled maintenance, emergency security patches, hosting provider disruptions, telecommunications failures, or upstream Internet service disruptions may result in temporary Service unavailability. Sahyak will endeavor to provide reasonable advance notification of scheduled downtime.
+                    </p>
+
+                    <!-- SECTION 15 -->
+                    <h2 id="section-15">15. Suspension and Termination for Cause</h2>
+                    <p>
+                        Sahyak reserves the right to suspend or terminate Customer's Workspace or access credentials immediately upon written or electronic notice if:
+                    </p>
+                    <ul>
+                        <li>Customer commits a material breach of these Terms, including violation of Section 8 (Permitted Use) or Section 9 (Acceptable Use Policy);</li>
+                        <li>Customer engages in illegal telemarketing or spam campaigns resulting in regulatory complaints or telecommunications blacklisting;</li>
+                        <li>Customer's subscription payment fails or enters ninety (90) days of unresolved delinquency;</li>
+                        <li>Customer's continued use creates an imminent security threat, legal liability, or technical danger to the Service or other subscribers;</li>
+                        <li>Required by law enforcement, court order, or governmental mandate.</li>
+                    </ul>
+                    <p>
+                        In non-emergency circumstances involving minor administrative breaches, Sahyak will grant Customer five (5) business days' cure notice prior to enacting suspension.
+                    </p>
+
+                    <!-- SECTION 16 -->
+                    <h2 id="section-16">16. Customer Data Export, Account Closure, and Deletion Lifecycle</h2>
+                    <p>
+                        Upon voluntary cancellation of a subscription, Customer may request a machine-readable export (CSV / JSON format) of all Customer Data within thirty (30) calendar days of the effective termination date.
+                    </p>
+                    <p>
+                        Following the expiration of the thirty-day post-termination grace period, Sahyak will queue Customer's Workspace for permanent deletion from production D1 databases and purge associated edge caches in accordance with our system lifecycle (typically completed within 60 calendar days), unless retention is required by tax or statutory compliance laws.
+                    </p>
+
+                    <!-- SECTION 17 -->
+                    <h2 id="section-17">17. Free Trials, Subscription Plans, and Resource Quotas</h2>
+                    <p>
+                        Sahyak offers both trial access and paid subscription tiers as published in our official Pricing Matrix:
+                    </p>
+                    <ul>
+                        <li><strong>14-Day Free Trial:</strong> Full access to core CRM features without requiring credit card registration. Upon trial expiration, access is paused until Customer selects a paid subscription;</li>
+                        <li><strong>Starter Plan:</strong> ₹1,499/user/month (billed annually) or ₹1,999/user/month (billed monthly). Includes up to 2,500 active leads, 5 user seats, property catalog, and standard WhatsApp follow-ups;</li>
+                        <li><strong>Pro Plan:</strong> ₹3,999/user/month (billed annually) or ₹4,999/user/month (billed monthly). Includes unlimited leads, advanced pipeline automation, team role permissions, and full API integration capabilities;</li>
+                        <li><strong>Enterprise Plan:</strong> Custom quotation with dedicated account management, custom SLA, and volume seat pricing.</li>
+                    </ul>
+                    <p>
+                        International subscriptions are billed in local currencies across 15 supported jurisdictions (including USD, AED, GBP, EUR, SGD, CAD, AUD) in accordance with the live pricing matrix at <code>/pricing/</code>.
+                    </p>
+
+                    <!-- SECTION 18 -->
+                    <h2 id="section-18">18. Invoicing, Payment Processing, Taxes, Renewals, and Refund Policy</h2>
+                    <p>
+                        <strong>Billing Cycle &amp; Auto-Renewal:</strong> Subscriptions are billed in advance on a recurring monthly or annual basis. Subscriptions renew automatically unless Customer disables auto-renewal at least seven (7) days prior to the expiration of the current billing cycle.
+                    </p>
+                    <p>
+                        <strong>Taxes:</strong> All listed fees are exclusive of applicable Goods and Services Tax (GST in India at 18%) or international value-added taxes, which will be calculated and appended at invoice generation.
+                    </p>
+                    <p>
+                        <strong>Refund Policy:</strong> Because Sahyak provides a 14-day fully featured free trial to evaluate system suitability prior to payment, <em>subscription payments for activated billing periods are generally non-refundable</em>. If Customer cancels mid-term, access continues until the end of the paid period, and no partial credits or pro-rata refunds are issued, except where mandated by applicable consumer protection laws.
+                    </p>
+
+                    <!-- SECTION 19 -->
+                    <h2 id="section-19">19. Intellectual Property and Proprietary Rights</h2>
+                    <p>
+                        All right, title, and interest in and to the Service&mdash;including software code, visual UI designs, workflows, icons, algorithms, documentation, brand logos, and trade secrets&mdash;remain the sole and exclusive intellectual property of Sahyak and its licensors.
+                    </p>
+                    <p>
+                        Customer shall not duplicate, mirror, frame, scrape, or create derivative works based upon the Service, nor remove or obscure any copyright notices or trademarks displayed in the application.
+                    </p>
+
+                    <!-- SECTION 20 -->
+                    <h2 id="section-20">20. Limited License to Customer Data for Service Operation</h2>
+                    <p>
+                        Customer grants Sahyak a strictly limited, non-exclusive, royalty-free, worldwide license to host, copy, store, transmit, format, and display Customer Data solely to the extent necessary to provide, secure, maintain, and support the Service for Customer.
+                    </p>
+                    <p>
+                        Sahyak will never sell, broker, or commercially monetize Customer Data to third-party advertisers, rival brokerages, or marketing agencies.
+                    </p>
+
+                    <!-- SECTION 21 -->
+                    <h2 id="section-21">21. Unsolicited Feedback and Product Enhancements</h2>
+                    <p>
+                        If Customer or any User submits suggestions, ideas, enhancement requests, or recommendations regarding the Service ("Feedback"), Sahyak may freely use and incorporate such Feedback into future product releases without restriction or obligation of financial compensation.
+                    </p>
+
+                    <!-- SECTION 22 -->
+                    <h2 id="section-22">22. Mutual Confidentiality</h2>
+                    <p>
+                        "Confidential Information" means all proprietary or non-public information disclosed by one party ("Disclosing Party") to the other ("Receiving Party"), including Customer Data, business plans, pricing, security architecture, and system performance benchmarks.
+                    </p>
+                    <p>
+                        Each party agrees to:
+                    </p>
+                    <ul>
+                        <li>Protect the other party's Confidential Information with the same degree of care it uses for its own confidential data (minimum reasonable care);</li>
+                        <li>Not disclose Confidential Information to any third party, except to employees, professional advisors, and subprocessors who need to know and are bound by equivalent non-disclosure obligations;</li>
+                        <li>Not use Confidential Information for any purpose outside the scope of this Agreement.</li>
+                    </ul>
+
+                    <!-- SECTION 23 -->
+                    <h2 id="section-23">23. Privacy and Data Protection Relationship</h2>
+                    <p>
+                        The handling of personal data is governed by our separate, detailed <a href="/privacy/" class="text-brand-green font-semibold hover:underline">Privacy Policy</a>, which is incorporated by reference into these Terms.
+                    </p>
+                    <p>
+                        With respect to lead records and homebuyer contacts stored in Customer's Workspace, Customer is the Data Fiduciary / Controller and Sahyak operates solely as the Data Processor acting on Customer's instructions.
+                    </p>
+
+                    <!-- SECTION 24 -->
+                    <h2 id="section-24">24. Express Warranty Disclaimers and No-Sales-Guarantee</h2>
+                    <p>
+                        <strong>CRITICAL DISCLAIMER OF GUARANTEES:</strong> SAHYAK CRM IS A PRODUCTIVITY AND WORKFLOW SOFTWARE TOOL. WE DO NOT GUARANTEE THAT USE OF THE SERVICE WILL GENERATE SALES, CLOSE REAL ESTATE TRANSACTIONS, INCREASE COMMISSION EARNINGS, OR CONVERT LEADS INTO BUYERS. CUSTOMER ALONE IS RESPONSIBLE FOR COMMERCIAL REAL ESTATE NEGOTIATIONS, CONTRACTUAL DUE DILIGENCE, TITLE CHECKS, AND CLIENT RELATIONSHIPS.
+                    </p>
+                    <p>
+                        EXCEPT AS EXPRESSLY PROVIDED HEREIN, THE SERVICE IS DELIVERED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING WITHOUT LIMITATION WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, OR UNINTERRUPTED AVAILABILITY.
+                    </p>
+
+                    <!-- SECTION 25 -->
+                    <h2 id="section-25">25. Limitation of Liability</h2>
+                    <p>
+                        TO THE MAXIMUM EXTENT PERMITTED UNDER APPLICABLE LAW:
+                    </p>
+                    <ol>
+                        <li><strong>INDIRECT DAMAGES:</strong> NEITHER PARTY SHALL BE LIABLE TO THE OTHER FOR ANY INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, PUNITIVE, OR EXEMPLARY DAMAGES, INCLUDING LOSS OF PROFITS, LOSS OF REVENUE, BUSINESS INTERRUPTION, LOSS OF REPUTATION, OR LOSS OF BUSINESS DATA, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES;</li>
+                        <li><strong>AGGREGATE MONETARY CAP:</strong> IN NO EVENT SHALL SAHYAK'S TOTAL CUMULATIVE LIABILITY ARISING OUT OF OR RELATING TO THIS AGREEMENT, WHETHER IN CONTRACT, TORT (INCLUDING NEGLIGENCE), OR OTHERWISE, EXCEED THE TOTAL FEES ACTUALLY PAID BY CUSTOMER TO SAHYAK IN THE TWELVE (12) MONTHS IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO LIABILITY.</li>
+                    </ol>
+
+                    <!-- SECTION 26 -->
+                    <h2 id="section-26">26. Customer Indemnification</h2>
+                    <p>
+                        Customer agrees to defend, indemnify, and hold harmless Sahyak, its corporate affiliates, officers, directors, employees, and agents from and against any third-party claims, regulatory penalties, damages, liabilities, and legal expenses (including reasonable attorney fees) arising out of or related to:
+                    </p>
+                    <ul>
+                        <li>Customer's breach of Section 9 (Acceptable Use Policy) or Section 11 (TRAI, DND, RERA, and Lead Consent Compliance);</li>
+                        <li>Allegations that Customer Data infringes third-party intellectual property or violates individual privacy rights;</li>
+                        <li>Customer's fraudulent, deceptive, or unlawful commercial real estate dealings with property buyers, developers, or tenants.</li>
+                    </ul>
+
+                    <!-- SECTION 27 -->
+                    <h2 id="section-27">27. Force Majeure</h2>
+                    <p>
+                        Neither party shall be held liable for failure or delay in performing its contractual obligations (other than financial payment obligations) due to causes beyond reasonable control, including acts of God, floods, fires, natural disasters, war, acts of terrorism, civil unrest, labor strikes, power grid blackouts, telecommunications infrastructure collapse, or global cyber warfare attacks.
+                    </p>
+
+                    <!-- SECTION 28 -->
+                    <h2 id="section-28">28. Modifications to Service and Contract Terms</h2>
+                    <p>
+                        Sahyak continuously updates and optimizes the CRM platform. We may introduce new features, retire legacy modules, or adjust API endpoints to enhance performance.
+                    </p>
+                    <p>
+                        If we implement material, adverse modifications to these Terms, we will notify Customer at least thirty (30) days in advance by dispatching an email to the registered Organization Administrator or posting a prominent banner in the application dashboard. Continued use of the Service following the effective date of revised terms constitutes Customer's acceptance.
+                    </p>
+
+                    <!-- SECTION 29 -->
+                    <h2 id="section-29">29. Governing Law and Jurisdiction</h2>
+                    <p>
+                        These Terms and any dispute or controversy arising out of or relating to this Agreement shall be governed by and construed in accordance with the substantive laws of the Republic of India, without regard to conflict of law principles.
+                    </p>
+                    <p>
+                        Subject to the grievance escalation mechanisms described in Section 30, the competent civil courts located in Mumbai, Maharashtra, India, shall possess exclusive jurisdiction over any legal proceeding arising out of this Agreement.
+                    </p>
+
+                    <!-- SECTION 30 -->
+                    <h2 id="section-30">30. Dispute Resolution and Grievance Mechanism</h2>
+                    <p>
+                        In the event of any operational grievance or dispute, the parties agree to engage in good-faith informal negotiations for a minimum period of thirty (30) calendar days following written notice of dispute sent to <code>support@sahyak.com</code>.
+                    </p>
+                    <p>
+                        If informal discussions fail to resolve the controversy, either party may escalate the dispute to final and binding arbitration administered in Mumbai, Maharashtra, India, in the English language, under the provisions of the Arbitration and Conciliation Act, 1996. The arbitral tribunal shall consist of a sole arbitrator mutually appointed by the parties.
+                    </p>
+
+                    <!-- SECTION 31 -->
+                    <h2 id="section-31">31. General Contractual Provisions</h2>
+                    <ul>
+                        <li><strong>Severability:</strong> If any provision of these Terms is held invalid or unenforceable by a court of competent jurisdiction, that provision shall be modified to the minimum extent necessary to make it valid, and all remaining provisions shall remain in full force and effect;</li>
+                        <li><strong>Waiver:</strong> No failure or delay by either party in exercising any right or remedy under these Terms shall operate as a waiver of that or any other right;</li>
+                        <li><strong>Assignment:</strong> Customer may not assign or transfer this Agreement without the prior written consent of Sahyak. Sahyak may freely assign its rights and obligations in connection with a merger, acquisition, corporate restructuring, or sale of substantial assets;</li>
+                        <li><strong>Entire Agreement:</strong> These Terms, together with the Privacy Policy and any executed Enterprise Order Form, constitute the entire agreement between the parties regarding the Service and supersede all prior discussions, proposals, or understandings.</li>
+                    </ul>
+
+                    <!-- SECTION 32 -->
+                    <h2 id="section-32">32. Contact Details, Versioning, and Legal Notice Status</h2>
+                    <p>
+                        For questions, notices, or formal correspondence regarding these Terms &amp; Conditions, please reach our legal and operational team:
+                    </p>
+                    <div class="my-4 p-5 rounded-xl bg-gray-50 border border-gray-200 text-xs sm:text-sm">
+                        <p class="font-bold text-gray-900 mb-1">Sahyak CRM Legal Department</p>
+                        <p class="text-gray-600 mb-1"><strong>Email:</strong> <code>support@sahyak.com</code></p>
+                        <p class="text-gray-600 mb-1"><strong>Direct Telephone:</strong> +91 87964 75107</p>
+                        <p class="text-gray-600 mb-0"><strong>Physical Address:</strong> Bandra Kurla Complex (BKC), Bandra East, Mumbai, Maharashtra 400051, India</p>
+                    </div>
+
+                    <!-- UNRESOLVED MATTERS / LEGAL APPROVAL CALLOUT -->
+                    <div class="mt-12 p-6 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-xs sm:text-sm">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div>
+                                <h3 class="font-bold text-blue-950 font-serif text-base mb-1 mt-0">Compliance &amp; Operational Disclosure</h3>
+                                <p class="text-blue-900 mb-2 leading-relaxed">
+                                    The operational rules, multi-tenant workspace boundaries, data ownership protections, and pricing structures documented above accurately mirror the live Sahyak CRM application code, Cloudflare D1 database setup, and current pricing tiers.
+                                </p>
+                                <p class="text-blue-900 mb-0 leading-relaxed">
+                                    Specific legal clauses&mdash;including exact indemnification scopes, formal arbitration clause wording, and corporate entity registration identifiers&mdash;remain subject to final confirmation and execution by our retained Indian corporate legal counsel prior to formal commercial execution of bespoke Enterprise agreements.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </article>
+            </div>
+        </section>
+
+        <!-- BOTTOM CTA STRIP -->
+        <section class="bg-brand-dark text-white py-12 px-6 lg:px-12 border-t border-white/10 no-print">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <h2 class="font-serif text-2xl font-bold text-white mb-2">Have Questions About Our Legal Terms?</h2>
+                    <p class="text-gray-300 text-sm max-w-xl">
+                        Our compliance team is ready to walk you through our multi-tenant data safety, tenant ownership terms, and enterprise contracts.
+                    </p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="/contact/" class="bg-brand-green text-brand-dark font-semibold px-6 py-3 rounded-xl hover:bg-brand-green/90 transition-colors text-sm shadow-md">
+                        Contact Support
+                    </a>
+                    <a href="/privacy/" class="bg-white/10 text-white font-medium px-6 py-3 rounded-xl hover:bg-white/20 transition-colors text-sm">
+                        View Privacy Policy
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Global Footer -->
+    <Footer />
+
+    <!-- Script for Dynamic Table of Contents Highlighting -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        document.querySelectorAll('#terms-toc a').forEach((link) => {
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            }, {
+                rootMargin: '-80px 0px -70% 0px'
+            });
+
+            document.querySelectorAll('article h2[id]').forEach((h2) => {
+                observer.observe(h2);
+            });
+
+            // Anti-Plagiarism Clipboard Attribution Appender
+            document.addEventListener('copy', (e) => {
+                const sel = window.getSelection();
+                if (!sel || sel.rangeCount === 0 || sel.toString().trim().length < 35) return;
+                const text = sel.toString();
+                const notice = '\n\n[Source: Sahyak CRM Master Terms & Conditions — https://sahyak.com/terms/ | Copyright © 2026 Sahyak Real Estate Technologies Private Limited. All rights reserved. Commercial reproduction or unauthorized competitor adoption prohibited.]';
+                if (e.clipboardData) {
+                    e.clipboardData.setData('text/plain', text + notice);
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
