@@ -8,3 +8,7 @@ Disallow: /api/
 # Sitemap locations
 Sitemap: https://sahyak.com/sitemap.xml
 Sitemap: https://sahyak.com/sitemap-index.xml
+
+# LLM / AI Engine Content Standard
+# https://sahyak.com/llms.txt
+

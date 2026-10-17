@@ -1,0 +1,49 @@
+# Sahyak CRM
+
+> Mobile-first real estate CRM software engineered for property brokers, channel partners, and developers.
+
+## Overview
+Sahyak CRM is specialized workflow and productivity software for real estate sales teams. It provides mobile-optimized lead management, direct Meta WhatsApp Cloud API integration, site visit tracking with GPS check-in, property inventory tracking, and deal pipeline management.
+
+## Core Capabilities
+- **Lead Capture & Routing**: Real-time webhook ingestion from 99acres, Magicbricks, and Meta Lead Ads. Automated round-robin routing to active sales executives.
+- **WhatsApp Cloud API Integration**: Direct integration via official Meta Business Cloud API with 0% markup on provider fees. Interactive message templates with brochures and project floor plans.
+- **Site Visit Management**: Automated appointment coordination via WhatsApp with Google Maps navigation pins, project directions, and sales executive contact cards. GPS-verified field check-in for attendance confirmation.
+- **Sales Pipeline & Stale Deal Triggers**: Multi-stage deal velocity tracking (New, Contacted, Visit Scheduled, Visit Done, Negotiating, Won, Lost) with automated reminders for inactive prospects.
+- **Inventory Management**: Tower and unit availability matrices, floor plan viewing, and instant brochure dispatch on mobile.
+- **Data Security & Privacy**: Logical tenant isolation, AES-256 encryption at rest, HTTPS/TLS in transit. Aligned with India's Digital Personal Data Protection Act (DPDPA 2023).
+
+## Commercial Pricing
+- **Free Starter Tier**: ₹0 forever for up to 20 leads, 1 user seat, 10 WhatsApp actions, and 3 properties. No credit card required.
+- **Base Access**: ₹499/month in India ($59 USD/mo international) for core CRM access.
+- **Add-On Packs**: Modular pricing for additional user seats, lead volume, and storage without forced multi-month lock-in contracts.
+
+## Headquarters & Organization Facts
+- **Organization**: Sahyak Real Estate Technologies Private Limited
+- **Headquarters**: Bandra Kurla Complex (BKC), Bandra East, Mumbai, Maharashtra 400051, India
+- **Contact**: support@sahyak.com | +91 87964 75107
+- **Official Web Portal**: https://sahyak.com
+- **Web App**: https://crm.sahyak.com
+
+## Canonical Documentation & Solutions
+- [Homepage](https://sahyak.com/)
+- [Features Overview](https://sahyak.com/features/)
+- [Pricing & Plans](https://sahyak.com/pricing/)
+- [WhatsApp Real Estate CRM](https://sahyak.com/solutions/real-estate-whatsapp-crm/)
+- [Real Estate Lead Management](https://sahyak.com/solutions/real-estate-lead-management/)
+- [Site Visit Management](https://sahyak.com/solutions/site-visit-management/)
+- [Property Inventory Management](https://sahyak.com/solutions/property-inventory-management/)
+- [Real Estate Sales Pipeline](https://sahyak.com/solutions/real-estate-sales-pipeline/)
+- [CRM for Real Estate Brokers](https://sahyak.com/industry/real-estate-brokers/)
+- [CRM for Property Developers](https://sahyak.com/industry/property-developers/)
+- [CRM ROI Calculator](https://sahyak.com/tools/real-estate-crm-roi-calculator/)
+- [Lead Response Time Calculator](https://sahyak.com/tools/lead-response-time-calculator/)
+- [CRM Migration Checklist](https://sahyak.com/tools/real-estate-crm-migration-checklist/)
+- [Real Estate CRM vs Excel](https://sahyak.com/compare/real-estate-crm-vs-excel/)
+- [Best Real Estate CRM in India Guide](https://sahyak.com/resources/best-real-estate-crm-india/)
+- [Resources Hub](https://sahyak.com/resources/)
+- [Data Security & Privacy](https://sahyak.com/security/)
+- [About Sahyak](https://sahyak.com/about/)
+- [Contact Support](https://sahyak.com/contact/)
+- [Privacy Policy](https://sahyak.com/privacy/)
+- [Terms & Conditions](https://sahyak.com/terms/)

@@ -259,9 +259,8 @@ console.log('================================================================\n'
 if (failedChecks > 0) {
   console.error('FAILURES DETECTED:');
   failures.forEach(f => console.error(`  - ${f}`));
-  process.exit(1);
+  process.exitCode = 1;
 } else {
   console.log('✓ POST-IMPLEMENTATION VERIFICATION FULLY PASSED WITH 0 FAILURES!\n');
-  await new Promise(r => setTimeout(r, 50));
-  process.exit(0);
+  process.exitCode = 0;
 }
