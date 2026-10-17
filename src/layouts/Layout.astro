@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 
 interface BreadcrumbItem {
@@ -15,7 +16,7 @@ interface Props {
   ogImage?: string;
   ogType?: 'website' | 'article' | 'product';
   schema?: Record<string, any> | Record<string, any>[];
-  activeNav?: 'home' | 'features' | 'pricing' | 'about' | 'resources' | 'security' | 'contact';
+  activeNav?: 'home' | 'features' | 'pricing' | 'about' | 'resources' | 'security' | 'contact' | 'solutions' | 'tools';
   breadcrumbs?: BreadcrumbItem[];
   noindex?: boolean;
 }
@@ -30,7 +31,7 @@ const {
   ogImage = 'https://sahyak.com/images/sahyak-logo.png',
   ogType = 'website',
   schema,
-  activeNav = 'home',
+  activeNav,
   breadcrumbs,
   noindex = false
 } = Astro.props;
@@ -116,13 +117,6 @@ const softwareSchema = {
     "priceCurrency": "INR",
     "priceValidUntil": "2027-12-31",
     "availability": "https://schema.org/InStock"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "reviewCount": "148",
-    "bestRating": "5",
-    "worstRating": "1"
   }
 };
 
@@ -216,71 +210,8 @@ const fullSchemaList = [
     <slot />
   </main>
 
-  <!-- Site Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <div class="site-logo" style="margin-bottom: 1.25rem;">
-            <img src="/images/sahyak-logo.png" alt="Sahyak CRM" style="height: 36px; width: auto; object-fit: contain; border-radius: 4px;" />
-            <span>Sahyak CRM</span>
-          </div>
-          <p style="color: var(--text-light-muted); max-width: 320px; font-size: 0.95rem; margin-bottom: 1.5rem;">
-            The mobile-first real estate CRM built for real people. Capture leads, coordinate client visits, and close deals effortlessly across 15+ countries.
-          </p>
-          <div style="display: flex; gap: 0.75rem;">
-            <span class="badge-pill" style="margin: 0; font-size: 0.75rem;">
-              <span class="badge-dot"></span> Built for Global Real Estate
-            </span>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <h4>Product</h4>
-          <ul>
-            <li><a href="/features/">All Features</a></li>
-            <li><a href="/features/#lead-management">Lead Capture</a></li>
-            <li><a href="/features/#whatsapp">Multi-Channel Follow-ups</a></li>
-            <li><a href="/features/#site-visits">Site Visit Coordinator</a></li>
-            <li><a href="/features/#inventory">Inventory Management</a></li>
-            <li><a href="/pricing/">Pricing & Plans</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Resources</h4>
-          <ul>
-            <li><a href="/resources/">Resource Center</a></li>
-            <li><a href="/resources/#guides">Real Estate Playbooks</a></li>
-            <li><a href="/resources/#tutorials">Video Tutorials</a></li>
-            <li><a href="/security/">Security & Encryption</a></li>
-            <li><a href="/contact/">Support & Help Desk</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Company</h4>
-          <ul>
-            <li><a href="/about/">About Sahyak CRM</a></li>
-            <li><a href="/contact/">Contact Team</a></li>
-            <li><!--email_off--><a href="mailto:support@sahyak.com">support@sahyak.com</a><!--email_on--></li>
-            <li><a href="tel:+918796475107">+91 87964 75107</a></li>
-            <li><a href="/security/#gdpr">Data Privacy & GDPR</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Sahyak CRM (<a href="https://sahyak.com/" style="color: #4ADE80; text-decoration: none;">sahyak.com</a>). All rights reserved.</p>
-        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
-          <a href="/privacy/" style="color: inherit;">Privacy Policy</a>
-          <a href="/terms/" style="color: inherit;">Terms of Service</a>
-          <a href="/security/#gdpr" style="color: inherit;">Data Protection</a>
-          <a href="/sitemap.xml" style="color: inherit;">Sitemap</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <!-- Universal Global Footer -->
+  <Footer />
 
   <!-- Lightweight Client Script for Interactivity -->
   <script is:inline>

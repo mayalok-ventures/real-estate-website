@@ -1,0 +1,362 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const seoTitle = "Real Estate Lead Management & Follow-Up Software | Sahyak CRM";
+const seoDesc = "Capture property portal leads from 99acres & Magicbricks in under 15 seconds. Automated round-robin routing, 1-tap WhatsApp outreach, and anti-leakage audit logs.";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Solutions", url: "/features/" },
+  { name: "Lead Management", url: "/solutions/real-estate-lead-management/" }
+];
+
+const faqItems = [
+  {
+    question: "How fast do leads from 99acres and Magicbricks appear in Sahyak CRM?",
+    answer: "Via real-time webhook ingestion, leads appear in Sahyak in under 15 seconds. Your designated agents or telecallers receive an immediate push notification on their mobile phone with buyer name, budget, preferred configuration, and source portal."
+  },
+  {
+    question: "How does Sahyak prevent lead leakage and agent duplicate calling?",
+    answer: "Sahyak enforces automated deduplication across mobile number and email. If an existing buyer inquires on a different portal, the system appends the inquiry to the existing contact timeline and alerts the assigned lead owner rather than creating a duplicate or broadcasting to another agent."
+  },
+  {
+    question: "Can I customize the lead distribution rules among my sales team?",
+    answer: "Yes. You can configure round-robin routing, project-specific allocation, language-matching, or budget-based routing rules. Team managers can set active work shifts so unassigned leads are routed only to online agents."
+  },
+  {
+    question: "Does the Free Starter tier include portal lead capture?",
+    answer: "Yes. The Free Starter tier includes up to 20 active leads, 1 user seat, 10 WhatsApp actions, and 3 active properties with complete lead capture and follow-up capabilities without requiring a credit card."
+  }
+];
+
+const leadSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Sahyak Real Estate Lead Management Software",
+  "operatingSystem": "Web, Android, iOS",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "499",
+    "priceCurrency": "INR"
+  },
+  "description": seoDesc
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(f => ({
+    "@type": "Question",
+    "name": f.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": f.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonicalUrl="https://sahyak.com/solutions/real-estate-lead-management/"
+  breadcrumbs={breadcrumbs}
+  schema={[leadSchema, faqSchema]}
+  activeNav="solutions"
+>
+  <!-- Hero Section -->
+  <section class="relative bg-darkGreen text-white py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-brandGreen border border-white/10 uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+          Speed-to-Lead & Follow-Up OS
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight">
+          Real Estate Lead Management That <span class="text-brandGreen italic">Stops Commission Leakage.</span>
+        </h1>
+        <p class="text-gray-300 text-lg max-w-xl leading-relaxed">
+          Ingest property inquiries from 99acres, Magicbricks, Housing.com, and Meta Ads in under 15 seconds. Distribute instantly to field agents, trigger automated WhatsApp follow-ups, and track the entire sales journey from inquiry to booking.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 pt-4">
+          <a href="https://crm.sahyak.com" class="btn btn-primary px-8 py-3.5 text-base">
+            Start Free (20 Leads Included) <span>&rarr;</span>
+          </a>
+          <a href="/tools/real-estate-crm-roi-calculator/" class="btn btn-outline px-8 py-3.5 text-base">
+            Calculate Lead Leakage Cost <span>&rarr;</span>
+          </a>
+        </div>
+        <p class="text-xs text-gray-400">
+          No credit card required &bull; Full webhook access &bull; 1-tap mobile call & WhatsApp
+        </p>
+      </div>
+
+      <div class="relative flex flex-col items-center justify-center">
+        <div class="relative w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+          <img src="/images/features/2.webp" alt="Sahyak Lead Management pipeline and multi-channel lead capture interface" width="1402" height="1122" fetchpriority="high" loading="eager" class="w-full h-auto object-cover rounded-2xl" />
+        </div>
+        <div class="mt-4 w-full max-w-lg p-3 rounded-xl bg-white/10 border border-white/10 flex items-center justify-between text-xs backdrop-blur-md">
+          <span class="text-brandGreen font-semibold flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brandGreen animate-pulse"></span>
+            Live Portal Ingress Active
+          </span>
+          <span class="text-gray-300">Avg First Contact: <strong class="text-brandGreen">3.4 Mins</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem / Speed-to-Lead Statistics Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-16">
+        <div class="lg:col-span-7 space-y-4">
+          <span class="text-xs font-bold text-green-700 tracking-wider uppercase bg-green-100 px-3 py-1 rounded-full">
+            The Reality of Property Inquiries
+          </span>
+          <h2 class="text-3xl md:text-4xl font-serif text-darkGreen">
+            Overcoming Follow-Up Delays in Real Estate Lead Management
+          </h2>
+          <p class="text-gray-600 text-base md:text-lg leading-relaxed">
+            Property buyers frequently submit inquiries across multiple developer campaigns and portals at the same time. Centralizing lead ingestion and automating immediate assignment ensures timely contact before buyers commit elsewhere.
+          </p>
+        </div>
+        <div class="lg:col-span-5">
+          <img src="/images/homepage/2.webp" alt="Real estate broker managing client communication channels and timely follow-ups" width="1672" height="941" loading="lazy" decoding="async" class="w-full h-auto rounded-2xl shadow-lg border border-gray-200 object-cover" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-2xl bg-white border border-gray-200 shadow-sm flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-green-50 text-darkGreen flex items-center justify-center text-xl font-bold mb-4">⚡</div>
+            <h3 class="text-lg font-bold text-darkGreen mb-2">Automated Ingestion</h3>
+            <p class="text-sm text-gray-600">
+              Direct webhook endpoints capture incoming inquiries from 99acres, Magicbricks, and Meta Ads instantly without manual spreadsheet exports.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-white border border-gray-200 shadow-sm flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-green-50 text-darkGreen flex items-center justify-center text-xl font-bold mb-4">🔄</div>
+            <h3 class="text-lg font-bold text-darkGreen mb-2">Instant Assignment</h3>
+            <p class="text-sm text-gray-600">
+              Round-robin or rule-based assignment routes leads directly to active sales executives' phones, complete with budget and location preferences.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-white border border-gray-200 shadow-sm flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-green-50 text-darkGreen flex items-center justify-center text-xl font-bold mb-4">📋</div>
+            <h3 class="text-lg font-bold text-darkGreen mb-2">Unified Timeline</h3>
+            <p class="text-sm text-gray-600">
+              Consolidated lead cards track calls, WhatsApp message histories, site visit records, and stage changes in a single searchable interface.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5-Stage Lead Workflow Breakdown -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-white">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          How Sahyak CRM Automates the Entire Lead Lifecycle
+        </h2>
+        <p class="text-gray-600">
+          Engineered specifically for Indian real estate operations — replacing messy WhatsApp notes and lost Excel sheets.
+        </p>
+      </div>
+
+      <div class="space-y-12">
+        <!-- Step 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center p-6 rounded-2xl bg-gray-50 border border-gray-200">
+          <div class="md:col-span-2 text-center md:text-left">
+            <span class="inline-block text-3xl font-extrabold text-green-600 font-serif">01</span>
+            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Sub-15s Ingress</div>
+          </div>
+          <div class="md:col-span-10">
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Universal Webhook & Portal Integration</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Connect 99acres, Magicbricks, Housing.com, Meta Lead Forms, and website webhooks directly into Sahyak. No CSV export-import gymnastics. Leads enter your CRM within seconds of form submission.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center p-6 rounded-2xl bg-gray-50 border border-gray-200">
+          <div class="md:col-span-2 text-center md:text-left">
+            <span class="inline-block text-3xl font-extrabold text-green-600 font-serif">02</span>
+            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Anti-Leakage Routing</div>
+          </div>
+          <div class="md:col-span-10">
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Smart Round-Robin & Shift Allocation</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Route inquiries automatically based on agent availability, property micro-market (e.g. Bandra vs Thane), or buyer budget. If an agent does not log a response within 15 minutes, the lead automatically escalates to a team lead.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center p-6 rounded-2xl bg-gray-50 border border-gray-200">
+          <div class="md:col-span-2 text-center md:text-left">
+            <span class="inline-block text-3xl font-extrabold text-green-600 font-serif">03</span>
+            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">1-Tap Mobile Action</div>
+          </div>
+          <div class="md:col-span-10">
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Click-to-Call & WhatsApp Dispatch</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Agents trigger calls directly from the Sahyak mobile interface with automatic duration recording. Share verified project brochures, floor plans, and pricing cards on WhatsApp in 1 tap without cluttering personal address books.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center p-6 rounded-2xl bg-gray-50 border border-gray-200">
+          <div class="md:col-span-2 text-center md:text-left">
+            <span class="inline-block text-3xl font-extrabold text-green-600 font-serif">04</span>
+            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Automated Cadences</div>
+          </div>
+          <div class="md:col-span-10">
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Follow-Up Reminders & Re-engagement Tasks</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Consolidate follow-up workflows: receive push reminders for Day 1, Day 3, and post-site visit touchpoints. Never lose high-intent buyers simply because an agent forgot to enter a manual calendar task.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Table: Spreadsheets vs Generic CRM vs Sahyak -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-lightBg">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Spreadsheets vs Generic CRMs vs Sahyak Lead Management
+        </h2>
+        <p class="text-gray-600">See why property sales teams transition to vertical-first mobile software.</p>
+      </div>
+
+      <div class="overflow-x-auto bg-white rounded-2xl shadow-sm border border-gray-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-darkGreen text-white text-xs uppercase tracking-wider">
+            <tr>
+              <th class="py-4 px-6">Capability</th>
+              <th class="py-4 px-6 text-gray-300">Excel / Google Sheets</th>
+              <th class="py-4 px-6 text-gray-300">Generic CRMs (HubSpot / Zoho)</th>
+              <th class="py-4 px-6 text-brandGreen">Sahyak Real Estate CRM</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr>
+              <td class="py-4 px-6 font-semibold text-darkGreen">Portal Ingress (99acres / Magicbricks)</td>
+              <td class="py-4 px-6 text-red-500">❌ Manual copy-paste</td>
+              <td class="py-4 px-6 text-yellow-600">⚠️ Paid custom Zapier integration</td>
+              <td class="py-4 px-6 text-green-600 font-bold">✅ Built-in sub-15s webhook</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-semibold text-darkGreen">WhatsApp 1-Tap Property Dispatch</td>
+              <td class="py-4 px-6 text-red-500">❌ Save contact first</td>
+              <td class="py-4 px-6 text-yellow-600">⚠️ Expensive third-party addons</td>
+              <td class="py-4 px-6 text-green-600 font-bold">✅ 1-tap without saving numbers</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-semibold text-darkGreen">Anti-Leakage Data Masking</td>
+              <td class="py-4 px-6 text-red-500">❌ Zero protection (agents steal sheets)</td>
+              <td class="py-4 px-6 text-yellow-600">⚠️ Enterprise tier only ($100+/mo)</td>
+              <td class="py-4 px-6 text-green-600 font-bold">✅ Role-based contact security</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-semibold text-darkGreen">Site Visit Coordination</td>
+              <td class="py-4 px-6 text-red-500">❌ Untracked phone calls</td>
+              <td class="py-4 px-6 text-yellow-600">⚠️ Generic calendar meetings</td>
+              <td class="py-4 px-6 text-green-600 font-bold">✅ GPS check-in & WhatsApp pin</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-semibold text-darkGreen">Starting Price</td>
+              <td class="py-4 px-6 text-gray-600">Free (Hidden costs in lost deals)</td>
+              <td class="py-4 px-6 text-gray-600">₹1,400–₹3,000/user/month</td>
+              <td class="py-4 px-6 text-green-700 font-bold">Free Starter &bull; ₹499/mo Base</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Cross-Link Section to Other Workflows -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-white">
+    <div class="max-w-6xl mx-auto">
+      <h3 class="text-2xl font-serif text-darkGreen mb-8 text-center">Connected Real Estate Workflows</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="/solutions/real-estate-whatsapp-crm/" class="p-6 rounded-2xl bg-gray-50 border border-gray-200 hover:border-brandGreen transition-all group flex flex-col justify-between h-full">
+          <div>
+            <div class="text-2xl mb-2">💬</div>
+            <h4 class="text-lg font-bold text-darkGreen group-hover:text-green-700 mb-1">WhatsApp CRM</h4>
+            <p class="text-xs text-gray-600">Send property brochures and schedule follow-ups directly through Meta Cloud API.</p>
+          </div>
+          <span class="text-xs font-semibold text-darkGreen mt-4 flex items-center gap-1">Explore WhatsApp &rarr;</span>
+        </a>
+        <a href="/solutions/site-visit-management/" class="p-6 rounded-2xl bg-gray-50 border border-gray-200 hover:border-brandGreen transition-all group flex flex-col justify-between h-full">
+          <div>
+            <div class="text-2xl mb-2">📍</div>
+            <h4 class="text-lg font-bold text-darkGreen group-hover:text-green-700 mb-1">Site Visit Tracking</h4>
+            <p class="text-xs text-gray-600">Track Sunday show-flat attendance, field agent GPS logs, and buyer feedback.</p>
+          </div>
+          <span class="text-xs font-semibold text-darkGreen mt-4 flex items-center gap-1">Explore site visits &rarr;</span>
+        </a>
+        <a href="/tools/real-estate-crm-roi-calculator/" class="p-6 rounded-2xl bg-gray-50 border border-gray-200 hover:border-brandGreen transition-all group flex flex-col justify-between h-full">
+          <div>
+            <div class="text-2xl mb-2">🧮</div>
+            <h4 class="text-lg font-bold text-darkGreen group-hover:text-green-700 mb-1">CRM ROI Calculator</h4>
+            <p class="text-xs text-gray-600">Model your brokerage commission growth with faster response times.</p>
+          </div>
+          <span class="text-xs font-semibold text-darkGreen mt-4 flex items-center gap-1">Calculate ROI &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-lightBg">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-serif text-darkGreen mb-10 text-center">Frequently Asked Questions</h2>
+      <div class="space-y-6">
+        {faqItems.map(item => (
+          <div class="p-6 rounded-2xl bg-white border border-gray-200">
+            <h3 class="text-lg font-bold text-darkGreen mb-2">{item.question}</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">{item.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Strip -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-darkGreen text-white text-center">
+    <div class="max-w-4xl mx-auto space-y-6">
+      <h2 class="text-3xl md:text-5xl font-serif">
+        Start Capturing and Converting Property Leads in Minutes.
+      </h2>
+      <p class="text-gray-300 text-lg max-w-2xl mx-auto">
+        Activate your Free Starter tier with 20 active leads, 1 seat, and 10 WhatsApp actions. No credit card required.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+        <a href="https://crm.sahyak.com" class="btn btn-primary px-8 py-3.5 text-base">
+          Start Free Now <span>&rarr;</span>
+        </a>
+        <a href="/pricing/" class="btn btn-outline px-8 py-3.5 text-base">
+          View All Plans & Pricing <span>&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

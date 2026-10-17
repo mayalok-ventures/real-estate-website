@@ -16,43 +16,55 @@ import AnalyticsTracker from './AnalyticsTracker.astro';
         </p>
         <div class="sahyak-footer-trust">
           <span class="trust-dot"></span>
-          <span>Trusted by 10,000+ real estate professionals worldwide</span>
+          <span>Engineered for real estate sales teams &bull; 99.9% Uptime</span>
         </div>
       </div>
 
-      <!-- Col 2: Product -->
+      <!-- Col 2: Solutions -->
       <div class="sahyak-footer-col">
-        <h4 class="sahyak-footer-heading">Platform</h4>
+        <h4 class="sahyak-footer-heading">Solutions</h4>
         <ul class="sahyak-footer-links">
-          <li><a href="/">Home</a></li>
+          <li><a href="/solutions/real-estate-lead-management/">Lead Management</a></li>
+          <li><a href="/solutions/real-estate-whatsapp-crm/">WhatsApp CRM</a></li>
+          <li><a href="/solutions/real-estate-sales-pipeline/">Sales Pipeline</a></li>
+          <li><a href="/solutions/property-inventory-management/">Property Inventory</a></li>
+          <li><a href="/solutions/site-visit-management/">Site Visit Tracking</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Industry & Plans -->
+      <div class="sahyak-footer-col">
+        <h4 class="sahyak-footer-heading">Industry & Plans</h4>
+        <ul class="sahyak-footer-links">
+          <li><a href="/industry/real-estate-brokers/">Real Estate Brokers</a></li>
+          <li><a href="/industry/property-developers/">Property Developers</a></li>
           <li><a href="/features/">All Features</a></li>
-          <li><a href="/pricing/">Pricing & Plans</a></li>
-          <li><a href="/security/">Enterprise Security</a></li>
+          <li><a href="/pricing/">Pricing & ₹0 Plan</a></li>
+          <li><a href="/security/">Data Security & Privacy</a></li>
         </ul>
       </div>
 
-      <!-- Col 3: Resources -->
+      <!-- Col 4: Free Tools & Guides -->
       <div class="sahyak-footer-col">
-        <h4 class="sahyak-footer-heading">Resources</h4>
+        <h4 class="sahyak-footer-heading">Tools & Guides</h4>
         <ul class="sahyak-footer-links">
-          <li><a href="/resources/#quick-start">Getting Started Guide</a></li>
-          <li><a href="/resources/#video-tutorials">Video Tutorials</a></li>
-          <li><a href="/resources/#guides">Best Practices</a></li>
-          <li><a href="/resources/#templates">Sales Templates</a></li>
-          <li><a href="/resources/#help-articles">Knowledge Base</a></li>
+          <li><a href="/tools/real-estate-crm-roi-calculator/">CRM ROI Calculator</a></li>
+          <li><a href="/tools/lead-response-time-calculator/">Response Time Calculator</a></li>
+          <li><a href="/tools/real-estate-crm-migration-checklist/">18-Step Migration Checklist</a></li>
+          <li><a href="/compare/real-estate-crm-vs-excel/">Real Estate CRM vs Excel</a></li>
+          <li><a href="/resources/best-real-estate-crm-india/">Best Real Estate CRM India</a></li>
         </ul>
       </div>
 
-      <!-- Col 4: Company & Global Contact -->
+      <!-- Col 5: Company & Support -->
       <div class="sahyak-footer-col">
-        <h4 class="sahyak-footer-heading">Global Support</h4>
+        <h4 class="sahyak-footer-heading">Company & Support</h4>
         <ul class="sahyak-footer-links">
-          <li><a href="/about/">About Sahyak CRM</a></li>
-          <li><a href="/contact/">Contact Global Team</a></li>
+          <li><a href="/about/">About Sahyak</a></li>
+          <li><a href="/resources/">Resources Hub</a></li>
+          <li><a href="/contact/">Contact Headquarters</a></li>
           <li><!--email_off--><a href="mailto:support@sahyak.com">support@sahyak.com</a><!--email_on--></li>
           <li><a href="tel:+918796475107">+91 87964 75107</a></li>
-          <li><a href="/contact/">Book an Enterprise Demo &rarr;</a></li>
-          <li class="location-text">Global Data Centers: US, EU, APAC & MEA</li>
         </ul>
       </div>
     </div>
@@ -132,15 +144,15 @@ import AnalyticsTracker from './AnalyticsTracker.astro';
 
   .sahyak-footer-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1.2fr;
-    gap: 3.5rem;
+    grid-template-columns: 1.8fr repeat(4, 1fr);
+    gap: 2.5rem;
     margin-bottom: 3rem;
   }
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1100px) {
     .sahyak-footer-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 2.5rem;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
     }
   }
 

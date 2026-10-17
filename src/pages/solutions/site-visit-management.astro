@@ -1,0 +1,285 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const seoTitle = "Site Visit Tracking Software for Real Estate | Sahyak CRM";
+const seoDesc = "Real estate site visit management software for Indian brokers and builders. Schedule visits, send WhatsApp location pins, log GPS check-ins, and capture instant buyer feedback.";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Solutions", url: "/features/" },
+  { name: "Site Visit Tracking", url: "/solutions/site-visit-management/" }
+];
+
+const faqItems = [
+  {
+    question: "How does Sahyak automate site visit reminders?",
+    answer: "Sahyak automatically dispatches a WhatsApp confirmation after booking, followed by a scheduled reminder on the morning of the visit containing the Google Maps navigation pin, the assigned executive's direct phone number, and parking instructions."
+  },
+  {
+    question: "How does GPS check-in work for field sales executives?",
+    answer: "When a sales agent arrives at the project sales gallery or meets the client on site, they tap 'Check In' inside the mobile CRM. Sahyak captures the GPS coordinates and timestamp, verifying physical attendance and ensuring genuine client interactions."
+  },
+  {
+    question: "How is buyer feedback captured immediately after a site visit?",
+    answer: "Within 15 minutes of site visit completion, the agent fills out a rapid 60-second feedback form: Interest level (Hot/Warm/Cold), preferred unit or floor visited, key objections (pricing, possession date, Vastu), and the agreed next action step."
+  },
+  {
+    question: "Can developers track which channel partners generate the highest site visit footfalls?",
+    answer: "Yes. Every scheduled site visit is tagged to the originating channel partner or marketing portal (99acres, Magicbricks, Google Ads). Developers get transparent footfall attribution reports to reward top-performing brokers."
+  },
+  {
+    question: "Is site visit tracking available on the Free Starter plan?",
+    answer: "Yes. The Free Starter tier includes full site visit scheduling and tracking for up to 20 leads at ₹0 without requiring a credit card."
+  }
+];
+
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Sahyak Site Visit Tracking Software",
+  "operatingSystem": "Web, Android, iOS",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "499",
+    "priceCurrency": "INR"
+  },
+  "description": seoDesc
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(f => ({
+    "@type": "Question",
+    "name": f.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": f.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonicalUrl="https://sahyak.com/solutions/site-visit-management/"
+  breadcrumbs={breadcrumbs}
+  schema={[softwareSchema, faqSchema]}
+  activeNav="solutions"
+>
+  <!-- Hero Section -->
+  <section class="relative bg-darkGreen text-white py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-brandGreen border border-white/10 uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+          The Critical Deal Conversion Milestone
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight">
+          Site Visit Tracking Software for <span class="text-brandGreen italic">Real Estate Field Teams.</span>
+        </h1>
+        <p class="text-gray-300 text-lg max-w-xl leading-relaxed">
+          In Indian real estate, 95% of bookings happen only after a physical site visit. Automate WhatsApp location pins, track field agent GPS check-ins, capture post-visit buyer feedback, and measure footfall-to-token conversion.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 pt-4">
+          <a href="https://crm.sahyak.com" class="btn btn-primary px-8 py-3.5 text-base">
+            Start Free (20 Leads Included) <span>&rarr;</span>
+          </a>
+          <a href="/solutions/real-estate-sales-pipeline/" class="btn btn-outline px-8 py-3.5 text-base">
+            View Sales Pipeline <span>&rarr;</span>
+          </a>
+        </div>
+        <p class="text-xs text-gray-400">
+          WhatsApp Google Maps dispatch &bull; GPS verified check-in &bull; Mobile-ready feedback logging
+        </p>
+      </div>
+
+      <!-- Hero Product Visual -->
+      <div class="relative flex flex-col items-center justify-center">
+        <div class="relative w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+          <img src="/images/features/4.webp" alt="Sahyak Site Visits coordination, agent scheduling, and field operations tracker" width="1402" height="1122" fetchpriority="high" loading="eager" class="w-full h-auto object-cover rounded-2xl" />
+        </div>
+        <div class="mt-4 w-full max-w-lg p-3 rounded-xl bg-white/10 border border-white/10 flex items-center justify-between text-xs backdrop-blur-md">
+          <span class="text-brandGreen font-semibold flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brandGreen animate-pulse"></span>
+            GPS Verified Field Check-In Active
+          </span>
+          <span class="text-gray-300">Conversion Rate: <strong class="text-brandGreen">22.4% (Visit to Token)</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem / Contrast Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Where Most Real Estate Deals Break Down
+        </h2>
+        <p class="text-gray-600 text-lg">
+          You spend thousands of rupees on Google Ads and property portals to generate an inquiry. But when the weekend arrives, half of scheduled visitors ghost your agents.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="text-2xl mb-4">🚗</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Wrong Location & Navigation Hassles</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Buyers search for a project on Google Maps and get directed to an unpaved service gate or a corporate office 10 km away instead of the active sales pavilion, leaving them frustrated and late.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="text-2xl mb-4">⏰</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">No Pre-Visit Cadence</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Without automated morning-of reminders and executive contact cards, buyers easily forget the appointment or get swayed by rival brokers along the highway.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="text-2xl mb-4">📝</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Feedback Never Gets Logged</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Field agents finish the tour and move on to the next visitor without logging the client's objections, favorite layout, or budget ceiling, making subsequent follow-up generic and ineffective.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Capabilities Grid -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          The Complete Site Visit Operating System
+        </h2>
+        <p class="text-gray-600 text-lg">
+          From calendar dispatch to sales gallery check-in and automated follow-up.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              📍
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">1-Tap WhatsApp Location Card</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Send an interactive WhatsApp message with verified Google Maps pins, gate entry codes, parking details, and the sales executive's direct contact card.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              📱
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">GPS Attendance Verification</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Ensure field sales accountability. Sales reps tap check-in on their mobile phone, logging exact GPS coordinates and meeting durations automatically.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              📊
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">Instant 60-Second Feedback Form</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Capture hot/warm/cold tags, visited units, financing requirements, and specific buyer objections before the agent forgets the details.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Connected Workflows Grid -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-darkGreen text-white">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-2xl md:text-3xl font-serif">A Unified Sales Architecture</h2>
+        <p class="text-gray-300 text-sm mt-2">Every site visit syncs directly with inventory, pipeline, and WhatsApp.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="/solutions/real-estate-whatsapp-crm/" class="p-6 bg-white/5 rounded-2xl border border-white/10 hover:border-brandGreen transition-all group">
+          <p class="text-brandGreen text-sm font-semibold mb-2">WhatsApp Automation &rarr;</p>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-brandGreen">Morning-Of Reminders</h3>
+          <p class="text-xs text-gray-400">Automate reminder messages with directions and executive contact cards.</p>
+        </a>
+        <a href="/solutions/property-inventory-management/" class="p-6 bg-white/5 rounded-2xl border border-white/10 hover:border-brandGreen transition-all group">
+          <p class="text-brandGreen text-sm font-semibold mb-2">Property Inventory &rarr;</p>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-brandGreen">Show Sample Flats</h3>
+          <p class="text-xs text-gray-400">Check live unit availability on mobile right while walking the client through the tower.</p>
+        </a>
+        <a href="/solutions/real-estate-sales-pipeline/" class="p-6 bg-white/5 rounded-2xl border border-white/10 hover:border-brandGreen transition-all group">
+          <p class="text-brandGreen text-sm font-semibold mb-2">Sales Pipeline &rarr;</p>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-brandGreen">Advance to Token Stage</h3>
+          <p class="text-xs text-gray-400">Move deals to Negotiation and Token Paid directly from the post-visit feedback screen.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-gray-600">
+          Everything you need to know about managing real estate site visits with Sahyak CRM.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {faqItems.map((faq) => (
+          <div class="bg-white rounded-2xl p-6 border border-gray-200">
+            <h3 class="text-lg font-bold text-darkGreen mb-2">{faq.question}</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-brandGreen text-darkGreen text-center">
+    <div class="max-w-4xl mx-auto space-y-6">
+      <h2 class="text-3xl md:text-5xl font-serif font-bold">
+        Turn More Site Visits Into Booking Tokens
+      </h2>
+      <p class="text-darkGreen/80 text-lg max-w-2xl mx-auto">
+        Start tracking site visits today. Free Starter includes 20 leads, 1 user seat, 10 WhatsApp actions, and 3 active properties at ₹0.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+        <a href="https://crm.sahyak.com" class="btn bg-darkGreen text-white hover:bg-darkGreen/90 px-8 py-4 text-base font-semibold">
+          Start Free Today <span>&rarr;</span>
+        </a>
+        <a href="/pricing/" class="btn bg-white/40 text-darkGreen hover:bg-white/60 px-8 py-4 text-base font-semibold">
+          View All Plans <span>&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

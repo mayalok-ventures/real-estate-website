@@ -1,0 +1,44 @@
+# Sahyak CRM — Edge Redirect Rules (Cloudflare Pages)
+# Format: /source-path /target-path 301
+
+# Consolidate duplicate lead follow-up to lead management
+/solutions/real-estate-lead-follow-up /solutions/real-estate-lead-management/ 301
+/solutions/real-estate-lead-follow-up/ /solutions/real-estate-lead-management/ 301
+
+# Consolidate duplicate migration URLs
+/resources/real-estate-crm-migration /tools/real-estate-crm-migration-checklist/ 301
+/resources/real-estate-crm-migration/ /tools/real-estate-crm-migration-checklist/ 301
+
+# Consolidate calculator variations to canonical ROI calculator
+/tools/real-estate-lead-leakage-calculator /tools/real-estate-crm-roi-calculator/ 301
+/tools/real-estate-lead-leakage-calculator/ /tools/real-estate-crm-roi-calculator/ 301
+/tools/crm-roi-calculator /tools/real-estate-crm-roi-calculator/ 301
+/tools/crm-roi-calculator/ /tools/real-estate-crm-roi-calculator/ 301
+
+# Channel partners alias to brokers
+/industry/channel-partners /industry/real-estate-brokers/ 301
+/industry/channel-partners/ /industry/real-estate-brokers/ 301
+
+# Core page non-trailing slash aliases
+/features /features/ 301
+/pricing /pricing/ 301
+/about /about/ 301
+/contact /contact/ 301
+/resources /resources/ 301
+/security /security/ 301
+/privacy /privacy/ 301
+/terms /terms/ 301
+/resources/best-real-estate-crm-india /resources/best-real-estate-crm-india/ 301
+
+# Solution & Industry non-trailing slash aliases
+/industry/property-developers /industry/property-developers/ 301
+/industry/real-estate-brokers /industry/real-estate-brokers/ 301
+/solutions/real-estate-lead-management /solutions/real-estate-lead-management/ 301
+/solutions/real-estate-whatsapp-crm /solutions/real-estate-whatsapp-crm/ 301
+/solutions/real-estate-sales-pipeline /solutions/real-estate-sales-pipeline/ 301
+/solutions/property-inventory-management /solutions/property-inventory-management/ 301
+/solutions/site-visit-management /solutions/site-visit-management/ 301
+/tools/real-estate-crm-roi-calculator /tools/real-estate-crm-roi-calculator/ 301
+/tools/lead-response-time-calculator /tools/lead-response-time-calculator/ 301
+/tools/real-estate-crm-migration-checklist /tools/real-estate-crm-migration-checklist/ 301
+/compare/real-estate-crm-vs-excel /compare/real-estate-crm-vs-excel/ 301

@@ -1,0 +1,321 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const seoTitle = "Real Estate CRM for Brokers & Independent Agents | Sahyak CRM";
+const seoDesc = "Mobile-first real estate CRM for Indian brokers, single agents, and channel partners. Capture 99acres leads, send WhatsApp brochures, and track commissions for ₹499/mo.";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Industry", url: "/features/" },
+  { name: "Real Estate Brokers", url: "/industry/real-estate-brokers/" }
+];
+
+const faqItems = [
+  {
+    question: "Is Sahyak CRM suitable for a single independent broker?",
+    answer: "Yes, Sahyak was specifically engineered for solo agents and independent brokers. You don't need a desktop computer, IT team, or complex configuration. The entire CRM runs natively on your smartphone, enabling you to manage leads, send brochures, and track site visits while driving between client meetings."
+  },
+  {
+    question: "Can I use Sahyak for free as an individual agent?",
+    answer: "Yes. Sahyak offers a 100% Free Starter tier designed for solo agents. It includes 20 active leads, 1 user seat, 10 WhatsApp automated actions, and 3 active properties at ₹0 without requiring a credit card."
+  },
+  {
+    question: "How does Sahyak help channel partners manage inventory across multiple developers?",
+    answer: "Unlike developer-locked CRMs, Sahyak lets channel partners list and manage properties from multiple builders (e.g. Godrej, Lodha, Prestige, DLF) in a single unified portfolio. You can filter inventory by developer, location, configuration, and commission terms."
+  },
+  {
+    question: "Can I import existing lead contacts from my phone book or Excel?",
+    answer: "Yes. You can import contacts via CSV or sync leads directly through phone caller integrations and property portal webhooks (99acres, Magicbricks, Housing.com)."
+  },
+  {
+    question: "How does Sahyak track broker commission payouts?",
+    answer: "Each deal card tracks the agreed commission percentage, milestone triggers (e.g., 50% on booking token, 50% on builder agreement registration), and payment reconciliation status, ensuring you never miss a developer payout."
+  }
+];
+
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Sahyak CRM for Real Estate Brokers",
+  "operatingSystem": "Web, Android, iOS",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "499",
+    "priceCurrency": "INR"
+  },
+  "description": seoDesc
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(f => ({
+    "@type": "Question",
+    "name": f.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": f.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonicalUrl="https://sahyak.com/industry/real-estate-brokers/"
+  breadcrumbs={breadcrumbs}
+  schema={[softwareSchema, faqSchema]}
+  activeNav="solutions"
+>
+  <!-- Hero Section -->
+  <section class="relative bg-darkGreen text-white py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-brandGreen border border-white/10 uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+          Built for Solo Agents & Channel Partners
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight">
+          The Real Estate CRM Built for <span class="text-brandGreen italic">Brokers on the Move.</span>
+        </h1>
+        <p class="text-gray-300 text-lg max-w-xl leading-relaxed">
+          Stop managing high-value property buyers in messy WhatsApp chats and lost diary pages. Capture portal leads in 15 seconds, dispatch WhatsApp brochures on the go, and track commissions across multiple developers.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 pt-4">
+          <a href="https://crm.sahyak.com" class="btn btn-primary px-8 py-3.5 text-base">
+            Start Free (20 Leads Included) <span>&rarr;</span>
+          </a>
+          <a href="/pricing/" class="btn btn-outline px-8 py-3.5 text-base">
+            View ₹499/mo Solo Plan <span>&rarr;</span>
+          </a>
+        </div>
+        <p class="text-xs text-gray-400">
+          No desktop required &bull; Free Starter tier &bull; 1-tap WhatsApp brochure sharing
+        </p>
+      </div>
+
+      <!-- Broker Hero Visual -->
+      <div class="relative flex justify-center">
+        <div class="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-white/5 p-2 backdrop-blur-sm max-w-lg w-full">
+          <img
+            src="/images/homepage/5.webp"
+            alt="Indian Real Estate Broker Closing Property Deals with Sahyak CRM"
+            width="1672"
+            height="941"
+            class="w-full h-auto rounded-2xl object-cover"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <div class="p-4 bg-white/5 border-t border-white/10 flex items-center justify-between text-xs text-gray-300">
+            <span class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Field Agent Workflow
+            </span>
+            <span class="text-brandGreen font-medium">100% Smartphone Native</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Broker Pain Points Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Why Traditional CRMs Fail Independent Brokers
+        </h2>
+        <p class="text-gray-600 text-lg">
+          Most enterprise CRMs are bloated desktop software designed for corporate managers who sit at desks. Independent brokers spend 80% of their day in their car, at construction sites, and on customer calls.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <div class="text-2xl mb-4">🖥️</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Trapped Behind a Desktop</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              CRMs like Salesforce or standard Zoho require heavy laptop workflows. Brokers don't have time to open a computer at 10 PM to log notes; they need a mobile app that updates in 5 seconds.
+            </p>
+          </div>
+          <span class="mt-4 text-xs font-semibold text-brandGreen">Solution: 100% Mobile App</span>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <div class="text-2xl mb-4">💸</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Prohibitive Pricing & Minimum Seats</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Enterprise real estate software forces annual contracts, ₹30,000 onboarding fees, and 5-user minimums. A solo agent or 2-partner agency shouldn't have to pay enterprise ransom.
+            </p>
+          </div>
+          <span class="mt-4 text-xs font-semibold text-brandGreen">Solution: ₹499/mo Transparent</span>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <div class="text-2xl mb-4">📱</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">The WhatsApp Chaos Trap</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              When all client requests, floor plans, and reminders live in personal WhatsApp chats, inquiries get buried under family messages, resulting in forgotten follow-ups and lost commissions.
+            </p>
+          </div>
+          <span class="mt-4 text-xs font-semibold text-brandGreen">Solution: 1-Tap Cloud API</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How Sahyak Empowers Brokers -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Everything an Independent Broker Needs to Scale
+        </h2>
+        <p class="text-gray-600 text-lg">
+          Run your entire real estate practice from your pocket for ₹499/month.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <!-- Phone Visual -->
+        <div class="lg:col-span-4 flex justify-center">
+          <div class="relative rounded-3xl overflow-hidden border border-gray-200 shadow-xl bg-darkGreen p-2 max-w-[240px] w-full">
+            <img
+              src="/images/homepage/1.webp"
+              alt="Sahyak CRM Mobile Real Estate Broker App Interface"
+              width="799"
+              height="1422"
+              class="w-full h-auto rounded-2xl object-cover"
+              loading="lazy"
+            />
+          </div>
+        </div>
+
+        <!-- Capability Cards -->
+        <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-6 rounded-3xl bg-cream border border-gray-200 h-full flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-4">
+                ⚡
+              </div>
+              <h3 class="text-lg font-bold text-darkGreen mb-2">15-Second Lead Capture</h3>
+              <p class="text-gray-600 text-xs leading-relaxed mb-4">
+                Connect webhooks from 99acres, Magicbricks, and Housing.com. When a buyer submits an inquiry, your phone vibrates immediately with full buyer details.
+              </p>
+            </div>
+            <a href="/solutions/real-estate-lead-management/" class="text-brandGreen font-semibold text-xs flex items-center gap-1 hover:underline">
+              Read Lead Guide &rarr;
+            </a>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-cream border border-gray-200 h-full flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-4">
+                💬
+              </div>
+              <h3 class="text-lg font-bold text-darkGreen mb-2">1-Tap WhatsApp Outreach</h3>
+              <p class="text-gray-600 text-xs leading-relaxed mb-4">
+                Dispatch project brochures, floor plans, and price sheets to clients with a single tap. All chats log to the buyer's timeline automatically.
+              </p>
+            </div>
+            <a href="/solutions/real-estate-whatsapp-crm/" class="text-brandGreen font-semibold text-xs flex items-center gap-1 hover:underline">
+              Explore WhatsApp CRM &rarr;
+            </a>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-cream border border-gray-200 h-full flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-4">
+                💰
+              </div>
+              <h3 class="text-lg font-bold text-darkGreen mb-2">Multi-Developer Payouts</h3>
+              <p class="text-gray-600 text-xs leading-relaxed mb-4">
+                Manage listings and deals across multiple builder mandates. Track expected brokerage payouts, payment stages, and invoices in one dashboard.
+              </p>
+            </div>
+            <a href="/solutions/real-estate-sales-pipeline/" class="text-brandGreen font-semibold text-xs flex items-center gap-1 hover:underline">
+              Explore Pipeline &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROI / Affordability Comparison Callout -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-darkGreen text-white">
+    <div class="max-w-5xl mx-auto rounded-3xl bg-white/5 border border-white/10 p-8 md:p-12">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+        <div class="lg:col-span-2 space-y-4">
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-brandGreen/20 text-brandGreen uppercase tracking-wider">
+            Clear Broker Economics
+          </span>
+          <h2 class="text-2xl md:text-3xl font-serif">
+            One Saved Deal Pays for 20 Years of Sahyak CRM
+          </h2>
+          <p class="text-gray-300 text-sm leading-relaxed">
+            At ₹499/month, an entire year of Sahyak costs just ₹5,988. In Indian real estate, closing a single additional 2BHK deal with a 2% brokerage on a ₹1 Crore property earns you ₹2,00,000. Sahyak pays for itself hundreds of times over.
+          </p>
+        </div>
+        <div class="text-center p-6 bg-white/10 rounded-2xl border border-white/10">
+          <p class="text-xs text-gray-300 uppercase font-semibold">Solo Broker Plan</p>
+          <p class="text-3xl font-bold text-brandGreen my-2">₹499<span class="text-xs text-gray-300 font-normal">/month</span></p>
+          <p class="text-xs text-gray-400 mb-4">Free Starter tier available at ₹0</p>
+          <a href="https://crm.sahyak.com" class="btn btn-primary w-full text-sm py-2.5">
+            Start Free (20 Leads)
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-gray-600">
+          Common questions from independent brokers and channel partners.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {faqItems.map((faq) => (
+          <div class="bg-white rounded-2xl p-6 border border-gray-200">
+            <h3 class="text-lg font-bold text-darkGreen mb-2">{faq.question}</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-brandGreen text-darkGreen text-center">
+    <div class="max-w-4xl mx-auto space-y-6">
+      <h2 class="text-3xl md:text-5xl font-serif font-bold">
+        Upgrade Your Brokerage Workflow Today
+      </h2>
+      <p class="text-darkGreen/80 text-lg max-w-2xl mx-auto">
+        No setup fees, no credit card required, and no complex training. Free Starter gives you 20 leads, 1 seat, 10 WhatsApp actions, and 3 properties.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+        <a href="https://crm.sahyak.com" class="btn bg-darkGreen text-white hover:bg-darkGreen/90 px-8 py-4 text-base font-semibold">
+          Create Free Broker Account <span>&rarr;</span>
+        </a>
+        <a href="/tools/real-estate-crm-roi-calculator/" class="btn bg-white/40 text-darkGreen hover:bg-white/60 px-8 py-4 text-base font-semibold">
+          Calculate Your Broker ROI <span>&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

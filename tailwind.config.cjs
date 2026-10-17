@@ -8,11 +8,15 @@ module.exports = {
         brandGreen: '#4ADE80',
         textDark: '#111827',
         textLight: '#F3F4F6',
+        cream: '#F4F6F4',
+        neon: '#4ADE80',
         brand: {
           dark: '#0A1C16',
           darkSurface: '#0E271F',
           darkCard: '#133329',
           light: '#F4F6F4',
+          cream: '#F4F6F4',
+          surface: '#0E271F',
           green: '#4ADE80',
           greenDark: '#22c55e',
           greenHover: '#22c55e'

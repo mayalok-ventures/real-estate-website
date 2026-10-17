@@ -15,7 +15,8 @@
     "test:analytics": "node tests/p1-analytics.test.mjs",
     "test:leads": "node --experimental-strip-types tests/p1-leads.test.mjs",
     "test:hardening": "node --experimental-strip-types tests/p2-hardening-perf.test.mjs",
-    "test:all": "node --experimental-strip-types tests/p0-security-remediation.test.mjs && node tests/p0-auth-security.test.mjs && node tests/p1-gsc.test.mjs && node tests/p1-analytics.test.mjs && node --experimental-strip-types tests/p1-leads.test.mjs && node --experimental-strip-types tests/p2-hardening-perf.test.mjs",
+    "test:seo": "node scripts/validate_seo.mjs",
+    "test:all": "node scripts/validate_seo.mjs && node --experimental-strip-types tests/p0-security-remediation.test.mjs && node tests/p0-auth-security.test.mjs && node tests/p1-gsc.test.mjs && node tests/p1-analytics.test.mjs && node --experimental-strip-types tests/p1-leads.test.mjs && node --experimental-strip-types tests/p2-hardening-perf.test.mjs",
     "astro": "astro"
   },
   "dependencies": {

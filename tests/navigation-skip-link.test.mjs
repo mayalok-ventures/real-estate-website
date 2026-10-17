@@ -22,13 +22,20 @@ const pages = [
   { route: '/404.html', file: '404.html', title: '404' }
 ];
 
-test('1. Skip Link: visually hidden off-screen by default across all pages', () => {
-  // Read Navbar CSS bundle
+function getNavCss() {
   const astroDir = path.join(DIST_DIR, '_astro');
-  const cssFiles = fs.readdirSync(astroDir).filter(f => f.startsWith('Navbar.') && f.endsWith('.css'));
-  assert.ok(cssFiles.length > 0, 'Navbar CSS bundle must exist in output');
-  
-  const navbarCss = fs.readFileSync(path.join(astroDir, cssFiles[0]), 'utf8');
+  const cssFiles = fs.readdirSync(astroDir).filter(f => f.endsWith('.css'));
+  for (const f of cssFiles) {
+    const content = fs.readFileSync(path.join(astroDir, f), 'utf8');
+    if (content.includes('sahyak-site-nav') && content.includes('skip-link')) {
+      return content;
+    }
+  }
+  throw new Error('No CSS bundle containing sahyak-site-nav and skip-link found in _astro');
+}
+
+test('1. Skip Link: visually hidden off-screen by default across all pages', () => {
+  const navbarCss = getNavCss();
   
   // Verify standard accessible clip rect rule
   assert.match(navbarCss, /\.skip-link:not\(:focus\):not\(:focus-visible\)/, 'Must have :not(:focus) selector');
@@ -40,9 +47,7 @@ test('1. Skip Link: visually hidden off-screen by default across all pages', () 
 });
 
 test('2. Skip Link: becomes prominently visible and styled upon keyboard focus', () => {
-  const astroDir = path.join(DIST_DIR, '_astro');
-  const cssFiles = fs.readdirSync(astroDir).filter(f => f.startsWith('Navbar.') && f.endsWith('.css'));
-  const navbarCss = fs.readFileSync(path.join(astroDir, cssFiles[0]), 'utf8');
+  const navbarCss = getNavCss();
 
   assert.match(navbarCss, /\.skip-link:focus,\.skip-link:focus-visible/, 'Must style focus and focus-visible');
   assert.match(navbarCss, /clip:auto!important/, 'Must unclip upon focus');
@@ -81,9 +86,7 @@ test('4. Breadcrumb: lists are styled flex-row with NO decimal numbering or bull
 });
 
 test('5. Header Navigation: desktop flex layout and mobile responsive hamburger', () => {
-  const astroDir = path.join(DIST_DIR, '_astro');
-  const cssFiles = fs.readdirSync(astroDir).filter(f => f.startsWith('Navbar.') && f.endsWith('.css'));
-  const navbarCss = fs.readFileSync(path.join(astroDir, cssFiles[0]), 'utf8');
+  const navbarCss = getNavCss();
 
   // Verify desktop navigation display
   assert.match(navbarCss, /@media\s*\((min-width:\s*980px|width\s*>=\s*980px)\)/, 'Must have 980px desktop breakpoint');
@@ -92,14 +95,14 @@ test('5. Header Navigation: desktop flex layout and mobile responsive hamburger'
   assert.match(navbarCss, /\.sahyak-mobile-nav-drawer.*\.open.*display:\s*flex/, 'Drawer must open as flex container');
 });
 
-test('6. Shared Stylesheets: every page links /css/tailwind.css and Navbar CSS bundle', () => {
+test('6. Shared Stylesheets: every page links /css/tailwind.css and an Astro CSS bundle', () => {
   for (const p of pages) {
     const filePath = path.join(DIST_DIR, p.file);
     if (!fs.existsSync(filePath)) continue;
     const html = fs.readFileSync(filePath, 'utf8');
 
     assert.ok(html.includes('href="/css/tailwind.css"'), `Page ${p.title} must link /css/tailwind.css`);
-    assert.match(html, /href="\/_astro\/Navbar\.[A-Za-z0-9_-]+\.css"/, `Page ${p.title} must link Navbar CSS`);
+    assert.match(html, /href="\/_astro\/[A-Za-z0-9_.-]+\.css"/, `Page ${p.title} must link an Astro CSS bundle`);
   }
 });
 

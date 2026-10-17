@@ -1,0 +1,320 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const seoTitle = "Property Developer & Builder CRM Software | Sahyak CRM";
+const seoDesc = "Real estate developer CRM for Indian builders and project mandate firms. Manage multi-tower inventory, automate CP lead attribution, and streamline site visit footfalls.";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Industry", url: "/features/" },
+  { name: "Property Developers", url: "/industry/property-developers/" }
+];
+
+const faqItems = [
+  {
+    question: "How does Sahyak resolve Channel Partner (CP) lead dispute claims?",
+    answer: "Sahyak enforces automated CP lead tagging with timestamped attribution rules. When a channel partner registers a prospect via the CP portal or WhatsApp, the lead is tagged to that CP with a configurable validity window (e.g. 45 or 60 days). If another CP tries to introduce the same mobile number, the system automatically flags the existing active registration."
+  },
+  {
+    question: "Can sales managers track live tower inventory across multiple phases?",
+    answer: "Yes. Sahyak provides a color-coded tower matrix across phases, wings, and floors. Units on hold have automated expiration timers (e.g. 24 or 48 hours for token clearance), after which they automatically revert to 'Available' status if the booking advance isn't verified."
+  },
+  {
+    question: "How does the sales gallery site visit check-in work?",
+    answer: "When a prospective buyer arrives at your sales pavilion, the reception desk logs their mobile number into Sahyak. The system immediately checks if they are an existing inquiry, verifies the registered CP or digital ad source, and routes an instant notification to the assigned sales manager's phone."
+  },
+  {
+    question: "What is the pricing model for builder sales teams?",
+    answer: "Sahyak is priced at a transparent ₹499/month per active user seat without punitive enterprise lock-ins or mandatory multi-lakh onboarding fees. Furthermore, Sahyak charges 0% software markup on Meta WhatsApp conversation charges, keeping your acquisition costs completely transparent."
+  },
+  {
+    question: "Can we restrict junior telecallers from viewing builder master data?",
+    answer: "Yes. Sahyak features granular role-based access control (RBAC). Telecallers can only see their assigned lead contact lists and call buttons, while sales executives see unit inventory, and project heads access full sales velocity charts, pricing overrides, and commission disbursements."
+  }
+];
+
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Sahyak CRM for Property Developers & Builders",
+  "operatingSystem": "Web, Android, iOS",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "499",
+    "priceCurrency": "INR"
+  },
+  "description": seoDesc
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(f => ({
+    "@type": "Question",
+    "name": f.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": f.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonicalUrl="https://sahyak.com/industry/property-developers/"
+  breadcrumbs={breadcrumbs}
+  schema={[softwareSchema, faqSchema]}
+  activeNav="solutions"
+>
+  <!-- Hero Section -->
+  <section class="relative bg-darkGreen text-white py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-brandGreen border border-white/10 uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+          Engineered for Real Estate Builders & Mandate Teams
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight">
+          Property Developer CRM for <span class="text-brandGreen italic">High-Velocity Project Sales.</span>
+        </h1>
+        <p class="text-gray-300 text-lg max-w-xl leading-relaxed">
+          Manage multi-tower inventory in real time, eliminate channel partner lead disputes, streamline sales pavilion site visits, and coordinate telecallers with closing managers—all from a single real-estate-first platform.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 pt-4">
+          <a href="https://crm.sahyak.com" class="btn btn-primary px-8 py-3.5 text-base">
+            Start Free (3 Properties Included) <span>&rarr;</span>
+          </a>
+          <a href="/pricing/" class="btn btn-outline px-8 py-3.5 text-base">
+            View ₹499/Seat Pricing <span>&rarr;</span>
+          </a>
+        </div>
+        <p class="text-xs text-gray-400">
+          Live tower matrix &bull; Channel partner attribution &bull; 0% markup on Meta WhatsApp API
+        </p>
+      </div>
+
+      <!-- Developer Hero Visual -->
+      <div class="relative flex justify-center">
+        <div class="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-white/5 p-2 backdrop-blur-sm max-w-md w-full">
+          <img
+            src="/images/features/1.webp"
+            alt="Sahyak CRM Multi-Tower Property Developer Project Command Center"
+            width="1122"
+            height="1402"
+            class="w-full h-auto rounded-2xl object-cover"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <div class="p-4 bg-white/5 border-t border-white/10 flex items-center justify-between text-xs text-gray-300">
+            <span class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Live Multi-Tower Command
+            </span>
+            <span class="text-brandGreen font-medium">Real-Time Inventory & CP Feeds</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Developer Challenges Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Where Property Builders Lose Millions in Sales Slippage
+        </h2>
+        <p class="text-gray-600 text-lg">
+          Managing hundreds of units across dozens of channel partners and sales reps with fragmented tools causes severe revenue leaks and brand reputation damage.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <div class="text-2xl mb-4">⚔️</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Channel Partner Dispute Drama</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              When multiple CPs claim commission on the same high-budget buyer without transparent timestamped registration proof, builders end up in awkward disputes that fracture their broker distribution network.
+            </p>
+          </div>
+          <span class="mt-4 text-xs font-semibold text-brandGreen">Solution: Timestamped CP Tagging</span>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <div class="text-2xl mb-4">🏢</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Stale Unit Locking & Dead Inventory</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Sales reps put popular units on verbal hold for casual prospects. Without automated expiration timers, premium flats sit locked for weeks while genuine walk-in buyers are turned away.
+            </p>
+          </div>
+          <span class="mt-4 text-xs font-semibold text-brandGreen">Solution: 24h Auto-Release Timers</span>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <div class="text-2xl mb-4">📉</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Blind Ad Spend Allocation</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Spending ₹15 Lakhs a month across 99acres, Magicbricks, and Meta Ads without real-time tracking of which source generates actual signed agreements leaves builders guessing their true cost per booking.
+            </p>
+          </div>
+          <span class="mt-4 text-xs font-semibold text-brandGreen">Solution: Source-to-Agreement Tracking</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Developer Solutions Grid -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-white">
+    <div class="max-w-7xl mx-auto space-y-12">
+      <div class="text-center max-w-3xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          The End-to-End Operating System for Real Estate Projects
+        </h2>
+        <p class="text-gray-600 text-lg">
+          From first digital inquiry to sales gallery check-in, token receipt, and builder-buyer agreement.
+        </p>
+      </div>
+
+      <!-- CP Collaboration Showcase Image -->
+      <div class="max-w-4xl mx-auto rounded-3xl overflow-hidden border border-gray-200 shadow-md">
+        <img
+          src="/images/features/5.webp"
+          alt="Sahyak CRM Channel Partner Network and Builder Sales Collaboration"
+          width="1402"
+          height="1122"
+          class="w-full h-auto object-cover"
+          loading="lazy"
+        />
+        <div class="p-4 bg-cream/60 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-darkGreen">
+          <span class="font-bold">Unified Project Mandate & Channel Partner Portal</span>
+          <span class="text-gray-600">Timestamped lead locks &bull; Multi-tier commission management</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              🤝
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">Tamper-Proof CP Attribution</h3>
+            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+              Protect your channel partners. Inbound leads are linked to their originating broker with verifiable timestamps and automatic 45-day protection windows to eliminate dispute friction.
+            </p>
+          </div>
+          <a href="/solutions/real-estate-lead-management/" class="text-brandGreen font-semibold text-xs flex items-center gap-1 hover:underline">
+            Lead Ingress Workflows &rarr;
+          </a>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              🏢
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">Multi-Tower Unit Matrices</h3>
+            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+              Give closing managers real-time visibility across towers and floors. Automated 24-hour hold timers automatically release unconfirmed units back to the sales pool.
+            </p>
+          </div>
+          <a href="/solutions/property-inventory-management/" class="text-brandGreen font-semibold text-xs flex items-center gap-1 hover:underline">
+            Inventory Grid System &rarr;
+          </a>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              🏛️
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">Sales Pavilion Reception Kiosk</h3>
+            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+              Greet walk-in visitors with instant mobile lookups. Receptionists route verified buyers to available relationship managers without delay.
+            </p>
+          </div>
+          <a href="/solutions/site-visit-management/" class="text-brandGreen font-semibold text-xs flex items-center gap-1 hover:underline">
+            Site Visit Tracking Workflows &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Transparency Callout -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-darkGreen text-white">
+    <div class="max-w-5xl mx-auto rounded-3xl bg-white/5 border border-white/10 p-8 md:p-12">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+        <div class="lg:col-span-2 space-y-4">
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-brandGreen/20 text-brandGreen uppercase tracking-wider">
+            Predictable Scalability
+          </span>
+          <h2 class="text-2xl md:text-3xl font-serif">
+            No Enterprise Rip-Offs. Simple ₹499/Seat Pricing.
+          </h2>
+          <p class="text-gray-300 text-sm leading-relaxed">
+            Legacy developer software charges ₹3,00,000 to ₹10,00,000 in upfront customization and licensing fees. Sahyak is priced at <strong>₹499 per user seat per month</strong>. Add 5 telecallers during a launch campaign and scale down when the phase closes without penalty.
+          </p>
+        </div>
+        <div class="text-center p-6 bg-white/10 rounded-2xl border border-white/10">
+          <p class="text-xs text-gray-300 uppercase font-semibold">Developer Base Seat</p>
+          <p class="text-3xl font-bold text-brandGreen my-2">₹499<span class="text-xs text-gray-300 font-normal">/seat/mo</span></p>
+          <p class="text-xs text-gray-400 mb-4">0% markup on Meta WhatsApp API</p>
+          <a href="https://crm.sahyak.com" class="btn btn-primary w-full text-sm py-2.5">
+            Start Free Starter
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-gray-600">
+          Everything real estate builders need to know about implementing Sahyak CRM.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {faqItems.map((faq) => (
+          <div class="bg-white rounded-2xl p-6 border border-gray-200">
+            <h3 class="text-lg font-bold text-darkGreen mb-2">{faq.question}</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-brandGreen text-darkGreen text-center">
+    <div class="max-w-4xl mx-auto space-y-6">
+      <h2 class="text-3xl md:text-5xl font-serif font-bold">
+        Supercharge Your Project Sales Velocity
+      </h2>
+      <p class="text-darkGreen/80 text-lg max-w-2xl mx-auto">
+        Empower your telecallers, closing managers, and channel partners with the modern real estate CRM. Free Starter tier available with 3 active properties at ₹0.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+        <a href="https://crm.sahyak.com" class="btn bg-darkGreen text-white hover:bg-darkGreen/90 px-8 py-4 text-base font-semibold">
+          Create Developer Account <span>&rarr;</span>
+        </a>
+        <a href="/solutions/real-estate-sales-pipeline/" class="btn bg-white/40 text-darkGreen hover:bg-white/60 px-8 py-4 text-base font-semibold">
+          Explore Sales Pipeline <span>&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,409 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const seoTitle = "Real Estate CRM ROI Calculator | Sahyak CRM";
+const seoDesc = "Calculate the exact ROI of implementing a real estate CRM. See how faster lead response times and automated follow-up increase monthly commission revenue.";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Tools", url: "/features/" },
+  { name: "CRM ROI Calculator", url: "/tools/real-estate-crm-roi-calculator/" }
+];
+
+const faqItems = [
+  {
+    question: "What formulas are used in this real estate CRM ROI calculator?",
+    answer: "Current Monthly Commission = Monthly Leads × (Current Conversion % ÷ 100) × (Avg Property Value × Commission % ÷ 100). The projected revenue applies the chosen conversion lift achieved through instant WhatsApp brochure dispatch and speed-to-lead follow-up. Net ROI % = ((Additional Commission - Software Cost) ÷ Software Cost) × 100."
+  },
+  {
+    question: "What is a realistic conversion rate for Indian real estate portal leads?",
+    answer: "Industry benchmarks from 99acres and Magicbricks show typical unassisted portal conversion rates range between 1.0% and 2.5% from inquiry to registered booking. Teams utilizing automated 15-second WhatsApp response and structured 7-stage pipelines routinely achieve 2.8% to 3.5% conversion rates."
+  },
+  {
+    question: "How much does Sahyak CRM cost in this calculation?",
+    answer: "Sahyak CRM's transparent Base Plan costs ₹499 per month per user seat, or ₹0 on the Free Starter tier (up to 20 leads). There are no hidden onboarding charges or mandatory annual commitments."
+  },
+  {
+    question: "How does faster lead response increase deal conversion?",
+    answer: "Harvard Business Review research proves that contacting property inquiries within 5 minutes results in a 391% higher qualification rate compared to waiting 30 minutes. Faster response engages prospective buyers while their purchase intent and property search context are fresh."
+  }
+];
+
+const toolSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Real Estate CRM ROI Calculator",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "All modern web browsers",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  },
+  "description": seoDesc
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(f => ({
+    "@type": "Question",
+    "name": f.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": f.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonicalUrl="https://sahyak.com/tools/real-estate-crm-roi-calculator/"
+  breadcrumbs={breadcrumbs}
+  schema={[toolSchema, faqSchema]}
+  activeNav="tools"
+>
+  <!-- Hero Section -->
+  <section class="relative bg-darkGreen text-white py-16 px-6 md:px-12 lg:px-20">
+    <div class="max-w-4xl mx-auto text-center space-y-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-brandGreen border border-white/10 uppercase tracking-wider">
+        <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+        Interactive Financial Tool
+      </div>
+      <h1 class="text-3xl md:text-5xl font-serif">
+        Real Estate CRM <span class="text-brandGreen italic">ROI Calculator</span>
+      </h1>
+      <p class="text-gray-300 text-base md:text-lg max-w-2xl mx-auto">
+        Input your monthly lead volume, average property deal size, and commission rate to calculate how much additional revenue a mobile CRM generates for your agency.
+      </p>
+    </div>
+  </section>
+
+  <!-- Interactive Calculator Section -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Inputs Column -->
+      <div class="lg:col-span-7 bg-white p-8 rounded-3xl border border-gray-200 shadow-sm space-y-6">
+        <h2 class="text-xl font-bold text-darkGreen border-b border-gray-100 pb-3">
+          1. Your Brokerage & Pipeline Metrics
+        </h2>
+
+        <!-- Input 1: Monthly Leads -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
+            <label for="monthlyLeads">Monthly Inbound Leads</label>
+            <span id="leadsVal" class="text-brandGreen font-mono font-bold text-base">50 leads</span>
+          </div>
+          <input
+            type="range"
+            id="monthlyLeads"
+            min="10"
+            max="500"
+            step="5"
+            value="50"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brandGreen"
+          />
+          <div class="flex justify-between text-[11px] text-gray-400">
+            <span>10 (Solo Broker)</span>
+            <span>250 (Agency)</span>
+            <span>500+ (Mandate Team)</span>
+          </div>
+        </div>
+
+        <!-- Input 2: Avg Deal Value -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
+            <label for="avgTicket">Average Property Value (₹)</label>
+            <span id="ticketVal" class="text-brandGreen font-mono font-bold text-base">₹1.20 Cr</span>
+          </div>
+          <input
+            type="range"
+            id="avgTicket"
+            min="2500000"
+            max="50000000"
+            step="500000"
+            value="12000000"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brandGreen"
+          />
+          <div class="flex justify-between text-[11px] text-gray-400">
+            <span>₹25 Lakh (Affordable)</span>
+            <span>₹1.2 Cr (Mid-Segment)</span>
+            <span>₹5 Cr (Luxury)</span>
+          </div>
+        </div>
+
+        <!-- Input 3: Commission Rate -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
+            <label for="commRate">Brokerage Commission Rate (%)</label>
+            <span id="commVal" class="text-brandGreen font-mono font-bold text-base">2.0%</span>
+          </div>
+          <input
+            type="range"
+            id="commRate"
+            min="1.0"
+            max="4.0"
+            step="0.25"
+            value="2.0"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brandGreen"
+          />
+          <div class="flex justify-between text-[11px] text-gray-400">
+            <span>1.0%</span>
+            <span>2.0% (Standard CP)</span>
+            <span>4.0% (Exclusive Mandate)</span>
+          </div>
+        </div>
+
+        <!-- Input 4: Current Conversion Rate -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
+            <label for="currentConv">Current Lead-to-Close Rate (%)</label>
+            <span id="currentConvVal" class="text-brandGreen font-mono font-bold text-base">2.0%</span>
+          </div>
+          <input
+            type="range"
+            id="currentConv"
+            min="0.5"
+            max="5.0"
+            step="0.25"
+            value="2.0"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brandGreen"
+          />
+          <div class="flex justify-between text-[11px] text-gray-400">
+            <span>0.5% (Low follow-up)</span>
+            <span>2.0% (Typical)</span>
+            <span>5.0% (High touch)</span>
+          </div>
+        </div>
+
+        <!-- Input 5: Conversion Lift with Sahyak -->
+        <div class="space-y-2 pt-2 border-t border-gray-100">
+          <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
+            <label for="convLift">Conversion Lift with Sahyak CRM</label>
+            <span id="liftVal" class="text-emerald-600 font-mono font-bold text-base">+30% Lift</span>
+          </div>
+          <input
+            type="range"
+            id="convLift"
+            min="10"
+            max="60"
+            step="5"
+            value="30"
+            class="w-full h-2 bg-emerald-100 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+          />
+          <p class="text-[11px] text-gray-500">
+            Backed by 15-second webhook ingestion, 1-tap WhatsApp brochure delivery, and automated site visit location reminders.
+          </p>
+        </div>
+      </div>
+
+      <!-- Results Column -->
+      <div class="lg:col-span-5 bg-darkGreen text-white p-8 rounded-3xl border border-white/10 shadow-xl space-y-6 static lg:sticky top-28">
+        <div class="flex items-center justify-between border-b border-white/10 pb-4">
+          <h2 class="text-lg font-bold text-white">Projected ROI Summary</h2>
+          <span class="px-2.5 py-1 bg-brandGreen/20 text-brandGreen rounded text-xs font-semibold">Live Simulation</span>
+        </div>
+
+        <!-- Big Highlight: Additional Monthly Commission -->
+        <div class="p-6 bg-white/5 rounded-2xl border border-white/10 text-center space-y-1">
+          <p class="text-xs uppercase tracking-wider text-gray-300">Additional Monthly Brokerage</p>
+          <p id="extraCommission" class="text-3xl md:text-4xl font-mono font-bold text-brandGreen">₹72,000</p>
+          <p class="text-xs text-gray-400">per month in newly recovered deals</p>
+        </div>
+
+        <!-- Key Financial Breakdown -->
+        <div class="space-y-3 font-sans text-xs">
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300">Current Monthly Commission</span>
+            <span id="currentRevenue" class="font-mono font-bold text-white text-sm">₹2,40,000</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300">Projected with Sahyak CRM</span>
+            <span id="projectedRevenue" class="font-mono font-bold text-emerald-400 text-sm">₹3,12,000</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300">Sahyak CRM Base Plan</span>
+            <span class="font-mono font-bold text-white text-sm">₹499 / mo</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300">Estimated Annual Brokerage Lift</span>
+            <span id="annualLift" class="font-mono font-bold text-brandGreen text-base">₹8,64,000</span>
+          </div>
+          <div class="flex justify-between items-center py-2">
+            <span class="text-gray-300">Projected Return on Investment</span>
+            <span id="roiPercentage" class="font-mono font-bold text-emerald-300 text-lg">14,328%</span>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <a href="https://crm.sahyak.com" class="btn btn-primary w-full py-3.5 text-center text-sm font-semibold">
+            Start Free (20 Leads Included) &rarr;
+          </a>
+          <p class="text-center text-[11px] text-gray-400 mt-2">
+            Free Starter tier available at ₹0 &bull; Base plan ₹499/mo
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benchmark & Formula Explanation Section -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-white">
+    <div class="max-w-4xl mx-auto space-y-8">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-serif text-darkGreen mb-4">
+          Understanding the Real Estate Math Behind the Calculator
+        </h2>
+        <p class="text-gray-600 text-base leading-relaxed">
+          In real estate brokerage, lead generation represents a major marketing investment. When portal inquiries from 99acres or digital campaigns go uncontacted, delayed follow-ups erode advertising returns and reduce potential deal velocity.
+        </p>
+      </div>
+
+      <!-- Analytics Dashboard Preview -->
+      <div class="rounded-3xl overflow-hidden border border-gray-200 shadow-md">
+        <img
+          src="/images/features/7.webp"
+          alt="Sahyak CRM Real Estate Deal Velocity and Commission Forecasting Dashboard"
+          width="1402"
+          height="1122"
+          class="w-full h-auto object-cover"
+          loading="lazy"
+        />
+        <div class="p-4 bg-cream/60 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-darkGreen">
+          <span class="font-bold">Real-Time Commission Forecasting</span>
+          <span class="text-gray-600">Track pipeline velocity, conversion lifts, and broker commission payouts</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="p-6 rounded-2xl bg-cream border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-darkGreen text-base mb-2">The Speed-to-Lead Multiplier</h3>
+            <p class="text-xs text-gray-600 leading-relaxed">
+              Data from the Lead Response Management Study shows that reaching a buyer in under 5 minutes increases conversion odds by nearly 4x. Sahyak's 15-second webhook ingestion ensures your agent is the first voice or WhatsApp message the buyer receives.
+            </p>
+          </div>
+          <span class="text-xs font-semibold text-brandGreen mt-3">391% Qualification Advantage</span>
+        </div>
+        <div class="p-6 rounded-2xl bg-cream border border-gray-200 h-full flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-darkGreen text-base mb-2">The Follow-Up Retention Curve</h3>
+            <p class="text-xs text-gray-600 leading-relaxed">
+              Over 80% of Indian property sales close between the 5th and 12th contact touchpoint. A CRM prevents deals from going cold after the first site visit by enforcing automated WhatsApp reminders.
+            </p>
+          </div>
+          <span class="text-xs font-semibold text-brandGreen mt-3">Automated Deal Protection</span>
+        </div>
+      </div>
+
+      <!-- Calculation Formula Box -->
+      <div class="p-6 bg-cream rounded-2xl border border-gray-200 font-mono text-xs text-gray-700 space-y-2">
+        <p class="font-bold font-sans text-sm text-darkGreen">Formal Calculation Formula:</p>
+        <p>• Baseline Monthly Deals = Monthly Leads × (Current Conversion Rate % ÷ 100)</p>
+        <p>• Baseline Commission = Baseline Monthly Deals × Average Property Price × (Commission % ÷ 100)</p>
+        <p>• Projected Conversion Rate = Current Conversion Rate × (1 + (Conversion Lift % ÷ 100))</p>
+        <p>• Additional Monthly Commission = (Projected Deals - Baseline Deals) × Average Property Price × (Commission % ÷ 100)</p>
+        <p>• Net Monthly ROI % = ((Additional Monthly Commission - ₹499) ÷ ₹499) × 100</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl md:text-3xl font-serif text-darkGreen mb-2">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-gray-600 text-sm">
+          Everything about calculating CRM return on investment for your real estate business.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {faqItems.map((faq) => (
+          <div class="bg-white rounded-2xl p-6 border border-gray-200">
+            <h3 class="text-base font-bold text-darkGreen mb-1">{faq.question}</h3>
+            <p class="text-gray-600 text-xs leading-relaxed">{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive JavaScript Logic -->
+  <script is:inline>
+    function formatINR(val) {
+      if (val >= 10000000) {
+        return '₹' + (val / 10000000).toFixed(2) + ' Cr';
+      } else if (val >= 100000) {
+        return '₹' + (val / 100000).toFixed(2) + ' Lakh';
+      } else {
+        return '₹' + Math.round(val).toLocaleString('en-IN');
+      }
+    }
+
+    function calculateROI() {
+      const leadsEl = document.getElementById('monthlyLeads');
+      const ticketEl = document.getElementById('avgTicket');
+      const commEl = document.getElementById('commRate');
+      const currentConvEl = document.getElementById('currentConv');
+      const liftEl = document.getElementById('convLift');
+      if (!leadsEl || !ticketEl || !commEl || !currentConvEl || !liftEl) return;
+
+      const leads = parseFloat(leadsEl.value);
+      const ticket = parseFloat(ticketEl.value);
+      const comm = parseFloat(commEl.value) / 100;
+      const currentConv = parseFloat(currentConvEl.value) / 100;
+      const lift = parseFloat(liftEl.value) / 100;
+
+      // Update UI labels
+      document.getElementById('leadsVal').textContent = leads + ' leads';
+      document.getElementById('ticketVal').textContent = formatINR(ticket);
+      document.getElementById('commVal').textContent = (comm * 100).toFixed(2) + '%';
+      document.getElementById('currentConvVal').textContent = (currentConv * 100).toFixed(2) + '%';
+      document.getElementById('liftVal').textContent = '+' + (lift * 100).toFixed(0) + '% Lift';
+
+      // Calculations
+      const currentDeals = leads * currentConv;
+      const currentRevenue = currentDeals * (ticket * comm);
+
+      const projectedConv = currentConv * (1 + lift);
+      const projectedDeals = leads * projectedConv;
+      const projectedRevenue = projectedDeals * (ticket * comm);
+
+      const extraCommission = projectedRevenue - currentRevenue;
+      const annualLift = extraCommission * 12;
+      const softwareCost = 499; // Base plan per month
+      const roiPercent = ((extraCommission - softwareCost) / softwareCost) * 100;
+
+      // Update Result Elements
+      document.getElementById('extraCommission').textContent = formatINR(extraCommission);
+      document.getElementById('currentRevenue').textContent = formatINR(currentRevenue);
+      document.getElementById('projectedRevenue').textContent = formatINR(projectedRevenue);
+      document.getElementById('annualLift').textContent = formatINR(annualLift);
+      document.getElementById('roiPercentage').textContent = Math.round(roiPercent).toLocaleString('en-IN') + '%';
+    }
+
+    function initCalculator() {
+      ['monthlyLeads', 'avgTicket', 'commRate', 'currentConv', 'convLift'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', calculateROI);
+        }
+      });
+      calculateROI();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCalculator);
+    } else {
+      initCalculator();
+    }
+  </script>
+</Layout>

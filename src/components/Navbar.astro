@@ -1,9 +1,38 @@
 ---
 interface Props {
-  active?: 'home' | 'features' | 'pricing' | 'about' | 'resources' | 'security' | 'contact';
+  active?: 'home' | 'features' | 'pricing' | 'about' | 'resources' | 'security' | 'contact' | 'solutions' | 'tools';
 }
 
-const { active } = Astro.props;
+const { active: propActive } = Astro.props;
+
+// Canonical path normalization: strip trailing slashes, treat '/' as '/'
+const rawPath = Astro.url.pathname || '/';
+const currentPath = rawPath.replace(/\/+$/, '') || '/';
+
+// Dynamic category detection based on path
+function detectCategory(path: string): 'home' | 'features' | 'pricing' | 'about' | 'resources' | 'security' | 'contact' | 'solutions' | 'tools' | null {
+  if (path === '/' || path === '/index.html') return 'home';
+  if (path === '/features' || path.startsWith('/features/')) return 'features';
+  if (path === '/solutions' || path.startsWith('/solutions/') || path === '/industry' || path.startsWith('/industry/')) return 'solutions';
+  if (path === '/pricing' || path.startsWith('/pricing/')) return 'pricing';
+  if (path === '/tools' || path.startsWith('/tools/') || path === '/compare' || path.startsWith('/compare/')) return 'tools';
+  if (path === '/resources' || path.startsWith('/resources/')) return 'resources';
+  if (path === '/security' || path.startsWith('/security/')) return 'security';
+  if (path === '/about' || path.startsWith('/about/')) return 'about';
+  if (path === '/contact' || path.startsWith('/contact/')) return 'contact';
+  return null;
+}
+
+const detectedCategory = detectCategory(currentPath);
+
+// Prioritize detectedCategory over propActive to prevent stale manual overrides
+const effectiveActive = detectedCategory || propActive || null;
+
+// Exact path match helper for aria-current="page"
+function isExactMatch(href: string): boolean {
+  const cleanHref = href.replace(/\/+$/, '') || '/';
+  return cleanHref === currentPath;
+}
 ---
 
 <a href="#main-content" class="skip-link" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">Skip to main content</a>
@@ -16,13 +45,144 @@ const { active } = Astro.props;
     </a>
 
     <nav class="sahyak-site-nav" aria-label="Main Navigation">
-      <a href="/" class={`sahyak-site-nav-link ${active === 'home' ? 'active' : ''}`}>Home</a>
-      <a href="/features/" class={`sahyak-site-nav-link ${active === 'features' ? 'active' : ''}`}>Features</a>
-      <a href="/pricing/" class={`sahyak-site-nav-link ${active === 'pricing' ? 'active' : ''}`}>Pricing</a>
-      <a href="/about/" class={`sahyak-site-nav-link ${active === 'about' ? 'active' : ''}`}>About</a>
-      <a href="/resources/" class={`sahyak-site-nav-link ${active === 'resources' ? 'active' : ''}`}>Resources</a>
-      <a href="/security/" class={`sahyak-site-nav-link ${active === 'security' ? 'active' : ''}`}>Security</a>
-      <a href="/contact/" class={`sahyak-site-nav-link ${active === 'contact' ? 'active' : ''}`}>Contact</a>
+      <a 
+        href="/" 
+        class={`sahyak-site-nav-link ${effectiveActive === 'home' ? 'active' : ''}`}
+        aria-current={isExactMatch('/') ? 'page' : undefined}
+        data-nav-category="home"
+      >Home</a>
+
+      <a 
+        href="/features/" 
+        class={`sahyak-site-nav-link ${effectiveActive === 'features' ? 'active' : ''}`}
+        aria-current={isExactMatch('/features/') ? 'page' : undefined}
+        data-nav-category="features"
+      >Features</a>
+
+      <!-- Solutions Dropdown Menu -->
+      <div class="sahyak-nav-item-dropdown">
+        <a 
+          href="/solutions/real-estate-lead-management/" 
+          class={`sahyak-site-nav-link ${effectiveActive === 'solutions' ? 'active' : ''}`}
+          aria-current={isExactMatch('/solutions/real-estate-lead-management/') ? 'page' : undefined}
+          data-nav-category="solutions"
+          aria-haspopup="true"
+        >
+          Solutions
+          <svg class="nav-caret" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <div class="sahyak-dropdown-menu" role="menu" aria-label="Solutions Menu">
+          <div class="sahyak-dropdown-group-title">CRM Capabilities</div>
+          <a href="/solutions/real-estate-lead-management/" class={`sahyak-dropdown-item ${isExactMatch('/solutions/real-estate-lead-management/') ? 'active' : ''}`} aria-current={isExactMatch('/solutions/real-estate-lead-management/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">Lead Management</span>
+            <span class="dropdown-item-desc">Capture, qualify & allocate portal leads</span>
+          </a>
+          <a href="/solutions/real-estate-whatsapp-crm/" class={`sahyak-dropdown-item ${isExactMatch('/solutions/real-estate-whatsapp-crm/') ? 'active' : ''}`} aria-current={isExactMatch('/solutions/real-estate-whatsapp-crm/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">WhatsApp CRM</span>
+            <span class="dropdown-item-desc">Automated chat, broadcast & reminders</span>
+          </a>
+          <a href="/solutions/real-estate-sales-pipeline/" class={`sahyak-dropdown-item ${isExactMatch('/solutions/real-estate-sales-pipeline/') ? 'active' : ''}`} aria-current={isExactMatch('/solutions/real-estate-sales-pipeline/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">Sales Pipeline</span>
+            <span class="dropdown-item-desc">Visual deal stages & revenue forecasting</span>
+          </a>
+          <a href="/solutions/property-inventory-management/" class={`sahyak-dropdown-item ${isExactMatch('/solutions/property-inventory-management/') ? 'active' : ''}`} aria-current={isExactMatch('/solutions/property-inventory-management/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">Property Inventory</span>
+            <span class="dropdown-item-desc">Unit availability & instant brochure sharing</span>
+          </a>
+          <a href="/solutions/site-visit-management/" class={`sahyak-dropdown-item ${isExactMatch('/solutions/site-visit-management/') ? 'active' : ''}`} aria-current={isExactMatch('/solutions/site-visit-management/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">Site Visit Tracking</span>
+            <span class="dropdown-item-desc">GPS-verified attendance & follow-up</span>
+          </a>
+          <div class="sahyak-dropdown-divider"></div>
+          <div class="sahyak-dropdown-group-title">Industry Solutions</div>
+          <a href="/industry/real-estate-brokers/" class={`sahyak-dropdown-item ${isExactMatch('/industry/real-estate-brokers/') ? 'active' : ''}`} aria-current={isExactMatch('/industry/real-estate-brokers/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">For Real Estate Brokers</span>
+            <span class="dropdown-item-desc">Solo agents & brokerage teams</span>
+          </a>
+          <a href="/industry/property-developers/" class={`sahyak-dropdown-item ${isExactMatch('/industry/property-developers/') ? 'active' : ''}`} aria-current={isExactMatch('/industry/property-developers/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">For Property Developers</span>
+            <span class="dropdown-item-desc">Builders, township sales & channel partners</span>
+          </a>
+        </div>
+      </div>
+
+      <a 
+        href="/pricing/" 
+        class={`sahyak-site-nav-link ${effectiveActive === 'pricing' ? 'active' : ''}`}
+        aria-current={isExactMatch('/pricing/') ? 'page' : undefined}
+        data-nav-category="pricing"
+      >Pricing</a>
+
+      <!-- Free Tools Dropdown Menu -->
+      <div class="sahyak-nav-item-dropdown">
+        <a 
+          href="/tools/real-estate-crm-roi-calculator/" 
+          class={`sahyak-site-nav-link ${effectiveActive === 'tools' ? 'active' : ''}`}
+          aria-current={isExactMatch('/tools/real-estate-crm-roi-calculator/') ? 'page' : undefined}
+          data-nav-category="tools"
+          aria-haspopup="true"
+        >
+          Free Tools
+          <svg class="nav-caret" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <div class="sahyak-dropdown-menu" role="menu" aria-label="Free Tools Menu">
+          <div class="sahyak-dropdown-group-title">Calculators & Checklists</div>
+          <a href="/tools/real-estate-crm-roi-calculator/" class={`sahyak-dropdown-item ${isExactMatch('/tools/real-estate-crm-roi-calculator/') ? 'active' : ''}`} aria-current={isExactMatch('/tools/real-estate-crm-roi-calculator/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">CRM ROI Calculator</span>
+            <span class="dropdown-item-desc">Calculate payback & revenue uplift</span>
+          </a>
+          <a href="/tools/lead-response-time-calculator/" class={`sahyak-dropdown-item ${isExactMatch('/tools/lead-response-time-calculator/') ? 'active' : ''}`} aria-current={isExactMatch('/tools/lead-response-time-calculator/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">Response Decay Calculator</span>
+            <span class="dropdown-item-desc">Measure conversion loss from delay</span>
+          </a>
+          <a href="/tools/real-estate-crm-migration-checklist/" class={`sahyak-dropdown-item ${isExactMatch('/tools/real-estate-crm-migration-checklist/') ? 'active' : ''}`} aria-current={isExactMatch('/tools/real-estate-crm-migration-checklist/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">Migration Checklist</span>
+            <span class="dropdown-item-desc">Step-by-step transition from spreadsheets</span>
+          </a>
+          <div class="sahyak-dropdown-divider"></div>
+          <div class="sahyak-dropdown-group-title">Comparisons & Guides</div>
+          <a href="/compare/real-estate-crm-vs-excel/" class={`sahyak-dropdown-item ${isExactMatch('/compare/real-estate-crm-vs-excel/') ? 'active' : ''}`} aria-current={isExactMatch('/compare/real-estate-crm-vs-excel/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">CRM vs Excel</span>
+            <span class="dropdown-item-desc">Security, follow-up & automation comparison</span>
+          </a>
+          <a href="/resources/best-real-estate-crm-india/" class={`sahyak-dropdown-item ${isExactMatch('/resources/best-real-estate-crm-india/') ? 'active' : ''}`} aria-current={isExactMatch('/resources/best-real-estate-crm-india/') ? 'page' : undefined} role="menuitem">
+            <span class="dropdown-item-title">Best Real Estate CRM</span>
+            <span class="dropdown-item-desc">Comprehensive 2026 buyers guide</span>
+          </a>
+        </div>
+      </div>
+
+      <a 
+        href="/resources/" 
+        class={`sahyak-site-nav-link ${effectiveActive === 'resources' ? 'active' : ''}`}
+        aria-current={isExactMatch('/resources/') ? 'page' : undefined}
+        data-nav-category="resources"
+      >Resources</a>
+
+      <a 
+        href="/security/" 
+        class={`sahyak-site-nav-link ${effectiveActive === 'security' ? 'active' : ''}`}
+        aria-current={isExactMatch('/security/') ? 'page' : undefined}
+        data-nav-category="security"
+      >Security</a>
+
+      <a 
+        href="/about/" 
+        class={`sahyak-site-nav-link ${effectiveActive === 'about' ? 'active' : ''}`}
+        aria-current={isExactMatch('/about/') ? 'page' : undefined}
+        data-nav-category="about"
+      >About</a>
+
+      <a 
+        href="/contact/" 
+        class={`sahyak-site-nav-link ${effectiveActive === 'contact' ? 'active' : ''}`}
+        aria-current={isExactMatch('/contact/') ? 'page' : undefined}
+        data-nav-category="contact"
+      >Contact</a>
     </nav>
 
     <div class="sahyak-site-header-actions">
@@ -38,17 +198,84 @@ const { active } = Astro.props;
   </div>
 
   <!-- Mobile Drawer -->
-  <div class="sahyak-mobile-nav-drawer" id="sahyak-mobile-drawer">
-    <a href="/" class={active === 'home' ? 'active' : ''}>Home</a>
-    <a href="/features/" class={active === 'features' ? 'active' : ''}>Features</a>
-    <a href="/pricing/" class={active === 'pricing' ? 'active' : ''}>Pricing</a>
-    <a href="/about/" class={active === 'about' ? 'active' : ''}>About</a>
-    <a href="/resources/" class={active === 'resources' ? 'active' : ''}>Resources</a>
-    <a href="/security/" class={active === 'security' ? 'active' : ''}>Security</a>
-    <a href="/contact/" class={active === 'contact' ? 'active' : ''}>Contact</a>
+  <div class="sahyak-mobile-nav-drawer" id="sahyak-mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+    <a 
+      href="/" 
+      class={`sahyak-drawer-link ${effectiveActive === 'home' ? 'active' : ''}`}
+      aria-current={isExactMatch('/') ? 'page' : undefined}
+      data-nav-category="home"
+    >Home</a>
 
-    <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem;">
-      <a href="https://crm.sahyak.com" class="sahyak-btn-nav-primary" style="text-align: center; justify-content: center;">Start 14-Day Free Trial &rarr;</a>
+    <a 
+      href="/features/" 
+      class={`sahyak-drawer-link ${effectiveActive === 'features' ? 'active' : ''}`}
+      aria-current={isExactMatch('/features/') ? 'page' : undefined}
+      data-nav-category="features"
+    >Features</a>
+
+    <a 
+      href="/pricing/" 
+      class={`sahyak-drawer-link ${effectiveActive === 'pricing' ? 'active' : ''}`}
+      aria-current={isExactMatch('/pricing/') ? 'page' : undefined}
+      data-nav-category="pricing"
+    >Pricing</a>
+
+    <!-- Solutions Sub-Drawer -->
+    <div class="sahyak-drawer-section">
+      <div class="sahyak-drawer-section-header">
+        <span class="sahyak-drawer-section-title">Solutions</span>
+      </div>
+      <a href="/solutions/real-estate-lead-management/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/solutions/real-estate-lead-management/') ? 'active' : ''}`} aria-current={isExactMatch('/solutions/real-estate-lead-management/') ? 'page' : undefined}>Lead Management</a>
+      <a href="/solutions/real-estate-whatsapp-crm/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/solutions/real-estate-whatsapp-crm/') ? 'active' : ''}`} aria-current={isExactMatch('/solutions/real-estate-whatsapp-crm/') ? 'page' : undefined}>WhatsApp CRM</a>
+      <a href="/solutions/real-estate-sales-pipeline/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/solutions/real-estate-sales-pipeline/') ? 'active' : ''}`} aria-current={isExactMatch('/solutions/real-estate-sales-pipeline/') ? 'page' : undefined}>Sales Pipeline</a>
+      <a href="/solutions/property-inventory-management/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/solutions/property-inventory-management/') ? 'active' : ''}`} aria-current={isExactMatch('/solutions/property-inventory-management/') ? 'page' : undefined}>Property Inventory</a>
+      <a href="/solutions/site-visit-management/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/solutions/site-visit-management/') ? 'active' : ''}`} aria-current={isExactMatch('/solutions/site-visit-management/') ? 'page' : undefined}>Site Visit Tracking</a>
+      <a href="/industry/real-estate-brokers/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/industry/real-estate-brokers/') ? 'active' : ''}`} aria-current={isExactMatch('/industry/real-estate-brokers/') ? 'page' : undefined}>For Real Estate Brokers</a>
+      <a href="/industry/property-developers/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/industry/property-developers/') ? 'active' : ''}`} aria-current={isExactMatch('/industry/property-developers/') ? 'page' : undefined}>For Property Developers</a>
+    </div>
+
+    <!-- Free Tools Sub-Drawer -->
+    <div class="sahyak-drawer-section">
+      <div class="sahyak-drawer-section-header">
+        <span class="sahyak-drawer-section-title">Free Tools & Guides</span>
+      </div>
+      <a href="/tools/real-estate-crm-roi-calculator/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/tools/real-estate-crm-roi-calculator/') ? 'active' : ''}`} aria-current={isExactMatch('/tools/real-estate-crm-roi-calculator/') ? 'page' : undefined}>CRM ROI Calculator</a>
+      <a href="/tools/lead-response-time-calculator/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/tools/lead-response-time-calculator/') ? 'active' : ''}`} aria-current={isExactMatch('/tools/lead-response-time-calculator/') ? 'page' : undefined}>Response Decay Calculator</a>
+      <a href="/tools/real-estate-crm-migration-checklist/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/tools/real-estate-crm-migration-checklist/') ? 'active' : ''}`} aria-current={isExactMatch('/tools/real-estate-crm-migration-checklist/') ? 'page' : undefined}>CRM Migration Checklist</a>
+      <a href="/compare/real-estate-crm-vs-excel/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/compare/real-estate-crm-vs-excel/') ? 'active' : ''}`} aria-current={isExactMatch('/compare/real-estate-crm-vs-excel/') ? 'page' : undefined}>Real Estate CRM vs Excel</a>
+      <a href="/resources/best-real-estate-crm-india/" class={`sahyak-drawer-link sahyak-drawer-sublink ${isExactMatch('/resources/best-real-estate-crm-india/') ? 'active' : ''}`} aria-current={isExactMatch('/resources/best-real-estate-crm-india/') ? 'page' : undefined}>Best Real Estate CRM Guide</a>
+    </div>
+
+    <a 
+      href="/resources/" 
+      class={`sahyak-drawer-link ${effectiveActive === 'resources' ? 'active' : ''}`}
+      aria-current={isExactMatch('/resources/') ? 'page' : undefined}
+      data-nav-category="resources"
+    >Resources Hub</a>
+
+    <a 
+      href="/security/" 
+      class={`sahyak-drawer-link ${effectiveActive === 'security' ? 'active' : ''}`}
+      aria-current={isExactMatch('/security/') ? 'page' : undefined}
+      data-nav-category="security"
+    >Security</a>
+
+    <a 
+      href="/about/" 
+      class={`sahyak-drawer-link ${effectiveActive === 'about' ? 'active' : ''}`}
+      aria-current={isExactMatch('/about/') ? 'page' : undefined}
+      data-nav-category="about"
+    >About</a>
+
+    <a 
+      href="/contact/" 
+      class={`sahyak-drawer-link ${effectiveActive === 'contact' ? 'active' : ''}`}
+      aria-current={isExactMatch('/contact/') ? 'page' : undefined}
+      data-nav-category="contact"
+    >Contact</a>
+
+    <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.85rem;">
+      <a href="https://crm.sahyak.com" class="sahyak-btn-nav-primary" style="text-align: center; justify-content: center;">Start Free &rarr;</a>
     </div>
   </div>
 </header>
@@ -161,6 +388,7 @@ const { active } = Astro.props;
     font-weight: 700;
     font-size: 1.35rem;
     letter-spacing: -0.02em;
+    flex-shrink: 0;
   }
 
   .sahyak-logo-img {
@@ -191,15 +419,32 @@ const { active } = Astro.props;
     letter-spacing: 0.05em;
   }
 
+  /* Desktop Nav Flex Layout */
   .sahyak-site-nav {
     display: none;
     align-items: center;
-    gap: 1.6rem;
+    gap: 1.35rem;
   }
 
   @media (min-width: 980px) {
     .sahyak-site-nav {
       display: flex;
+    }
+  }
+
+  @media (min-width: 980px) and (max-width: 1180px) {
+    .sahyak-site-header-inner {
+      padding: 0 1rem;
+    }
+    .sahyak-site-nav {
+      gap: 0.75rem;
+    }
+    .sahyak-site-nav-link {
+      font-size: 0.82rem;
+    }
+    .sahyak-btn-nav-primary {
+      padding: 0.45rem 1rem;
+      font-size: 0.82rem;
     }
   }
 
@@ -211,10 +456,35 @@ const { active } = Astro.props;
     padding: 0.4rem 0;
     position: relative;
     transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
   }
 
-  .sahyak-site-nav-link:hover, .sahyak-site-nav-link.active {
+  /* Distinct states: hover, active, focus-visible */
+  .sahyak-site-nav-link:hover:not(.active) {
+    color: #F3F4F6;
+  }
+
+  .sahyak-site-nav-link.active {
     color: #4ADE80;
+    font-weight: 600;
+  }
+
+  .sahyak-site-nav-link.active:hover {
+    color: #4ADE80;
+  }
+
+  .sahyak-site-nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #4ADE80;
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
   }
 
   .sahyak-site-nav-link:focus-visible {
@@ -241,15 +511,134 @@ const { active } = Astro.props;
     border-radius: 4px;
   }
 
-  .sahyak-site-nav-link.active::after {
+  /* Desktop Dropdowns */
+  .sahyak-nav-item-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-caret {
+    transition: transform 0.2s ease;
+    opacity: 0.75;
+  }
+
+  .sahyak-nav-item-dropdown:hover .nav-caret,
+  .sahyak-nav-item-dropdown:focus-within .nav-caret {
+    transform: rotate(180deg);
+    opacity: 1;
+    color: #4ADE80;
+  }
+
+  .sahyak-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 300px;
+    background: #0B221A;
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(74, 222, 128, 0.12);
+    padding: 0.65rem 0.5rem;
+    z-index: 1050;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .sahyak-dropdown-menu::before {
     content: '';
     position: absolute;
-    bottom: -2px;
+    top: -0.65rem;
     left: 0;
     width: 100%;
-    height: 2px;
-    background: #4ADE80;
-    border-radius: 2px;
+    height: 0.65rem;
+  }
+
+  .sahyak-nav-item-dropdown:hover .sahyak-dropdown-menu,
+  .sahyak-nav-item-dropdown:focus-within .sahyak-dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    animation: navDropdownFade 0.16s ease-out forwards;
+  }
+
+  @keyframes navDropdownFade {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  .sahyak-dropdown-group-title {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    color: #4ADE80;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.35rem 0.65rem 0.15rem;
+  }
+
+  .sahyak-dropdown-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 0.3rem 0;
+  }
+
+  .sahyak-dropdown-item {
+    display: flex;
+    flex-direction: column;
+    padding: 0.45rem 0.65rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .dropdown-item-title {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #F3F4F6;
+  }
+
+  .dropdown-item-desc {
+    font-size: 0.72rem;
+    color: #9CA3AF;
+    margin-top: 0.1rem;
+    line-height: 1.25;
+  }
+
+  .sahyak-dropdown-item:hover {
+    background: rgba(74, 222, 128, 0.08);
+  }
+
+  .sahyak-dropdown-item:hover .dropdown-item-title {
+    color: #86EFAC;
+  }
+
+  .sahyak-dropdown-item.active {
+    background: rgba(74, 222, 128, 0.14);
+    border-left: 3px solid #4ADE80;
+    padding-left: calc(0.65rem - 3px);
+  }
+
+  .sahyak-dropdown-item.active .dropdown-item-title {
+    color: #4ADE80;
+    font-weight: 700;
+  }
+
+  .sahyak-dropdown-item.active .dropdown-item-desc {
+    color: #A7F3D0;
+  }
+
+  .sahyak-dropdown-item:focus-visible {
+    outline: 2px solid #4ADE80;
+    outline-offset: 1px;
+    border-radius: 6px;
   }
 
   .sahyak-site-header-actions {
@@ -312,6 +701,7 @@ const { active } = Astro.props;
     transition: 0.2s;
   }
 
+  /* Mobile Drawer Container */
   .sahyak-mobile-nav-drawer {
     display: none;
     position: fixed;
@@ -320,37 +710,91 @@ const { active } = Astro.props;
     width: 100%;
     height: calc(100vh - 72px);
     background: #0A1C16;
-    padding: 2rem 1.5rem;
+    padding: 1.5rem 1.25rem 3rem;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 0.5rem;
     overflow-y: auto;
     border-top: 1px solid rgba(74, 222, 128, 0.15);
+    overscroll-behavior: contain;
   }
 
   .sahyak-mobile-nav-drawer.open {
     display: flex;
   }
 
-  .sahyak-mobile-nav-drawer a {
+  .sahyak-drawer-link {
     color: #F3F4F6;
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 600;
     text-decoration: none;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: color 0.15s ease;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.15s ease, color 0.15s ease;
+    display: block;
   }
 
-  .sahyak-mobile-nav-drawer a:hover,
-  .sahyak-mobile-nav-drawer a.active {
+  .sahyak-drawer-link:hover:not(.active) {
+    color: #86EFAC;
+    background: rgba(74, 222, 128, 0.05);
+  }
+
+  .sahyak-drawer-link.active {
     color: #4ADE80;
+    font-weight: 700;
+    background: rgba(74, 222, 128, 0.12);
+    border-left: 3px solid #4ADE80;
+    padding-left: calc(0.75rem - 3px);
   }
 
-  .sahyak-mobile-nav-drawer a:focus-visible {
+  .sahyak-drawer-link:focus-visible {
     color: #4ADE80;
     outline: 2px solid #4ADE80;
-    outline-offset: 4px;
-    border-radius: 4px;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  .sahyak-drawer-section {
+    padding: 0.5rem 0;
+    margin: 0.25rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .sahyak-drawer-section-header {
+    padding: 0.25rem 0.5rem 0.35rem;
+  }
+
+  .sahyak-drawer-section-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: #4ADE80;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .sahyak-drawer-sublink {
+    font-size: 0.88rem;
+    padding: 0.45rem 0.75rem;
+    font-weight: 500;
+    color: #D1D5DB;
+    border-bottom: none;
+  }
+
+  .sahyak-drawer-sublink:hover:not(.active) {
+    color: #86EFAC;
+    background: rgba(74, 222, 128, 0.05);
+  }
+
+  .sahyak-drawer-sublink.active {
+    color: #4ADE80;
+    font-weight: 700;
+    background: rgba(74, 222, 128, 0.12);
+    border-left: 3px solid #4ADE80;
+    padding-left: calc(0.75rem - 3px);
   }
 </style>
 
@@ -413,6 +857,16 @@ const { active } = Astro.props;
     window.dispatchEvent(new CustomEvent('sahyak:country-changed', {
       detail: { country: code, ...data }
     }));
+
+    // Desktop Dropdowns Keyboard Accessibility: Escape key returns focus to parent trigger
+    document.querySelectorAll('.sahyak-nav-item-dropdown').forEach(dropdown => {
+      dropdown.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const trigger = dropdown.querySelector('.sahyak-site-nav-link');
+          if (trigger) trigger.focus();
+        }
+      });
+    });
 
     // Mobile Hamburger with full accessibility & Escape key listener
     const hamburger = document.getElementById('sahyak-hamburger-btn');

@@ -13,9 +13,27 @@ function applySecurityHeaders(res: Response): Response {
   return res;
 }
 
+const CONSOLIDATION_REDIRECTS: Record<string, string> = {
+  '/solutions/real-estate-lead-follow-up': '/solutions/real-estate-lead-management/',
+  '/solutions/real-estate-lead-follow-up/': '/solutions/real-estate-lead-management/',
+  '/resources/real-estate-crm-migration': '/tools/real-estate-crm-migration-checklist/',
+  '/resources/real-estate-crm-migration/': '/tools/real-estate-crm-migration-checklist/',
+  '/tools/real-estate-lead-leakage-calculator': '/tools/real-estate-crm-roi-calculator/',
+  '/tools/real-estate-lead-leakage-calculator/': '/tools/real-estate-crm-roi-calculator/',
+  '/tools/crm-roi-calculator': '/tools/real-estate-crm-roi-calculator/',
+  '/tools/crm-roi-calculator/': '/tools/real-estate-crm-roi-calculator/',
+  '/industry/channel-partners': '/industry/real-estate-brokers/',
+  '/industry/channel-partners/': '/industry/real-estate-brokers/'
+};
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url);
   const pathname = url.pathname;
+
+  // Handle SEO permanent consolidation redirects
+  if (CONSOLIDATION_REDIRECTS[pathname]) {
+    return context.redirect(CONSOLIDATION_REDIRECTS[pathname], 301);
+  }
 
   // Protect /admin routes and /api/admin routes
   if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {

@@ -1,0 +1,285 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const seoTitle = "Property Inventory Management Software for Real Estate | Sahyak CRM";
+const seoDesc = "Real-time property inventory management software for Indian brokers and builders. Track tower units, carpet area, floor-rise pricing, and share instant floor plans.";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Solutions", url: "/features/" },
+  { name: "Property Inventory", url: "/solutions/property-inventory-management/" }
+];
+
+const faqItems = [
+  {
+    question: "How does real-time inventory tracking prevent double-booking?",
+    answer: "When an agent or sales manager places a unit on 'Hold' or marks it 'Booked' upon receiving a token payment, the unit status updates instantly across all connected mobile apps and web dashboards. Other agents cannot issue a booking application for that same unit, preventing embarrassing customer disputes."
+  },
+  {
+    question: "Can I manage inventory across multiple towers, phases, and projects?",
+    answer: "Yes. Sahyak allows developers and channel partners to organize inventory hierarchically: Project &rarr; Phase &rarr; Tower &rarr; Floor &rarr; Unit Number. You can filter by configuration (1BHK, 2BHK, 3BHK, Penthouse), facing (Vastu compliant, East-facing, Garden view), and carpet area in square feet."
+  },
+  {
+    question: "Can agents share brochures and floor plans directly from the inventory view?",
+    answer: "Yes. Tapping any unit card reveals its complete spec sheet, RERA carpet area, floor plan graphic, and pricing sheet. Agents can share this package to a client via WhatsApp with a single tap, with the buyer's name automatically customized."
+  },
+  {
+    question: "How many properties can I manage on the Free Starter tier?",
+    answer: "The Free Starter tier includes up to 3 active property listings/units at ₹0 with full floor plan sharing, lead linkage, and pipeline integration. Upgrading to the ₹499/month Base plan unlocks expanded inventory slots for growing brokers and developer mandates."
+  },
+  {
+    question: "Can I track commercial office spaces and residential plots?",
+    answer: "Yes. Sahyak supports diverse Indian property types including residential apartments, commercial retail shops, bare-shell office plates, and plotting/plotted developments with custom square-yard or square-foot pricing metrics."
+  }
+];
+
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Sahyak Property Inventory Management Software",
+  "operatingSystem": "Web, Android, iOS",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "499",
+    "priceCurrency": "INR"
+  },
+  "description": seoDesc
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(f => ({
+    "@type": "Question",
+    "name": f.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": f.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonicalUrl="https://sahyak.com/solutions/property-inventory-management/"
+  breadcrumbs={breadcrumbs}
+  schema={[softwareSchema, faqSchema]}
+  activeNav="solutions"
+>
+  <!-- Hero Section -->
+  <section class="relative bg-darkGreen text-white py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-brandGreen border border-white/10 uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+          Real-Time Unit Control & Matching
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight">
+          Property Inventory Management That <span class="text-brandGreen italic">Eliminates Double-Booking.</span>
+        </h1>
+        <p class="text-gray-300 text-lg max-w-xl leading-relaxed">
+          Manage towers, floors, and unit availability in real-time. Match buyer requirements to vacant flats in seconds, send RERA-approved floor plans via WhatsApp, and give your sales team live unit status right on their mobile phones.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 pt-4">
+          <a href="https://crm.sahyak.com" class="btn btn-primary px-8 py-3.5 text-base">
+            Start Free (3 Properties Included) <span>&rarr;</span>
+          </a>
+          <a href="/solutions/real-estate-sales-pipeline/" class="btn btn-outline px-8 py-3.5 text-base">
+            View Sales Pipeline <span>&rarr;</span>
+          </a>
+        </div>
+        <p class="text-xs text-gray-400">
+          Visual tower matrix &bull; Instant floor plan dispatch &bull; Vastu & carpet area filters
+        </p>
+      </div>
+
+      <!-- Hero Product Visual -->
+      <div class="relative flex flex-col items-center justify-center">
+        <div class="relative w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+          <img src="/images/features/3.webp" alt="Sahyak Real Estate Inventory management with towers, floor plans, and unit pricing" width="1122" height="1402" fetchpriority="high" loading="eager" class="w-full h-auto object-cover rounded-2xl" />
+        </div>
+        <div class="mt-4 w-full max-w-lg p-3 rounded-xl bg-white/10 border border-white/10 flex items-center justify-between text-xs backdrop-blur-md">
+          <span class="text-brandGreen font-semibold flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brandGreen animate-pulse"></span>
+            Live Multi-Tower Unit Matrix
+          </span>
+          <span class="text-gray-300">Lock Status: <strong class="text-brandGreen">48h Token Hold Active</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem / Solution Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          The True Cost of Outdated Inventory Spreadsheets
+        </h2>
+        <p class="text-gray-600 text-lg">
+          Managing property inventory on WhatsApp groups and shared Excel sheets is a recipe for lost deals, price disputes, and double-booking embarrassment.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="text-2xl mb-4">❌</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Double-Booking Disputes</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Two agents accept booking tokens for the same 12th-floor corner unit on a busy Sunday afternoon because the Excel sheet wasn't refreshed. Result: one enraged buyer and cancelled commission.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="text-2xl mb-4">❌</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Slow Buyer Matching</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              A high-budget buyer asks for an East-facing 3BHK with 2 car parks. The agent spends 30 minutes scrolling WhatsApp PDFs to check which tower has one left, losing the buyer's attention span.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="text-2xl mb-4">❌</div>
+            <h3 class="text-xl font-bold text-darkGreen mb-2">Outdated Price Quotes</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Developers adjust floor-rise charges or festival discounts, but agents continue quoting last month's obsolete rate cards to prospective clients, causing negotiation friction at the sales desk.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Capabilities Grid -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          How Sahyak Modernizes Property Inventory
+        </h2>
+        <p class="text-gray-600 text-lg">
+          Everything your sales team and channel partner network need to find, present, and lock properties in real-time.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              🏢
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">Visual Tower & Floor Matrix</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Color-coded availability at a glance. Green for open units, amber for active holds (with countdown timer), and grey for sold inventory.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              📐
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">Smart Requirement Matching</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Filter inventory by carpet area, budget range, Vastu direction, floor band, and parking slots. Sahyak surfaces all matching units across your portfolio in 1 second.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              📄
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">1-Tap WhatsApp Floor Plans</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Send high-resolution floor plans, cost estimation sheets, and RERA registration certificates to buyers via WhatsApp without leaving the unit screen.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interconnected Navigation -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-darkGreen text-white">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-2xl md:text-3xl font-serif">Connect Inventory to Your Entire Sales Machine</h2>
+        <p class="text-gray-300 text-sm mt-2">Inventory is directly linked to leads, site visits, and WhatsApp communications.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="/solutions/real-estate-whatsapp-crm/" class="p-6 bg-white/5 rounded-2xl border border-white/10 hover:border-brandGreen transition-all group">
+          <p class="text-brandGreen text-sm font-semibold mb-2">WhatsApp CRM &rarr;</p>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-brandGreen">Share Units via WhatsApp</h3>
+          <p class="text-xs text-gray-400">Send dynamic PDF floor plans and brochures directly to inquiring buyers.</p>
+        </a>
+        <a href="/solutions/site-visit-management/" class="p-6 bg-white/5 rounded-2xl border border-white/10 hover:border-brandGreen transition-all group">
+          <p class="text-brandGreen text-sm font-semibold mb-2">Site Visit Management &rarr;</p>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-brandGreen">Show Sample Flats</h3>
+          <p class="text-xs text-gray-400">Tag specific unit numbers visited during client site tours to refine follow-ups.</p>
+        </a>
+        <a href="/solutions/real-estate-sales-pipeline/" class="p-6 bg-white/5 rounded-2xl border border-white/10 hover:border-brandGreen transition-all group">
+          <p class="text-brandGreen text-sm font-semibold mb-2">Sales Pipeline &rarr;</p>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-brandGreen">Lock Inventory on Token</h3>
+          <p class="text-xs text-gray-400">Advance deals to Token Paid stage and lock inventory automatically.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-gray-600">
+          Everything you need to know about managing property inventory in Sahyak CRM.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {faqItems.map((faq) => (
+          <div class="bg-white rounded-2xl p-6 border border-gray-200">
+            <h3 class="text-lg font-bold text-darkGreen mb-2">{faq.question}</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-brandGreen text-darkGreen text-center">
+    <div class="max-w-4xl mx-auto space-y-6">
+      <h2 class="text-3xl md:text-5xl font-serif font-bold">
+        Organize Your Property Inventory in Real Time
+      </h2>
+      <p class="text-darkGreen/80 text-lg max-w-2xl mx-auto">
+        Get started in under 3 minutes. The Free Starter tier includes 3 properties, 20 leads, 1 user seat, and 10 WhatsApp actions at ₹0.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+        <a href="https://crm.sahyak.com" class="btn bg-darkGreen text-white hover:bg-darkGreen/90 px-8 py-4 text-base font-semibold">
+          Create Free Account <span>&rarr;</span>
+        </a>
+        <a href="/pricing/" class="btn bg-white/40 text-darkGreen hover:bg-white/60 px-8 py-4 text-base font-semibold">
+          Explore ₹499/mo Base Plan <span>&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

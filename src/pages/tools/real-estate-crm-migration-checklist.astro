@@ -1,0 +1,298 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const seoTitle = "Real Estate CRM Migration Checklist (18-Step Guide) | Sahyak CRM";
+const seoDesc = "The definitive 18-step checklist for migrating real estate lead and inventory data from Excel, Zoho, or TeleCRM to Sahyak without data loss or downtime.";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Tools", url: "/features/" },
+  { name: "Migration Checklist", url: "/tools/real-estate-crm-migration-checklist/" }
+];
+
+const checklistPhases = [
+  {
+    phase: "Phase 1: Data Audit & Sanitization",
+    items: [
+      { id: "step1", title: "Export CSVs from Legacy Source", desc: "Export all active contacts, open deals, and unit inventories from Excel, Google Sheets, Zoho, or legacy CRM." },
+      { id: "step2", title: "Standardize Indian Mobile Numbers", desc: "Ensure all phone numbers have clean 10-digit formats with the +91 country prefix to prevent WhatsApp delivery failures." },
+      { id: "step3", title: "Deduplicate Duplicate Buyer Records", desc: "Merge multiple inquiries from the same buyer across different portal campaigns into a single unified contact timeline." },
+      { id: "step4", title: "Archive Dead & Spam Inquiries", desc: "Filter out numbers marked 'wrong number' or inactive for more than 180 days to avoid cluttering your new database." }
+    ]
+  },
+  {
+    phase: "Phase 2: Custom Field & Pipeline Mapping",
+    items: [
+      { id: "step5", title: "Map Property Deal Stages", desc: "Configure stages: New Inquiry, Contacted, Site Visit Scheduled, Site Visit Completed, Token Received, Agreement Signed." },
+      { id: "step6", title: "Configure Real Estate Budget Fields", desc: "Set up standardized budget bands (e.g., 50L-1Cr, 1Cr-2Cr, 2Cr-5Cr, 5Cr+) for instant inventory matching." },
+      { id: "step7", title: "Tag Lead Sources & Channel Partners", desc: "Map portal tags (99acres, Magicbricks, Housing.com, Meta Ads, Walk-In) and Channel Partner registration codes." },
+      { id: "step8", title: "Upload Tower & Unit Inventory Spec Sheets", desc: "Populate project towers, floor numbers, carpet areas, unit facing, and price sheets." },
+      { id: "step9", title: "Import Sanitized CSV into Sahyak", desc: "Run a test import of 20 records first to verify column matching before uploading full database." }
+    ]
+  },
+  {
+    phase: "Phase 3: WhatsApp Business Cloud API Setup",
+    items: [
+      { id: "step10", title: "Verify Meta Business Manager Account", desc: "Ensure your legal business name, GST/RERA document, and domain are verified inside Meta Business Suite." },
+      { id: "step11", title: "Register Official WhatsApp Business Number", desc: "Set up your dedicated business number via official Meta Cloud API with 0% Sahyak software markup." },
+      { id: "step12", title: "Submit WhatsApp Brochure Templates", desc: "Submit RERA-compliant project brochure and site visit reminder templates for Meta approval." },
+      { id: "step13", title: "Configure Multi-Agent Shared Inbox", desc: "Assign telecaller and sales manager seating so incoming WhatsApp replies route to the assigned lead owner." }
+    ]
+  },
+  {
+    phase: "Phase 4: Webhook Ingress & Team Cutover",
+    items: [
+      { id: "step14", title: "Connect Real-Time Portal Webhooks", desc: "Replace legacy email forwarding with instant webhooks on 99acres and Magicbricks for sub-15 second ingestion." },
+      { id: "step15", title: "Download Mobile Apps for Sales Team", desc: "Have field agents and telecallers install Sahyak on their Android or iOS devices." },
+      { id: "step16", title: "Run 48-Hour Parallel Pilot", desc: "Keep old spreadsheets read-only while team logs all new calls, site visits, and WhatsApp messages in Sahyak." },
+      { id: "step17", title: "Verify Lead Assignment & GPS Check-In", desc: "Conduct a mock site visit to test push notifications, GPS check-in logging, and post-visit feedback forms." },
+      { id: "step18", title: "Full Cutover & Spreadsheet Retirement", desc: "Officially decommission shared Excel sheets and declare Sahyak as the single source of truth." }
+    ]
+  }
+];
+
+const faqItems = [
+  {
+    question: "How long does a typical real estate CRM migration take?",
+    answer: "For solo brokers or small teams (under 5 users), migration takes less than 2 hours. For mid-size developers with 20+ sales executives and multi-tower inventory, full data sanitization, template approval, and team onboarding typically takes 2 to 3 days."
+  },
+  {
+    question: "Will I lose historical WhatsApp conversations when migrating?",
+    answer: "Personal WhatsApp chats cannot be exported into official Meta Cloud API inboxes due to Meta's privacy protocols. However, you can import past interaction notes, stage histories, and contact records into Sahyak's timeline so agents retain full context."
+  },
+  {
+    question: "Can I migrate for free on the Free Starter plan?",
+    answer: "Yes. The Free Starter tier lets you import up to 20 active leads, 3 properties, and 1 user seat at ₹0, allowing you to test the complete workflow before scaling to the ₹499/month Base plan."
+  }
+];
+
+const toolSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "18-Step Real Estate CRM Migration Checklist",
+  "description": seoDesc,
+  "step": checklistPhases.flatMap(p => p.items.map((item, idx) => ({
+    "@type": "HowToStep",
+    "name": item.title,
+    "text": item.desc,
+    "position": idx + 1
+  })))
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(f => ({
+    "@type": "Question",
+    "name": f.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": f.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonicalUrl="https://sahyak.com/tools/real-estate-crm-migration-checklist/"
+  breadcrumbs={breadcrumbs}
+  schema={[toolSchema, faqSchema]}
+  activeNav="tools"
+>
+  <!-- Hero Section -->
+  <section class="relative bg-darkGreen text-white py-16 px-6 md:px-12 lg:px-20">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div class="text-center space-y-4 max-w-3xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-brandGreen border border-white/10 uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+          Zero Data Loss Framework
+        </div>
+        <h1 class="text-3xl md:text-5xl font-serif">
+          Real Estate CRM <span class="text-brandGreen italic">Migration Checklist</span>
+        </h1>
+        <p class="text-gray-300 text-base md:text-lg max-w-2xl mx-auto">
+          A step-by-step interactive roadmap for moving your property leads, channel partner rosters, and unit inventory from messy spreadsheets or legacy CRMs to Sahyak.
+        </p>
+      </div>
+
+      <div class="max-w-3xl mx-auto rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-white/5 p-2 backdrop-blur-sm">
+        <img
+          src="/images/resources/5.webp"
+          alt="Real Estate CRM Data Migration Playbook and Standard Operating Procedures"
+          width="1672"
+          height="941"
+          class="w-full h-auto rounded-2xl object-cover"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div class="p-3 text-center text-xs text-gray-300">
+          Step-by-Step SOP: Cleanse mobile numbers, map portal tags, configure Meta Cloud API, and onboard sales agents with zero downtime.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Checklist Section -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-4xl mx-auto space-y-8">
+      
+      <!-- Progress Bar Card -->
+      <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm static sm:sticky top-24 z-10">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-darkGreen text-sm">Migration Completion</span>
+          <span id="progressText" class="font-mono font-bold text-brandGreen text-sm">0 / 18 Completed (0%)</span>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+          <div id="progressBar" class="bg-brandGreen h-full transition-all duration-300" style="width: 0%;"></div>
+        </div>
+        <div class="flex justify-between items-center text-[11px] text-gray-500 mt-2">
+          <span>Progress saves automatically to your browser</span>
+          <button id="resetChecklist" class="text-gray-400 hover:text-red-500 underline text-[11px]">
+            Reset Checklist
+          </button>
+        </div>
+      </div>
+
+      <!-- Checklist Phases -->
+      <div class="space-y-6">
+        {checklistPhases.map((phaseGroup) => (
+          <div class="bg-white rounded-3xl p-6 md:p-8 border border-gray-200 shadow-sm space-y-4">
+            <h2 class="text-lg md:text-xl font-bold text-darkGreen border-b border-gray-100 pb-3 flex items-center justify-between">
+              <span>{phaseGroup.phase}</span>
+              <span class="text-xs font-normal text-gray-400">{phaseGroup.items.length} Tasks</span>
+            </h2>
+
+            <div class="space-y-3">
+              {phaseGroup.items.map((item) => (
+                <label class="flex items-start gap-3.5 p-3.5 rounded-2xl hover:bg-cream/60 transition-all cursor-pointer border border-transparent hover:border-gray-200">
+                  <input
+                    type="checkbox"
+                    id={item.id}
+                    class="migration-checkbox mt-1 w-5 h-5 rounded text-brandGreen focus:ring-brandGreen border-gray-300 accent-brandGreen cursor-pointer"
+                  />
+                  <div class="space-y-0.5">
+                    <span class="font-semibold text-sm text-darkGreen block">{item.title}</span>
+                    <span class="text-xs text-gray-600 block leading-relaxed">{item.desc}</span>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Callout / CTA Box -->
+      <div class="p-8 bg-darkGreen text-white rounded-3xl border border-white/10 text-center space-y-4">
+        <h3 class="text-2xl font-serif">Need Help Migrating Your Real Estate Database?</h3>
+        <p class="text-gray-300 text-sm max-w-xl mx-auto">
+          Our engineering team can assist you with custom CSV mapping, portal webhook configuration, and Meta WhatsApp Business API verification at zero onboarding fees.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+          <a href="https://crm.sahyak.com" class="btn btn-primary px-8 py-3 text-sm font-semibold">
+            Start Free Starter (20 Leads) &rarr;
+          </a>
+          <a href="/contact/" class="btn btn-outline px-8 py-3 text-sm font-semibold">
+            Request Migration Assistance &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-white">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl md:text-3xl font-serif text-darkGreen mb-2">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-gray-600 text-sm">
+          Everything about switching your real estate data to Sahyak CRM safely.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {faqItems.map((faq) => (
+          <div class="bg-cream rounded-2xl p-6 border border-gray-200">
+            <h3 class="text-base font-bold text-darkGreen mb-1">{faq.question}</h3>
+            <p class="text-gray-600 text-xs leading-relaxed">{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive JavaScript Logic -->
+  <script is:inline>
+    const STORAGE_KEY = 'sahyak_crm_migration_checklist_v1';
+
+    function loadProgress() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const checkedIds = JSON.parse(saved);
+          checkedIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.checked = true;
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const checkboxes = document.querySelectorAll('.migration-checkbox');
+      let checkedCount = 0;
+      const checkedIds = [];
+
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          checkedCount++;
+          checkedIds.push(cb.id);
+        }
+      });
+
+      const total = checkboxes.length;
+      const percent = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
+
+      const progressTextEl = document.getElementById('progressText');
+      const progressBarEl = document.getElementById('progressBar');
+      if (progressTextEl) progressTextEl.textContent = `${checkedCount} / ${total} Completed (${percent}%)`;
+      if (progressBarEl) progressBarEl.style.width = `${percent}%`;
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedIds));
+    }
+
+    function initChecklist() {
+      loadProgress();
+
+      const checkboxes = document.querySelectorAll('.migration-checkbox');
+      checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateProgress);
+      });
+
+      const resetBtn = document.getElementById('resetChecklist');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          if (confirm('Reset your migration checklist progress?')) {
+            localStorage.removeItem(STORAGE_KEY);
+            checkboxes.forEach(cb => cb.checked = false);
+            updateProgress();
+          }
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initChecklist);
+    } else {
+      initChecklist();
+    }
+  </script>
+</Layout>

@@ -1,0 +1,380 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const seoTitle = "Real Estate Lead Response Time Calculator | Sahyak CRM";
+const seoDesc = "Calculate how much commission you lose to slow response times. Benchmark your team against Harvard Business Review speed-to-lead data for property portals.";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Tools", url: "/features/" },
+  { name: "Lead Response Calculator", url: "/tools/lead-response-time-calculator/" }
+];
+
+const faqItems = [
+  {
+    question: "Why is speed-to-lead critical for Indian property portals?",
+    answer: "When a homebuyer inquires on 99acres or Magicbricks, their inquiry is typically distributed to 3 to 5 rival channel partners or brokers. The first agent to initiate contact via WhatsApp or phone call captures 71% of all subsequent site visit appointments."
+  },
+  {
+    question: "What does the Harvard Business Review speed-to-lead study reveal?",
+    answer: "The landmark study found that contacting a lead within 5 minutes results in a 21x higher qualification rate compared to contacting them after 30 minutes. After 1 hour, the odds of meaningful qualification drop by over 600%."
+  },
+  {
+    question: "How does Sahyak achieve sub-15 second response times?",
+    answer: "Sahyak connects via real-time webhooks directly to 99acres, Magicbricks, Housing.com, and Facebook Lead Ads. The moment an inquiry is posted, Sahyak can trigger an instant, automated WhatsApp welcome message with the project brochure and price list before competitors have even opened their email."
+  },
+  {
+    question: "Can I use Sahyak's speed-to-lead automation on the Free Starter tier?",
+    answer: "Yes. The Free Starter tier includes 10 automated WhatsApp outreach actions alongside native 1-tap mobile calling and webhook ingestion for up to 20 leads at ₹0."
+  }
+];
+
+const toolSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Real Estate Lead Response Time Calculator",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "All modern web browsers",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  },
+  "description": seoDesc
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(f => ({
+    "@type": "Question",
+    "name": f.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": f.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonicalUrl="https://sahyak.com/tools/lead-response-time-calculator/"
+  breadcrumbs={breadcrumbs}
+  schema={[toolSchema, faqSchema]}
+  activeNav="tools"
+>
+  <!-- Hero Section -->
+  <section class="relative bg-darkGreen text-white py-16 px-6 md:px-12 lg:px-20">
+    <div class="max-w-4xl mx-auto text-center space-y-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-brandGreen border border-white/10 uppercase tracking-wider">
+        <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+        HBR Speed-to-Lead Benchmark Model
+      </div>
+      <h1 class="text-3xl md:text-5xl font-serif">
+        Lead Response Time & <span class="text-brandGreen italic">Decay Calculator</span>
+      </h1>
+      <p class="text-gray-300 text-base md:text-lg max-w-2xl mx-auto">
+        Property buyers move fast. See how your team's average response delay diminishes lead qualification odds and costs you hundreds of thousands of rupees in lost brokerage commissions.
+      </p>
+    </div>
+  </section>
+
+  <!-- Interactive Calculator Section -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Inputs Column -->
+      <div class="lg:col-span-7 bg-white p-8 rounded-3xl border border-gray-200 shadow-sm space-y-6">
+        <h2 class="text-xl font-bold text-darkGreen border-b border-gray-100 pb-3">
+          1. Your Team's Response Latency
+        </h2>
+
+        <!-- Input 1: Response Time Bracket -->
+        <div class="space-y-3">
+          <label class="text-sm font-semibold text-gray-700 block">
+            Average Time to First Contact (Call or WhatsApp)
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button type="button" data-time="1" class="time-btn py-2.5 px-3 rounded-xl border border-gray-200 text-xs font-semibold hover:border-brandGreen focus:outline-none transition-all">
+              &lt; 5 mins
+            </button>
+            <button type="button" data-time="30" class="time-btn py-2.5 px-3 rounded-xl border border-gray-200 text-xs font-semibold hover:border-brandGreen focus:outline-none transition-all">
+              30 mins
+            </button>
+            <button type="button" data-time="120" class="time-btn py-2.5 px-3 rounded-xl border-2 border-brandGreen bg-brandGreen/10 text-darkGreen text-xs font-bold focus:outline-none transition-all">
+              2 hours (Avg)
+            </button>
+            <button type="button" data-time="1440" class="time-btn py-2.5 px-3 rounded-xl border border-gray-200 text-xs font-semibold hover:border-brandGreen focus:outline-none transition-all">
+              24+ hours
+            </button>
+          </div>
+          <input type="hidden" id="responseTimeMinutes" value="120" />
+        </div>
+
+        <!-- Input 2: Monthly Leads -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
+            <label for="monthlyLeadsInput">Monthly Portal & Ad Leads</label>
+            <span id="leadsDisplay" class="text-brandGreen font-mono font-bold text-base">100 leads</span>
+          </div>
+          <input
+            type="range"
+            id="monthlyLeadsInput"
+            min="20"
+            max="500"
+            step="10"
+            value="100"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brandGreen"
+          />
+        </div>
+
+        <!-- Input 3: Avg Deal Commission -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
+            <label for="avgCommissionInput">Average Brokerage Commission per Deal (₹)</label>
+            <span id="commDisplay" class="text-brandGreen font-mono font-bold text-base">₹2,00,000</span>
+          </div>
+          <input
+            type="range"
+            id="avgCommissionInput"
+            min="50000"
+            max="1000000"
+            step="25000"
+            value="200000"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brandGreen"
+          />
+          <div class="flex justify-between text-[11px] text-gray-400">
+            <span>₹50,000 (Affordable)</span>
+            <span>₹2,00,000 (Mid-Market)</span>
+            <span>₹10,00,000 (Luxury)</span>
+          </div>
+        </div>
+
+        <div class="p-4 bg-cream rounded-2xl border border-gray-200 text-xs text-gray-600 space-y-1">
+          <p class="font-bold text-darkGreen">HBR Benchmark Fact:</p>
+          <p>The probability of qualifying a lead contacted after 30 minutes drops by <strong>21 times</strong> compared to leads contacted within 5 minutes.</p>
+        </div>
+      </div>
+
+      <!-- Results Column -->
+      <div class="lg:col-span-5 bg-darkGreen text-white p-8 rounded-3xl border border-white/10 shadow-xl space-y-6 static lg:sticky top-28">
+        <div class="flex items-center justify-between border-b border-white/10 pb-4">
+          <h2 class="text-lg font-bold text-white">Lead Decay Analysis</h2>
+          <span class="px-2.5 py-1 bg-red-500/20 text-red-300 rounded text-xs font-semibold">Decay Impact</span>
+        </div>
+
+        <!-- Qualification Probability Meter -->
+        <div class="p-6 bg-white/5 rounded-2xl border border-white/10 text-center space-y-2">
+          <p class="text-xs uppercase tracking-wider text-gray-300">Relative Qualification Probability</p>
+          <p id="decayPercent" class="text-4xl font-mono font-bold text-amber-400">18%</p>
+          <p id="decayLabel" class="text-xs text-gray-400">vs 100% at under 5 minutes</p>
+        </div>
+
+        <!-- Financial Impact Breakdown -->
+        <div class="space-y-3 font-sans text-xs">
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300">Estimated Lost Deals per Month</span>
+            <span id="lostDeals" class="font-mono font-bold text-red-400 text-sm">1.6 Deals</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300">Estimated Lost Monthly Commission</span>
+            <span id="lostRevenue" class="font-mono font-bold text-red-400 text-base">₹3,20,000</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300">Sahyak Automated Response Time</span>
+            <span class="font-mono font-bold text-brandGreen text-sm">&lt; 15 seconds</span>
+          </div>
+          <div class="flex justify-between items-center py-2">
+            <span class="text-gray-300">Sahyak Cost vs Recoverable Value</span>
+            <span class="font-mono font-bold text-brandGreen text-base">₹499 vs ₹3.2 Lakh</span>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <a href="/solutions/real-estate-whatsapp-crm/" class="btn btn-primary w-full py-3.5 text-center text-sm font-semibold">
+            Automate WhatsApp Responses Now &rarr;
+          </a>
+          <p class="text-center text-[11px] text-gray-400 mt-2">
+            Connect Meta WhatsApp Cloud API &bull; 0% markup
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Speed-to-Lead Comparison Visual -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-white">
+    <div class="max-w-4xl mx-auto space-y-8">
+      <div class="text-center max-w-2xl mx-auto">
+        <h2 class="text-2xl md:text-3xl font-serif text-darkGreen mb-3">
+          The Property Buyer's Psychology in Real Time
+        </h2>
+        <p class="text-gray-600 text-sm">
+          Why waiting 2 hours to call back a portal inquiry destroys your conversion rate.
+        </p>
+      </div>
+
+      <!-- Real Estate Lead Decay Visual -->
+      <div class="rounded-3xl overflow-hidden border border-gray-200 shadow-md">
+        <img
+          src="/images/homepage/2.webp"
+          alt="Indian Property Broker Overwhelmed with Untracked Lead Inquiries and Late Follow-Ups"
+          width="1672"
+          height="941"
+          class="w-full h-auto object-cover"
+          loading="lazy"
+        />
+        <div class="p-4 bg-cream/60 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-darkGreen">
+          <span class="font-bold">Human Latency Kills Property Conversions</span>
+          <span class="text-gray-600">Automate first-touch brochure delivery to capture active buyer interest</span>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-start gap-4">
+          <div class="text-2xl">⚡</div>
+          <div>
+            <h3 class="font-bold text-emerald-950 text-base">Within 15 Seconds (Sahyak Ingestion)</h3>
+            <p class="text-xs text-emerald-800 leading-relaxed mt-1">
+              The buyer just hit 'Contact Developer' on 99acres. Their phone is in their hand. Sahyak delivers an automated WhatsApp message with the official brochure. The buyer is impressed, opens the PDF, and saves your number.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-6 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-4">
+          <div class="text-2xl">⏳</div>
+          <div>
+            <h3 class="font-bold text-amber-950 text-base">After 30 Minutes</h3>
+            <p class="text-xs text-amber-800 leading-relaxed mt-1">
+              The buyer has clicked on 3 other listings and answered a call from a rival brokerage firm. When your agent finally calls, the buyer says: "Which project was this again? Send me details on WhatsApp, I'm in a meeting."
+            </p>
+          </div>
+        </div>
+
+        <div class="p-6 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-4">
+          <div class="text-2xl">🛑</div>
+          <div>
+            <h3 class="font-bold text-red-950 text-base">After 24 Hours</h3>
+            <p class="text-xs text-red-800 leading-relaxed mt-1">
+              Truecaller tags the call as 'Spam / Telemarketer'. The buyer rejects the incoming call without picking up. Your marketing budget on that inquiry is 100% wasted.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl md:text-3xl font-serif text-darkGreen mb-2">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-gray-600 text-sm">
+          Everything about speed-to-lead benchmarks and response time optimization.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {faqItems.map((faq) => (
+          <div class="bg-white rounded-2xl p-6 border border-gray-200">
+            <h3 class="text-base font-bold text-darkGreen mb-1">{faq.question}</h3>
+            <p class="text-gray-600 text-xs leading-relaxed">{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive JavaScript Logic -->
+  <script is:inline>
+    function formatINR(val) {
+      if (val >= 10000000) {
+        return '₹' + (val / 10000000).toFixed(2) + ' Cr';
+      } else if (val >= 100000) {
+        return '₹' + (val / 100000).toFixed(2) + ' Lakh';
+      } else {
+        return '₹' + Math.round(val).toLocaleString('en-IN');
+      }
+    }
+
+    function calculateDecay() {
+      const minutesEl = document.getElementById('responseTimeMinutes');
+      const leadsEl = document.getElementById('monthlyLeadsInput');
+      const commEl = document.getElementById('avgCommissionInput');
+      if (!minutesEl || !leadsEl || !commEl) return;
+
+      const minutes = parseInt(minutesEl.value);
+      const leads = parseInt(leadsEl.value);
+      const commission = parseInt(commEl.value);
+
+      document.getElementById('leadsDisplay').textContent = leads + ' leads';
+      document.getElementById('commDisplay').textContent = formatINR(commission);
+
+      // Relative qualification odds curve based on HBR / MIT study
+      let decayFactor = 1.0;
+      let label = "Optimal Qualification Window";
+
+      if (minutes <= 5) {
+        decayFactor = 0.95;
+        label = "Instant engagement (<5 mins)";
+      } else if (minutes <= 30) {
+        decayFactor = 0.45;
+        label = "Substantial lead decay (30 mins)";
+      } else if (minutes <= 120) {
+        decayFactor = 0.18;
+        label = "Severe lead decay (2 hours)";
+      } else {
+        decayFactor = 0.04;
+        label = "Ghosting territory (24+ hours)";
+      }
+
+      // Expected conversion baseline (e.g. 2.5% if instantaneous)
+      const baseConversion = 0.025;
+      const actualConversion = baseConversion * decayFactor;
+      const lostConversionRate = baseConversion - actualConversion;
+
+      const lostDeals = leads * lostConversionRate;
+      const lostRevenue = lostDeals * commission;
+
+      document.getElementById('decayPercent').textContent = Math.round(decayFactor * 100) + '%';
+      document.getElementById('decayLabel').textContent = label;
+      document.getElementById('lostDeals').textContent = lostDeals.toFixed(1) + ' Deals';
+      document.getElementById('lostRevenue').textContent = formatINR(lostRevenue);
+    }
+
+    function initDecayCalculator() {
+      const buttons = document.querySelectorAll('.time-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => {
+            b.className = 'time-btn py-2.5 px-3 rounded-xl border border-gray-200 text-xs font-semibold hover:border-brandGreen focus:outline-none transition-all';
+          });
+          btn.className = 'time-btn py-2.5 px-3 rounded-xl border-2 border-brandGreen bg-brandGreen/10 text-darkGreen text-xs font-bold focus:outline-none transition-all';
+          document.getElementById('responseTimeMinutes').value = btn.dataset.time;
+          calculateDecay();
+        });
+      });
+
+      ['monthlyLeadsInput', 'avgCommissionInput'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', calculateDecay);
+        }
+      });
+
+      calculateDecay();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDecayCalculator);
+    } else {
+      initDecayCalculator();
+    }
+  </script>
+</Layout>

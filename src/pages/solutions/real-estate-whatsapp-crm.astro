@@ -1,0 +1,307 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const seoTitle = "WhatsApp CRM for Real Estate Agents & Brokers | Sahyak CRM";
+const seoDesc = "Official Meta Cloud API WhatsApp integration for Indian real estate. Send RERA brochures, schedule site visits, trigger automated follow-ups with 0% software markup.";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Solutions", url: "/features/" },
+  { name: "WhatsApp CRM", url: "/solutions/real-estate-whatsapp-crm/" }
+];
+
+const faqItems = [
+  {
+    question: "How does Sahyak connect to WhatsApp? Will my business number get banned?",
+    answer: "Sahyak connects via the official Meta WhatsApp Business Cloud API. Unlike unverified web-scraping chrome extensions or unofficial bulk sender scripts that trigger algorithmic bans, Sahyak uses Meta-approved templates and opt-in standards, helping protect your business phone number from automated spam flags when operated in accordance with Meta's messaging policies."
+  },
+  {
+    question: "Does Sahyak charge an extra markup on WhatsApp messages?",
+    answer: "No. Sahyak charges 0% software markup on WhatsApp messages. You pay Meta directly at their standard regional conversation rates (approx. ₹0.70 to ₹0.85 per marketing conversation in India), keeping your acquisition costs transparent."
+  },
+  {
+    question: "What is included in the Free Starter plan for WhatsApp?",
+    answer: "The Free Starter tier includes 10 automated WhatsApp outreach actions per month alongside native 1-tap WhatsApp Web/mobile click-to-chat. You can upgrade to the ₹499/month Base plan to connect your official Meta Business Cloud API account for high-volume automated campaigns."
+  },
+  {
+    question: "Can agents send property brochures and floor plans directly through WhatsApp?",
+    answer: "Yes. From any lead card or inventory listing, agents can trigger 1-tap WhatsApp messages with dynamic PDF brochures, floor plan images, and Google Maps site-visit locations automatically populated with the buyer's name."
+  },
+  {
+    question: "Can multiple sales agents manage WhatsApp conversations from one business number?",
+    answer: "Yes. In the team configuration, Sahyak acts as a shared multi-agent inbox. Inbound replies are routed directly to the assigned lead owner while sales managers maintain full visibility over conversation timelines and response latency."
+  }
+];
+
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Sahyak WhatsApp Real Estate CRM",
+  "operatingSystem": "Web, Android, iOS",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "499",
+    "priceCurrency": "INR"
+  },
+  "description": seoDesc
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(f => ({
+    "@type": "Question",
+    "name": f.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": f.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonicalUrl="https://sahyak.com/solutions/real-estate-whatsapp-crm/"
+  breadcrumbs={breadcrumbs}
+  schema={[softwareSchema, faqSchema]}
+  activeNav="solutions"
+>
+  <!-- Hero Section -->
+  <section class="relative bg-darkGreen text-white py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-brandGreen border border-white/10 uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
+          Official Meta Cloud API &bull; 0% Software Markup
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight">
+          WhatsApp Real Estate CRM That <span class="text-brandGreen italic">Buyers Actually Reply To.</span>
+        </h1>
+        <p class="text-gray-300 text-lg max-w-xl leading-relaxed">
+          Stop losing buyers to unanswered phone calls. Engage property inquiries instantly with verified WhatsApp templates, 1-tap PDF brochures, automated site visit reminders, and multi-agent shared inboxes.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 pt-4">
+          <a href="https://crm.sahyak.com" class="btn btn-primary px-8 py-3.5 text-base">
+            Start Free (10 WhatsApp Actions) <span>&rarr;</span>
+          </a>
+          <a href="/pricing/" class="btn btn-outline px-8 py-3.5 text-base">
+            View ₹499/mo Plan <span>&rarr;</span>
+          </a>
+        </div>
+        <p class="text-xs text-gray-400">
+          Official Meta API partner &bull; Zero risk of number banning &bull; Works seamlessly on mobile
+        </p>
+      </div>
+
+      <!-- Hero Product Visual -->
+      <div class="relative flex flex-col items-center justify-center">
+        <div class="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+          <img src="/images/features/6.webp" alt="Sahyak WhatsApp Business API automation and verified broker chat templates" width="1122" height="1402" fetchpriority="high" loading="eager" class="w-full h-auto object-cover rounded-2xl" />
+        </div>
+        <div class="mt-4 w-full max-w-md p-3 rounded-xl bg-white/10 border border-white/10 flex items-center justify-between text-xs backdrop-blur-md">
+          <span class="text-brandGreen font-semibold flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brandGreen animate-pulse"></span>
+            Meta Cloud API &bull; Active
+          </span>
+          <span class="text-gray-300">Software Markup: <strong class="text-brandGreen">0% (At Cost)</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem / Contrast Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Why Cold Calling Fails in Indian Real Estate (And WhatsApp Wins)
+        </h2>
+        <p class="text-gray-600 text-lg">
+          Over 78% of high-net-worth property buyers screen unknown phone numbers through Truecaller. If you rely solely on phone calls, your acquisition cost multiplies.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Unofficial / Traditional Way -->
+        <div class="bg-white p-8 rounded-3xl border border-red-100 shadow-sm relative">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700 mb-6">
+            <span>&times;</span> The Risky / Legacy Approach
+          </div>
+          <h3 class="text-xl font-bold text-darkGreen mb-4">Chrome Scrapers & Personal WhatsApp</h3>
+          <ul class="space-y-4 text-sm text-gray-600">
+            <li class="flex items-start gap-3">
+              <span class="text-red-500 font-bold">&times;</span>
+              <span><strong>Frequent Number Bans:</strong> Bulk messaging through unauthorized web scrapers gets your primary SIM permanently blacklisted by WhatsApp.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-red-500 font-bold">&times;</span>
+              <span><strong>Zero Team Visibility:</strong> Chat histories stay trapped in individual agents' personal phones. When an agent quits, your customer data walks out the door.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-red-500 font-bold">&times;</span>
+              <span><strong>Manual Copy-Pasting:</strong> Sales reps spend 45 minutes manually typing project details, downloading brochures, and attaching floor plans one by one.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Sahyak Way -->
+        <div class="bg-white p-8 rounded-3xl border-2 border-brandGreen/40 shadow-md relative">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 mb-6">
+            <span>&check;</span> The Official Sahyak Engine
+          </div>
+          <h3 class="text-xl font-bold text-darkGreen mb-4">Official Meta Cloud API + Multi-Agent CRM</h3>
+          <ul class="space-y-4 text-sm text-gray-600">
+            <li class="flex items-start gap-3">
+              <span class="text-brandGreen font-bold">&check;</span>
+              <span><strong>100% Ban-Proof Infrastructure:</strong> Uses official Meta Business verification, approved HSM templates, and opt-in message triggers.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-brandGreen font-bold">&check;</span>
+              <span><strong>Centralized Lead History:</strong> All incoming messages and outbound brochures sync automatically to the CRM lead card. Managers see real-time chat transcripts.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-brandGreen font-bold">&check;</span>
+              <span><strong>1-Tap Dynamic PDF Dispatch:</strong> Send brochures, payment schedules, and Google Maps location pins with a single tap, customized with buyer name and budget.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Capabilities Grid -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Built Specifically for Real Estate Sales Workflows
+        </h2>
+        <p class="text-gray-600 text-lg">
+          Not a generic marketing blast tool. Sahyak connects WhatsApp directly to property inventory, site visits, and agent rosters.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 hover:border-brandGreen transition-all flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              ⚡
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">Instant Welcome & Brochure Dispatch</h3>
+            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+              The moment a buyer submits an inquiry on 99acres or Facebook Ads, Sahyak triggers an instant WhatsApp welcome message with the project brochure and price sheet before competitors can pick up the phone.
+            </p>
+          </div>
+          <a href="/solutions/real-estate-lead-management/" class="text-brandGreen font-semibold text-xs flex items-center gap-1 hover:underline mt-4">
+            Explore Lead Automation &rarr;
+          </a>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 hover:border-brandGreen transition-all flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              📍
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">Site Visit Reminders & GPS Pins</h3>
+            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+              Automate appointment coordination via WhatsApp with Google Maps navigation pins, project directions, and assigned sales executive contact cards directly on buyer phones.
+            </p>
+          </div>
+          <a href="/solutions/site-visit-management/" class="text-brandGreen font-semibold text-xs flex items-center gap-1 hover:underline mt-4">
+            Site Visit Tracking Workflows &rarr;
+          </a>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-cream border border-gray-200 hover:border-brandGreen transition-all flex flex-col justify-between h-full">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-darkGreen text-brandGreen flex items-center justify-center text-xl mb-6">
+              💬
+            </div>
+            <h3 class="text-xl font-bold text-darkGreen mb-3">Multi-Agent Shared Inbox</h3>
+            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+              Operate from one verified business number while 5, 20, or 50 telecallers reply simultaneously. Role-based permissions ensure agents only view inquiries assigned to their pipeline.
+            </p>
+          </div>
+          <a href="/pricing/" class="text-brandGreen font-semibold text-xs flex items-center gap-1 hover:underline mt-4">
+            View Multi-Seat Pricing &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Transparency Callout -->
+  <section class="py-16 px-6 md:px-12 lg:px-20 bg-darkGreen text-white">
+    <div class="max-w-5xl mx-auto rounded-3xl bg-white/5 border border-white/10 p-8 md:p-12">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+        <div class="lg:col-span-2 space-y-4">
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-brandGreen/20 text-brandGreen uppercase tracking-wider">
+            Transparent Pricing Policy
+          </span>
+          <h2 class="text-2xl md:text-3xl font-serif">
+            Zero Markups on Meta WhatsApp Conversation Fees
+          </h2>
+          <p class="text-gray-300 text-sm leading-relaxed">
+            Other CRM vendors bill ₹1.50 to ₹2.00 per WhatsApp message, pocketing huge markups on your marketing budget. Sahyak charges <strong>₹0 markup</strong>. You connect your own Meta Business Manager or WhatsApp Cloud API account and pay Meta's wholesale rates directly.
+          </p>
+        </div>
+        <div class="text-center p-6 bg-white/10 rounded-2xl border border-white/10">
+          <p class="text-xs text-gray-300 uppercase font-semibold">Free Starter Tier</p>
+          <p class="text-3xl font-bold text-brandGreen my-2">10 Actions</p>
+          <p class="text-xs text-gray-400 mb-4">Included every month at ₹0</p>
+          <a href="https://crm.sahyak.com" class="btn btn-primary w-full text-sm py-2.5">
+            Claim Free Account
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-cream">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-serif text-darkGreen mb-4">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-gray-600">
+          Everything you need to know about setting up WhatsApp CRM for your real estate business.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {faqItems.map((faq) => (
+          <div class="bg-white rounded-2xl p-6 border border-gray-200">
+            <h3 class="text-lg font-bold text-darkGreen mb-2">{faq.question}</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="py-20 px-6 md:px-12 lg:px-20 bg-brandGreen text-darkGreen text-center">
+    <div class="max-w-4xl mx-auto space-y-6">
+      <h2 class="text-3xl md:text-5xl font-serif font-bold">
+        Double Your Lead Response Rate on WhatsApp Today
+      </h2>
+      <p class="text-darkGreen/80 text-lg max-w-2xl mx-auto">
+        Set up in 5 minutes. Free Starter includes 20 leads, 1 user seat, 10 WhatsApp actions, and 3 properties without a credit card.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+        <a href="https://crm.sahyak.com" class="btn bg-darkGreen text-white hover:bg-darkGreen/90 px-8 py-4 text-base font-semibold">
+          Create Free Account Now <span>&rarr;</span>
+        </a>
+        <a href="/tools/lead-response-time-calculator/" class="btn bg-white/40 text-darkGreen hover:bg-white/60 px-8 py-4 text-base font-semibold">
+          Check Speed-to-Lead ROI <span>&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
