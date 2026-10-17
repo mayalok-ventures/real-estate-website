@@ -29,11 +29,14 @@ export const GET: APIRoute = async ({ url, locals }) => {
       }
     });
   } catch (err: any) {
+    const isDbUnavailable = err.message?.includes('database binding is unconfigured') || err.message?.includes('unavailable');
+    const status = isDbUnavailable ? 503 : 500;
     return new Response(JSON.stringify({
       success: false,
+      error: isDbUnavailable ? 'Service Unavailable' : 'Internal Error',
       message: err.message
     }), {
-      status: 500,
+      status,
       headers: { 'Content-Type': 'application/json' }
     });
   }

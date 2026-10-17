@@ -38,8 +38,11 @@ export const POST: APIRoute = async ({ request }) => {
       }
     });
   } catch (err: any) {
+    const isDbUnavailable = err.message?.includes('database binding is unconfigured') || err.message?.includes('unavailable');
+    const isBadRequest = err.message?.includes('Invalid analytics payload');
+    const status = isBadRequest ? 400 : (isDbUnavailable ? 503 : 500);
     return new Response(JSON.stringify({ success: false, error: err.message }), {
-      status: 500,
+      status,
       headers: { 'Content-Type': 'application/json' }
     });
   }

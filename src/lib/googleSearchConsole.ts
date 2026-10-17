@@ -17,6 +17,7 @@ import type {
   GSCAuditCheck,
   GSCHealthOverview
 } from '../types/gsc';
+import { sanitizeCsvCell } from './csv.ts';
 
 // Cached token state
 let cachedToken: { accessToken: string; expiresAt: number } | null = null;
@@ -63,6 +64,29 @@ export function normalizePrivateKey(key: string): string {
   }
   // Replace literal '\n' characters with actual linebreaks
   clean = clean.replace(/\\n/g, '\n');
+  // Ensure linebreaks around headers if headers are glued to the body
+  clean = clean.replace(/(-----BEGIN [A-Z ]+-----)([^\n])/g, '$1\n$2');
+  clean = clean.replace(/([^\n])(-----END [A-Z ]+-----)/g, '$1\n$2');
+  return clean;
+}
+
+// Helper: Normalize Google Search Console property identifier (URL-prefix vs sc-domain:)
+export function normalizeGscProperty(siteUrl: string): string {
+  if (!siteUrl) return 'https://sahyak.com/';
+  const clean = siteUrl.trim();
+  if (clean.startsWith('sc-domain:')) {
+    return clean;
+  }
+  if (clean.startsWith('http://') || clean.startsWith('https://')) {
+    try {
+      const parsed = new URL(clean);
+      if (parsed.pathname === '' || parsed.pathname === '/') {
+        return `${parsed.origin}/`;
+      }
+    } catch {
+      // ignore
+    }
+  }
   return clean;
 }
 
@@ -152,7 +176,19 @@ export async function getGoogleAccessToken(
   if (!privateKey.includes('-----BEGIN PRIVATE KEY-----') && !privateKey.includes('-----BEGIN RSA PRIVATE KEY-----')) {
     return {
       success: false,
-      error: 'Invalid Private Key Format: The value in GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY appears to be a Client ID (numeric ID) instead of the RSA Private Key. In your downloaded Google Cloud service account JSON key file, please copy the value from the "private_key" field (starts with "-----BEGIN PRIVATE KEY-----" and ends with "-----END PRIVATE KEY-----").'
+      error: 'Invalid Private Key Format: The value in GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY is missing RSA headers ("-----BEGIN PRIVATE KEY-----"). In your downloaded Google Cloud service account JSON key file, please copy the value from the "private_key" field.'
+    };
+  }
+
+  const rawKeyBody = privateKey
+    .replace(/-----BEGIN [A-Z ]+-----/g, '')
+    .replace(/-----END [A-Z ]+-----/g, '')
+    .replace(/\s+/g, '');
+
+  if (rawKeyBody.length < 500) {
+    return {
+      success: false,
+      error: `Invalid Private Key Format: The private key body has only ${rawKeyBody.length} characters. A valid Google Cloud service account RSA private key contains 1600-2400 base64 characters. You may have copied the 40-character "private_key_id" (key identifier) or an API key instead of the full "private_key" PEM string from your service account JSON file.`
     };
   }
 
@@ -210,6 +246,25 @@ export async function getGoogleAccessToken(
       success: false,
       error: `RSA Signing or OAuth2 token error: ${err.message || String(err)}`
     };
+  }
+}
+
+// Fetch all verified sites accessible to the service account (Google Search Console sites.list)
+export async function listVerifiedSites(accessToken: string): Promise<{ sites: string[]; error?: string }> {
+  try {
+    const url = 'https://searchconsole.googleapis.com/webmasters/v3/sites';
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    if (!res.ok) {
+      const errJson = (await res.json().catch(() => ({}))) as any;
+      return { sites: [], error: errJson?.error?.message || `HTTP ${res.status}` };
+    }
+    const data = (await res.json()) as any;
+    const entries = data.siteEntry || [];
+    return { sites: entries.map((e: any) => e.siteUrl).filter(Boolean) };
+  } catch (err: any) {
+    return { sites: [], error: err.message || String(err) };
   }
 }
 
@@ -308,9 +363,75 @@ export async function inspectUrl(
   auth?: { clientEmail?: string; privateKey?: string }
 ): Promise<URLInspectionResult> {
   const cleanBase = siteUrl.replace(/\/$/, '');
-  const cleanPath = targetPath.startsWith('/') ? targetPath : `/${targetPath}`;
-  const fullUrl = targetPath.startsWith('http') ? targetPath : `${cleanBase}${cleanPath}`;
   const now = new Date().toISOString();
+  let cleanPath = '';
+  let fullUrl: string;
+
+  try {
+    if (targetPath.startsWith('http://') || targetPath.startsWith('https://')) {
+      const parsed = new URL(targetPath);
+      cleanPath = parsed.pathname;
+      let allowedOrigin: string;
+      try {
+        allowedOrigin = new URL(siteUrl.startsWith('sc-domain:') ? `https://${siteUrl.replace('sc-domain:', '')}` : siteUrl).origin;
+      } catch {
+        allowedOrigin = 'https://sahyak.com';
+      }
+
+      if (parsed.origin !== allowedOrigin) {
+        return {
+          url: targetPath,
+          verdict: 'HTTP_ERROR',
+          httpStatus: 400,
+          title: 'Cross-Origin URL Inspection Blocked (SSRF Protection)',
+          hasMetaDescription: false,
+          metaRobots: 'invalid_origin',
+          canonicalUrl: targetPath,
+          isSitemapIncluded: false,
+          hasOpenGraph: false,
+          inspectedAt: now,
+          inspectionSource: 'live_http_check',
+          inspectionMessage: `Target URL origin (${parsed.origin}) must match verified site property (${allowedOrigin}). Cross-domain inspection is rejected to prevent SSRF.`
+        };
+      }
+      fullUrl = targetPath;
+    } else {
+      cleanPath = targetPath.startsWith('/') ? targetPath : `/${targetPath}`;
+      // Prevent protocol-relative URL bypass (e.g. "//evil.com")
+      if (cleanPath.startsWith('//')) {
+        return {
+          url: targetPath,
+          verdict: 'HTTP_ERROR',
+          httpStatus: 400,
+          title: 'Invalid URL Format',
+          hasMetaDescription: false,
+          metaRobots: 'invalid_path',
+          canonicalUrl: targetPath,
+          isSitemapIncluded: false,
+          hasOpenGraph: false,
+          inspectedAt: now,
+          inspectionSource: 'live_http_check',
+          inspectionMessage: 'Protocol-relative URLs are rejected.'
+        };
+      }
+      fullUrl = `${cleanBase}${cleanPath}`;
+    }
+  } catch (err: any) {
+    return {
+      url: targetPath,
+      verdict: 'HTTP_ERROR',
+      httpStatus: 400,
+      title: 'Malformed Target URL',
+      hasMetaDescription: false,
+      metaRobots: 'malformed_url',
+      canonicalUrl: targetPath,
+      isSitemapIncluded: false,
+      hasOpenGraph: false,
+      inspectedAt: now,
+      inspectionSource: 'live_http_check',
+      inspectionMessage: `Malformed URL: ${err?.message || String(err)}`
+    };
+  }
 
   // 1. Try official Google Search Console URL Inspection API if credentials are provided
   if (auth?.clientEmail && auth?.privateKey) {
@@ -687,13 +808,21 @@ export async function getSearchConsoleData(
     forceRefresh?: boolean;
   } = {}
 ): Promise<GSCDataSummary> {
-  const siteUrl = env.GOOGLE_SEARCH_CONSOLE_SITE_URL || 'https://sahyak.com';
+  const rawSiteUrl = env.GOOGLE_SEARCH_CONSOLE_SITE_URL || 'https://sahyak.com';
+  const siteUrl = normalizeGscProperty(rawSiteUrl);
   const clientEmail = env.GOOGLE_SEARCH_CONSOLE_CLIENT_EMAIL || '';
   const privateKey = env.GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY || '';
   const hasPrivateKey = !!privateKey.trim();
 
-  // Validate private key format without printing it
-  const isKeyFormatValid = hasPrivateKey && (privateKey.includes('-----BEGIN PRIVATE KEY-----') || privateKey.includes('-----BEGIN RSA PRIVATE KEY-----'));
+  const rawKeyBody = privateKey
+    .replace(/-----BEGIN [A-Z ]+-----/g, '')
+    .replace(/-----END [A-Z ]+-----/g, '')
+    .replace(/\s+/g, '');
+
+  // Validate private key format without printing it (requires headers AND minimum RSA key body length)
+  const isKeyFormatValid = hasPrivateKey &&
+    (privateKey.includes('-----BEGIN PRIVATE KEY-----') || privateKey.includes('-----BEGIN RSA PRIVATE KEY-----')) &&
+    rawKeyBody.length >= 500;
 
   const range = options.range || '28d';
   const cacheKey = `${siteUrl}_${range}`;
@@ -800,12 +929,44 @@ export async function getSearchConsoleData(
     const anyError = siteTotalsRes.error || queryRes.error || pageRes.error || countryRes.error || deviceRes.error || dateRes.error;
     if (anyError) {
       const isPermission = anyError.toLowerCase().includes('permission') || anyError.includes('403');
+      let statusMsg = isPermission
+        ? `Google Search Console Permission Denied: Ensure the service account email is added as a User (Full or Restricted) on the property "${siteUrl}" in Search Console Settings -> Users.`
+        : `Google Search Console API error: ${anyError}`;
+
+      if (isPermission) {
+        try {
+          const verified = await listVerifiedSites(token);
+          const accessibleList = verified.sites || [];
+
+          // Check if an accessible property matches the target domain (e.g. sc-domain:sahyak.com vs https://sahyak.com/)
+          const cleanDomain = siteUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^sc-domain:/, '').toLowerCase();
+          const matchedProperty = accessibleList.find(p => {
+            const pDomain = p.replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^sc-domain:/, '').toLowerCase();
+            return pDomain === cleanDomain;
+          });
+
+          if (matchedProperty && matchedProperty !== siteUrl) {
+            // Auto-resolve to the matching verified property in Google Search Console
+            return await getSearchConsoleData({
+              ...env,
+              GOOGLE_SEARCH_CONSOLE_SITE_URL: matchedProperty
+            }, options);
+          }
+
+          if (accessibleList.length === 0) {
+            statusMsg = `Google Search Console Permission Denied: Service account "${clientEmail}" is authenticated, but has not been added to any properties in Google Search Console. Please open Google Search Console -> Settings -> Users and Permissions, and add "${clientEmail}".`;
+          } else {
+            statusMsg = `Google Search Console Permission Denied: Service account "${clientEmail}" does not have access to property "${siteUrl}". Found ${accessibleList.length} accessible property(ies): [${accessibleList.join(', ')}]. Update GOOGLE_SEARCH_CONSOLE_SITE_URL in your environment or add the account to "${siteUrl}".`;
+          }
+        } catch {
+          // ignore
+        }
+      }
+
       return {
         status: isPermission ? 'permission_denied' : 'api_error',
         isLive: false,
-        statusMessage: isPermission
-          ? `Google Search Console Permission Denied: Ensure the service account email is added as a User (Full or Restricted) on the property "${siteUrl}" in Search Console Settings -> Users.`
-          : `Google Search Console API error: ${anyError}`,
+        statusMessage: statusMsg,
         siteUrl,
         clientEmail: clientEmail ? 'Configured' : '',
         hasPrivateKey,
@@ -1026,7 +1187,7 @@ export function exportGscToCsv(
   if (dimension === 'queries') {
     const headers = ['Keyword / Search Query', 'Organic Clicks', 'Google Impressions', 'CTR (%)', 'Average Position'];
     const rows = data.topQueries.map(q => [
-      `"${q.query.replace(/"/g, '""')}"`,
+      sanitizeCsvCell(q.query),
       q.clicks,
       q.impressions,
       `${q.ctr}%`,
@@ -1038,7 +1199,7 @@ export function exportGscToCsv(
   if (dimension === 'pages') {
     const headers = ['Landing Page URL', 'Organic Clicks', 'Google Impressions', 'CTR (%)', 'Average Position'];
     const rows = data.topPages.map(p => [
-      `"${p.page}"`,
+      sanitizeCsvCell(p.page),
       p.clicks,
       p.impressions,
       `${p.ctr}%`,
@@ -1050,8 +1211,8 @@ export function exportGscToCsv(
   if (dimension === 'countries') {
     const headers = ['Country Code', 'Country Name', 'Clicks', 'Impressions', 'CTR (%)', 'Average Position'];
     const rows = data.countries.map(c => [
-      `"${c.countryCode}"`,
-      `"${c.countryName}"`,
+      sanitizeCsvCell(c.countryCode),
+      sanitizeCsvCell(c.countryName),
       c.clicks,
       c.impressions,
       `${c.ctr}%`,
@@ -1063,7 +1224,7 @@ export function exportGscToCsv(
   if (dimension === 'dates') {
     const headers = ['Date', 'Organic Clicks', 'Google Impressions', 'CTR (%)', 'Average Position'];
     const rows = data.timeSeries.map(t => [
-      `"${t.date}"`,
+      sanitizeCsvCell(t.date),
       t.clicks,
       t.impressions,
       `${t.ctr}%`,
@@ -1075,13 +1236,13 @@ export function exportGscToCsv(
   if (dimension === 'opportunities') {
     const headers = ['Opportunity Type', 'Search Query', 'Clicks', 'Impressions', 'CTR (%)', 'Position', 'Action Recommendation'];
     const rows = data.opportunities.map(o => [
-      `"${o.type}"`,
-      `"${o.query.replace(/"/g, '""')}"`,
+      sanitizeCsvCell(o.type),
+      sanitizeCsvCell(o.query),
       o.clicks,
       o.impressions,
       `${o.ctr}%`,
       o.position,
-      `"${o.recommendation.replace(/"/g, '""')}"`
+      sanitizeCsvCell(o.recommendation)
     ]);
     return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
   }
@@ -1089,12 +1250,12 @@ export function exportGscToCsv(
   if (dimension === 'clusters') {
     const headers = ['Cluster Name', 'Target Persona', 'Search Volume', 'Ranking Terms Count', 'Buyer Intent', 'Top Keywords'];
     const rows = (data.clusters || []).map(c => [
-      `"${c.name}"`,
-      `"${c.persona}"`,
+      sanitizeCsvCell(c.name),
+      sanitizeCsvCell(c.persona),
       c.totalVolume,
       c.rankingCount,
-      c.intent,
-      `"${c.topKeywords.join('; ')}"`
+      sanitizeCsvCell(c.intent),
+      sanitizeCsvCell(c.topKeywords.join('; '))
     ]);
     return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
   }
@@ -1102,11 +1263,11 @@ export function exportGscToCsv(
   if (dimension === 'audit') {
     const headers = ['Audit Check', 'Category', 'Status', 'Score', 'Technical Details'];
     const rows = (data.auditIssues || []).map(a => [
-      `"${a.name}"`,
-      a.category,
-      a.status.toUpperCase(),
-      `"${a.score}"`,
-      `"${a.details.replace(/"/g, '""')}"`
+      sanitizeCsvCell(a.name),
+      sanitizeCsvCell(a.category),
+      sanitizeCsvCell(a.status.toUpperCase()),
+      sanitizeCsvCell(a.score),
+      sanitizeCsvCell(a.details)
     ]);
     return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
   }
@@ -1114,12 +1275,12 @@ export function exportGscToCsv(
   if (dimension === 'truth') {
     const headers = ['Search Query', 'Claimed Feature in SERP', 'Target URL', 'Verification Status', 'Accuracy Score', 'Audit Notes'];
     const rows = (data.productTruth || []).map(t => [
-      `"${t.query}"`,
-      `"${t.claimedFeature}"`,
-      `"${t.landingPage}"`,
-      `"${t.verifiedStatus}"`,
+      sanitizeCsvCell(t.query),
+      sanitizeCsvCell(t.claimedFeature),
+      sanitizeCsvCell(t.landingPage),
+      sanitizeCsvCell(t.verifiedStatus),
       `${t.accuracyScore}%`,
-      `"${t.notes.replace(/"/g, '""')}"`
+      sanitizeCsvCell(t.notes)
     ]);
     return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
   }
@@ -1139,25 +1300,25 @@ export function exportGscToCsv(
   lines.push('--- TOP SEARCH QUERIES / KEYWORDS ---');
   lines.push('Query,Clicks,Impressions,CTR,Position');
   data.topQueries.slice(0, 50).forEach(q => {
-    lines.push(`"${q.query.replace(/"/g, '""')}",${q.clicks},${q.impressions},${q.ctr}%,${q.position}`);
+    lines.push(`${sanitizeCsvCell(q.query)},${q.clicks},${q.impressions},${q.ctr}%,${q.position}`);
   });
   lines.push('');
   lines.push('--- TOP LANDING PAGES ---');
   lines.push('Page,Clicks,Impressions,CTR,Position');
   data.topPages.slice(0, 30).forEach(p => {
-    lines.push(`"${p.page}",${p.clicks},${p.impressions},${p.ctr}%,${p.position}`);
+    lines.push(`${sanitizeCsvCell(p.page)},${p.clicks},${p.impressions},${p.ctr}%,${p.position}`);
   });
   lines.push('');
   lines.push('--- TECHNICAL SEO AUDIT CHECKS ---');
   lines.push('Check,Category,Status,Score,Details');
   (data.auditIssues || []).forEach(a => {
-    lines.push(`"${a.name}",${a.category},${a.status.toUpperCase()},"${a.score}","${a.details.replace(/"/g, '""')}"`);
+    lines.push(`${sanitizeCsvCell(a.name)},${sanitizeCsvCell(a.category)},${sanitizeCsvCell(a.status.toUpperCase())},${sanitizeCsvCell(a.score)},${sanitizeCsvCell(a.details)}`);
   });
   lines.push('');
   lines.push('--- COUNTRY BREAKDOWN ---');
   lines.push('Country,Clicks,Impressions,CTR,Position');
   data.countries.slice(0, 20).forEach(c => {
-    lines.push(`"${c.countryName}",${c.clicks},${c.impressions},${c.ctr}%,${c.position}`);
+    lines.push(`${sanitizeCsvCell(c.countryName)},${c.clicks},${c.impressions},${c.ctr}%,${c.position}`);
   });
 
   return lines.join('\n');

@@ -31,3 +31,10 @@ pnpm-debug.log*
 *.log
 scratch/
 
+# Sensitive keys and credentials
+*.pem
+*.key
+*serviceaccount*.json
+*service-account*.json
+
+

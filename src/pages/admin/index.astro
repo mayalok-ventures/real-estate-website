@@ -2,7 +2,7 @@
 export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
-import { getContacts } from '../../lib/db';
+import { getContactsWithCount } from '../../lib/db';
 import { getRuntimeEnv } from '../../lib/env';
 import { getAnalyticsSummary, formatDuration, COUNTRY_META } from '../../lib/analytics';
 import { getSearchConsoleData } from '../../lib/googleSearchConsole';
@@ -14,6 +14,16 @@ if (!admin || !admin.email) {
 
 let env: any = {};
 let contacts: any[] = [];
+let initialPaginatedLeads: any = {
+  contacts: [],
+  total: 0,
+  page: 1,
+  limit: 25,
+  totalPages: 1,
+  hasNext: false,
+  hasPrev: false,
+  summary: { total: 0, new: 0, contacted: 0, qualified: 0, closed: 0, archived: 0 }
+};
 let analytics: any = {
   totalVisitors: 0,
   uniqueVisitors: 0,
@@ -27,7 +37,37 @@ let analytics: any = {
   deviceDistribution: {},
   hourlyTraffic: []
 };
-let gscData: any;
+let gscData: any = {
+  status: 'not_configured',
+  isLive: false,
+  statusMessage: 'Loading Google Search Console data...',
+  siteUrl: 'https://sahyak.com',
+  clientEmail: '',
+  hasPrivateKey: false,
+  isKeyFormatValid: false,
+  startDate: new Date(Date.now() - 28 * 86400000).toISOString().split('T')[0],
+  endDate: new Date().toISOString().split('T')[0],
+  totalClicks: 0,
+  totalImpressions: 0,
+  avgCtr: 0,
+  avgPosition: 0,
+  topQueries: [],
+  topPages: [],
+  countries: [],
+  devices: [],
+  timeSeries: [],
+  sitemaps: [],
+  opportunities: [],
+  lastFetchedAt: null,
+  healthOverview: null,
+  alerts: [],
+  marketIntelligence: null,
+  conversions: null,
+  authorityNodes: [],
+  productTruth: [],
+  clusters: [],
+  auditIssues: []
+};
 
 try {
   env = await getRuntimeEnv();
@@ -36,7 +76,8 @@ try {
 }
 
 try {
-  contacts = await getContacts(env?.DB, { limit: 100 });
+  initialPaginatedLeads = await getContactsWithCount(env?.DB, { page: 1, limit: 25 });
+  contacts = initialPaginatedLeads.contacts;
 } catch (e) {
   console.warn('[Admin] Failed to load contacts from DB:', e);
   contacts = [];
@@ -50,15 +91,19 @@ try {
 
 try {
   gscData = await getSearchConsoleData(env || {}, { range: '28d' });
-} catch (e) {
+} catch (e: any) {
   console.error('[Admin] getSearchConsoleData caught in page:', e);
+  gscData = {
+    ...gscData,
+    status: 'api_error',
+    statusMessage: `Failed to load Search Console data: ${e?.message || String(e)}`
+  };
 }
 
-// Compute pipeline stats
-const totalLeads = contacts.length;
-const newLeads = contacts.filter(c => c.status === 'new').length;
-const contactedLeads = contacts.filter(c => c.status === 'contacted').length;
-const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
+// Authoritative pipeline stats across all leads in the database
+const leadSummary = initialPaginatedLeads.summary;
+const totalLeads = leadSummary.total;
+const newLeads = leadSummary.new;
 ---
 
 <Layout title="Executive Admin & Analytics Console - Sahyak CRM" description="Real-time website analytics, visitor traffic tracking, dwell time insights, and Google Search Console portal.">
@@ -134,15 +179,15 @@ const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
           </div>
         </div>
 
-        <a href="/api/admin/logout" class="btn btn-sm" style="background: #DC2626; color: white; border-radius: 8px; padding: 0.5rem 0.9rem; font-size: 0.85rem;">
+        <button id="btn-admin-logout" type="button" class="btn btn-sm" style="background: #DC2626; color: white; border-radius: 8px; padding: 0.5rem 0.9rem; font-size: 0.85rem; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 0.4rem;">
           <i class="fa-solid fa-right-from-bracket"></i> Log out
-        </a>
+        </button>
       </div>
     </div>
   </section>
 
   <!-- HIGH-LEVEL PORTAL SWITCHER: ISOLATE CRM VS SEARCH CONSOLE -->
-  <section style="background: #081712; border-bottom: 2px solid rgba(74, 222, 128, 0.15); padding: 0.75rem 0;">
+  <section style="background: #081712; border-bottom: 2px solid rgba(1, 3, 2, 0.15); padding: 0.75rem 0;">
     <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
       <div style="display: flex; gap: 0.75rem; align-items: center;">
         <button id="portal-switch-crm" class="portal-mode-btn active" data-portal="crm">
@@ -317,11 +362,11 @@ const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
               Pipeline
             </span>
           </div>
-          <div style="font-size: 2.75rem; font-weight: 800; color: #7C3AED; font-family: 'Playfair Display', serif; line-height: 1;">
+          <div id="stat-total-leads" style="font-size: 2.75rem; font-weight: 800; color: #7C3AED; font-family: 'Playfair Display', serif; line-height: 1;">
             {totalLeads}
           </div>
           <p style="font-size: 0.75rem; color: #D97706; margin-top: 0.5rem; font-weight: 600;">
-            {newLeads} awaiting review
+            <span id="stat-new-leads">{newLeads}</span> awaiting review
           </p>
         </div>
 
@@ -674,20 +719,25 @@ const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
       <section id="tab-leads" class="crm-tab-panel" style="margin-bottom: 2.5rem;">
         <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
           
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
             <div>
-              <h3 style="font-size: 1.25rem; font-weight: 700; color: #0A1C16; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fa-solid fa-user-check" style="color: #D97706;"></i> Form Inquiries & Leads Pipeline
-              </h3>
-              <p style="font-size: 0.85rem; color: #6B7280; margin-top: 2px;">
-                Manage customer leads submitted via website contact and demo inquiry forms.
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: #0A1C16; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                  <i class="fa-solid fa-user-check" style="color: #D97706;"></i> Form Inquiries & Leads Pipeline
+                </h3>
+                <span id="leads-sync-indicator" style="font-size: 0.75rem; color: #059669; font-weight: 600; background: rgba(5, 150, 105, 0.1); border: 1px solid rgba(5, 150, 105, 0.2); padding: 2px 8px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px;">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #059669; display: inline-block;"></span> Live Sync Active
+                </span>
+              </div>
+              <p style="font-size: 0.85rem; color: #6B7280; margin-top: 4px; margin-bottom: 0;">
+                Server-side paginated inquiries with private notes editor and real-time lead alerts.
               </p>
             </div>
 
             <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
               <input type="text" id="admin-search-input" placeholder="Search prospect, email, phone..." style="padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem; min-width: 240px;" />
               
-              <select id="admin-status-filter" style="padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem;">
+              <select id="admin-status-filter" style="padding: 0.5rem 0.85rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.85rem; background: white;">
                 <option value="all" selected>All Statuses</option>
                 <option value="new">New Inquiries</option>
                 <option value="contacted">Contacted</option>
@@ -696,10 +746,32 @@ const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
                 <option value="archived">Archived</option>
               </select>
 
-              <a href="/api/admin/leads?format=csv" class="btn btn-sm btn-outline" download style="color: #0A1C16; border-color: #D1D5DB; font-size: 0.8rem; border-radius: 8px;">
+              <a id="export-leads-csv-btn" href="/api/admin/leads?format=csv" class="btn btn-sm btn-outline" download style="color: #0A1C16; border-color: #D1D5DB; font-size: 0.8rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
                 <i class="fa-solid fa-file-csv"></i> Export Leads CSV
               </a>
             </div>
+          </div>
+
+          <!-- Pipeline Status Counter Pills -->
+          <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.75rem; margin-bottom: 1.25rem; border-bottom: 1px solid #F3F4F6;">
+            <button class="lead-pill-btn active" data-status="all" style="background: #0A1C16; color: white; border: none; border-radius: 20px; padding: 0.35rem 0.85rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              All Leads <span id="pill-total-leads" style="background: rgba(255,255,255,0.2); padding: 1px 6px; border-radius: 10px; font-size: 0.75rem;">{leadSummary.total}</span>
+            </button>
+            <button class="lead-pill-btn" data-status="new" style="background: #F3F4F6; color: #374151; border: 1px solid #E5E7EB; border-radius: 20px; padding: 0.35rem 0.85rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              New <span id="pill-new-leads" style="background: #FEF3C7; color: #92400E; padding: 1px 6px; border-radius: 10px; font-size: 0.75rem;">{leadSummary.new}</span>
+            </button>
+            <button class="lead-pill-btn" data-status="contacted" style="background: #F3F4F6; color: #374151; border: 1px solid #E5E7EB; border-radius: 20px; padding: 0.35rem 0.85rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              Contacted <span id="pill-contacted-leads" style="background: #E0E7FF; color: #3730A3; padding: 1px 6px; border-radius: 10px; font-size: 0.75rem;">{leadSummary.contacted}</span>
+            </button>
+            <button class="lead-pill-btn" data-status="qualified" style="background: #F3F4F6; color: #374151; border: 1px solid #E5E7EB; border-radius: 20px; padding: 0.35rem 0.85rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              Qualified <span id="pill-qualified-leads" style="background: #DCFCE7; color: #166534; padding: 1px 6px; border-radius: 10px; font-size: 0.75rem;">{leadSummary.qualified}</span>
+            </button>
+            <button class="lead-pill-btn" data-status="closed" style="background: #F3F4F6; color: #374151; border: 1px solid #E5E7EB; border-radius: 20px; padding: 0.35rem 0.85rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              Closed Deal <span id="pill-closed-leads" style="background: #F3E8FF; color: #6B21A8; padding: 1px 6px; border-radius: 10px; font-size: 0.75rem;">{leadSummary.closed}</span>
+            </button>
+            <button class="lead-pill-btn" data-status="archived" style="background: #F3F4F6; color: #374151; border: 1px solid #E5E7EB; border-radius: 20px; padding: 0.35rem 0.85rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              Archived <span id="pill-archived-leads" style="background: #E5E7EB; color: #4B5563; padding: 1px 6px; border-radius: 10px; font-size: 0.75rem;">{leadSummary.archived}</span>
+            </button>
           </div>
 
           <div style="overflow-x: auto;">
@@ -720,13 +792,13 @@ const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
                   <tr>
                     <td colspan="7" style="padding: 3rem 1rem; text-align: center; color: #6B7280;">
                       <div style="font-size: 2rem; margin-bottom: 0.5rem; color: #D1D5DB;"><i class="fa-solid fa-inbox"></i></div>
-                      <div style="font-weight: 700; color: #111827; font-size: 1rem;">No Inquiries Received Yet</div>
+                      <div style="font-weight: 700; color: #111827; font-size: 1rem;">No Inquiries Found</div>
                       <p style="font-size: 0.85rem; margin-top: 0.25rem; color: #9CA3AF;">Form inquiries submitted via contact and demo forms will appear here in real time.</p>
                     </td>
                   </tr>
                 ) : (
                   contacts.map((c) => (
-                    <tr style="border-bottom: 1px solid #F3F4F6;" class="lead-row" data-id={c.id} data-status={c.status} data-search={`${c.name} ${c.email} ${c.phone} ${c.company || ''}`.toLowerCase()}>
+                    <tr style="border-bottom: 1px solid #F3F4F6;" class="lead-row" data-id={c.id} data-status={c.status} data-notes={c.admin_notes || ''} data-message={c.message || ''} data-name={c.name} data-email={c.email} data-phone={c.phone} data-company={c.company || ''} data-type={c.inquiry_type} data-created={c.created_at || ''}>
                       <td style="padding: 1rem;">
                         <strong style="color: #0A1C16;">#{c.id}</strong>
                         <div style="font-size: 0.75rem; color: #6B7280;">{c.created_at ? new Date(c.created_at).toLocaleDateString() : 'Today'}</div>
@@ -759,15 +831,51 @@ const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
                         </select>
                       </td>
                       <td style="padding: 1rem; text-align: center;">
-                        <button class="btn btn-sm btn-dark-outline view-note-btn" data-message={c.message || 'No additional message left.'} data-name={c.name} style="padding: 0.35rem 0.75rem; font-size: 0.8rem; border-radius: 6px;">
-                          View Note
+                        <button class="btn btn-sm btn-dark-outline manage-lead-btn" data-id={c.id} style="padding: 0.35rem 0.75rem; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;">
+                          <i class="fa-solid fa-pen-to-square"></i> Notes & Details
                         </button>
+                        {c.admin_notes && (
+                          <div style="font-size: 0.7rem; color: #D97706; margin-top: 3px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <i class="fa-solid fa-note-sticky"></i> Note attached
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
+          </div>
+
+          <!-- Server-side Pagination Controls -->
+          <div id="leads-pagination-bar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 0.5rem 0; border-top: 1px solid #E5E7EB; margin-top: 0.75rem;">
+            <div style="font-size: 0.85rem; color: #6B7280;">
+              Showing <strong id="pagination-showing-start" style="color: #111827;">{initialPaginatedLeads.total > 0 ? 1 : 0}</strong> - <strong id="pagination-showing-end" style="color: #111827;">{Math.min(initialPaginatedLeads.total, initialPaginatedLeads.limit)}</strong> of <strong id="pagination-total-records" style="color: #111827;">{initialPaginatedLeads.total}</strong> Leads
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #4B5563;">
+                <span>Rows:</span>
+                <select id="pagination-limit-select" style="padding: 0.3rem 0.5rem; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 0.85rem; background: white;">
+                  <option value="10">10</option>
+                  <option value="25" selected>25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button id="pagination-prev-btn" class="btn btn-sm btn-outline" style="border-radius: 6px; padding: 0.35rem 0.75rem; font-size: 0.8rem;" disabled>
+                  <i class="fa-solid fa-chevron-left"></i> Prev
+                </button>
+                <span id="pagination-page-indicator" style="font-size: 0.85rem; font-weight: 600; color: #374151; padding: 0 0.5rem;">
+                  Page 1 of {initialPaginatedLeads.totalPages}
+                </span>
+                <button id="pagination-next-btn" class="btn btn-sm btn-outline" style="border-radius: 6px; padding: 0.35rem 0.75rem; font-size: 0.8rem;" disabled={!initialPaginatedLeads.hasNext}>
+                  Next <i class="fa-solid fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -2046,14 +2154,66 @@ const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
     </div>
   </dialog>
 
-  <!-- Lead Message Modal -->
-  <dialog id="message-dialog" style="border: none; border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.25); margin: auto;">
-    <h3 id="modal-lead-name" style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #0A1C16;">Lead Message</h3>
-    <div id="modal-lead-message" style="background: #F9FAFB; padding: 1.25rem; border-radius: 8px; border: 1px solid #E5E7EB; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; color: #374151;"></div>
-    <div style="display: flex; justify-content: flex-end;">
-      <button id="close-modal-btn" class="btn btn-sm" style="background: #0A1C16; color: white; border-radius: 8px; padding: 0.5rem 1.25rem;">Close</button>
+  <!-- Real Admin Notes & Prospect Details Editor Modal -->
+  <dialog id="lead-notes-modal" style="border: none; border-radius: 16px; padding: 2rem; max-width: 620px; width: 92%; box-shadow: 0 25px 50px rgba(0,0,0,0.25); margin: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; border-bottom: 1px solid #E5E7EB; padding-bottom: 1rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span id="modal-lead-id" style="font-weight: 800; color: #0A1C16; font-size: 1.15rem;">#0</span>
+          <h3 id="modal-lead-name" style="font-size: 1.25rem; font-weight: 700; color: #111827; margin: 0;">Prospect Name</h3>
+        </div>
+        <div id="modal-lead-meta" style="font-size: 0.825rem; color: #6B7280; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 10px;">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+      <button id="modal-close-x" style="background: none; border: none; font-size: 1.5rem; color: #9CA3AF; cursor: pointer; line-height: 1; padding: 0 4px;">&times;</button>
+    </div>
+
+    <!-- Status Selector inside Modal -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; background: #F9FAFB; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #E5E7EB;">
+      <label for="modal-lead-status" style="font-size: 0.85rem; font-weight: 700; color: #374151;">Pipeline Status:</label>
+      <select id="modal-lead-status" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border-radius: 6px; font-weight: 600; border: 1px solid #D1D5DB; background: white;">
+        <option value="new">New Inquiry</option>
+        <option value="contacted">Contacted</option>
+        <option value="qualified">Qualified</option>
+        <option value="closed">Closed Deal</option>
+        <option value="archived">Archived</option>
+      </select>
+    </div>
+
+    <!-- SECTION 1: Original Prospect Message (Read-Only) -->
+    <div style="margin-bottom: 1.25rem;">
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #4B5563; margin-bottom: 0.5rem; letter-spacing: 0.05em;">
+        <i class="fa-solid fa-comment-dots" style="color: #3B82F6;"></i> Original Prospect Message (Read-Only)
+      </div>
+      <div id="modal-prospect-message" style="background: #F3F4F6; padding: 1rem; border-radius: 8px; border: 1px solid #E5E7EB; font-size: 0.9rem; line-height: 1.5; color: #374151; white-space: pre-wrap; max-height: 140px; overflow-y: auto;">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+
+    <!-- SECTION 2: Internal Admin Notes (Editable & Persisted) -->
+    <div style="margin-bottom: 1.25rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #D97706; letter-spacing: 0.05em;">
+          <i class="fa-solid fa-lock" style="font-size: 0.75rem;"></i> Confidential Admin Notes (Private)
+        </div>
+        <span id="modal-notes-char-count" style="font-size: 0.75rem; color: #9CA3AF;">0 / 5,000</span>
+      </div>
+      <textarea id="modal-admin-notes" rows="5" maxlength="5000" placeholder="Add confidential notes about client requirements, property preferences, phone follow-up summary, site visit schedule..." style="width: 100%; box-sizing: border-box; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 0.9rem; line-height: 1.5; font-family: inherit; resize: vertical; outline: none;"></textarea>
+      <div id="modal-save-feedback" style="min-height: 20px; margin-top: 6px; font-size: 0.8rem; font-weight: 600;"></div>
+    </div>
+
+    <!-- Modal Action Buttons -->
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-top: 1px solid #E5E7EB; padding-top: 1rem;">
+      <button id="modal-cancel-btn" class="btn btn-sm btn-outline" style="border-radius: 8px; padding: 0.5rem 1.25rem;">Cancel</button>
+      <button id="modal-save-btn" class="btn btn-sm" style="background: #059669; color: white; border-radius: 8px; padding: 0.5rem 1.5rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border: none;">
+        <i class="fa-solid fa-floppy-disk"></i> Save Notes & Status
+      </button>
     </div>
   </dialog>
+
+  <!-- Real-time In-App Toast Container for New Lead Alerts -->
+  <div id="admin-toast-container" style="position: fixed; top: 80px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; max-width: 380px; pointer-events: none;"></div>
 
   <!-- Pass Server Data safely to client script -->
   <script is:inline id="analytics-init-data" type="application/json" set:html={JSON.stringify(analytics.timeSeries)} />
@@ -2683,23 +2843,32 @@ const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
         secModalSubtitle.textContent = title;
         secModalContent.innerHTML = '';
 
-        sections.forEach(s => {
-          const row = document.createElement('div');
-          row.style.background = '#F9FAFB';
-          row.style.padding = '0.85rem 1rem';
-          row.style.borderRadius = '8px';
-          row.style.border = '1px solid #E5E7EB';
-          row.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <strong style="color: #111827; font-size: 0.9rem;">${s.label}</strong>
-              <span style="font-weight: 700; color: #059669; font-size: 0.85rem;">${s.avgSeconds}s avg (${s.viewPercent}%)</span>
-            </div>
-            <div style="width: 100%; height: 6px; background: #E5E7EB; border-radius: 4px; overflow: hidden;">
-              <div style="width: ${s.viewPercent}%; height: 100%; background: #10B981; border-radius: 4px;"></div>
-            </div>
-          `;
-          secModalContent.appendChild(row);
-        });
+        if (!sections || sections.length === 0) {
+          secModalContent.innerHTML = '<div style="text-align: center; padding: 2rem; color: #6B7280; font-size: 0.9rem;">No section engagement observations recorded for this page yet.</div>';
+        } else {
+          sections.forEach(s => {
+            const row = document.createElement('div');
+            row.style.background = '#F9FAFB';
+            row.style.padding = '0.85rem 1rem';
+            row.style.borderRadius = '8px';
+            row.style.border = '1px solid #E5E7EB';
+            const statText = s.avgSeconds > 0
+              ? `${s.avgSeconds}s avg (${s.viewPercent}%)`
+              : `<span style="color: #9CA3AF; font-weight: 500; font-size: 0.8rem;">No observations</span>`;
+            const barWidth = s.avgSeconds > 0 ? s.viewPercent : 0;
+            const barColor = s.avgSeconds > 0 ? '#10B981' : '#E5E7EB';
+            row.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <strong style="color: #111827; font-size: 0.9rem;">${s.label}</strong>
+                <span style="font-weight: 700; color: ${s.avgSeconds > 0 ? '#059669' : '#6B7280'}; font-size: 0.85rem;">${statText}</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: #E5E7EB; border-radius: 4px; overflow: hidden;">
+                <div style="width: ${barWidth}%; height: 100%; background: ${barColor}; border-radius: 4px;"></div>
+              </div>
+            `;
+            secModalContent.appendChild(row);
+          });
+        }
 
         secDialog.showModal();
       });
@@ -2750,73 +2919,584 @@ const qualifiedLeads = contacts.filter(c => c.status === 'qualified').length;
     geoFilter?.addEventListener('change', filterGeo);
     geoSearch?.addEventListener('input', filterGeo);
 
-    // Form Leads Search & Status Filter
+    // ========================================================
+    // PHASE 3: LEADS PAGINATION, NOTES EDITOR, KPIS & POLLING
+    // ========================================================
+    let currentLeadPage = 1;
+    let currentLeadLimit = 25;
+    let currentLeadStatus = 'all';
+    let currentLeadSearch = '';
+    let latestKnownLeadId = 0;
+    const knownLeadIds = new Set();
+    let isLeadPolling = false;
+
+    // DOM Elements
     const searchInput = document.getElementById('admin-search-input');
     const statusFilter = document.getElementById('admin-status-filter');
-    const tableRows = document.querySelectorAll('.lead-row');
-    const dialog = document.getElementById('message-dialog');
+    const leadsTableBody = document.getElementById('leads-table-body');
+    const leadsPaginationBar = document.getElementById('leads-pagination-bar');
+    const paginationStart = document.getElementById('pagination-showing-start');
+    const paginationEnd = document.getElementById('pagination-showing-end');
+    const paginationTotal = document.getElementById('pagination-total-records');
+    const paginationPageInd = document.getElementById('pagination-page-indicator');
+    const paginationPrevBtn = document.getElementById('pagination-prev-btn');
+    const paginationNextBtn = document.getElementById('pagination-next-btn');
+    const paginationLimitSelect = document.getElementById('pagination-limit-select');
+    const exportCsvBtn = document.getElementById('export-leads-csv-btn');
+    const syncIndicator = document.getElementById('leads-sync-indicator');
+
+    // Modal Elements
+    const leadNotesModal = document.getElementById('lead-notes-modal');
+    const modalLeadId = document.getElementById('modal-lead-id');
     const modalLeadName = document.getElementById('modal-lead-name');
-    const modalLeadMessage = document.getElementById('modal-lead-message');
-    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalLeadMeta = document.getElementById('modal-lead-meta');
+    const modalLeadStatus = document.getElementById('modal-lead-status');
+    const modalProspectMsg = document.getElementById('modal-prospect-message');
+    const modalAdminNotes = document.getElementById('modal-admin-notes');
+    const modalNotesCount = document.getElementById('modal-notes-char-count');
+    const modalSaveFeedback = document.getElementById('modal-save-feedback');
+    const modalSaveBtn = document.getElementById('modal-save-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+    const modalCloseX = document.getElementById('modal-close-x');
+    const toastContainer = document.getElementById('admin-toast-container');
 
-    function filterLeads() {
-      const query = (searchInput.value || '').toLowerCase().trim();
-      const status = statusFilter.value;
+    let currentEditingLead = null;
 
-      tableRows.forEach(row => {
-        const rowSearch = row.getAttribute('data-search') || '';
-        const rowStatus = row.getAttribute('data-status') || '';
+    // Utility: Safe HTML Escape
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
-        const matchesQuery = !query || rowSearch.includes(query);
-        const matchesStatus = status === 'all' || rowStatus === status;
+    // Populate initially known lead IDs
+    document.querySelectorAll('.lead-row').forEach(row => {
+      const id = parseInt(row.getAttribute('data-id') || '0', 10);
+      if (id > 0) {
+        knownLeadIds.add(id);
+        if (id > latestKnownLeadId) latestKnownLeadId = id;
+      }
+    });
 
-        row.style.display = (matchesQuery && matchesStatus) ? '' : 'none';
+    // Update KPI counters across dashboard
+    function updateLeadKpis(summary) {
+      if (!summary) return;
+      const statTotal = document.getElementById('stat-total-leads');
+      const statNew = document.getElementById('stat-new-leads');
+      if (statTotal && summary.total !== undefined) statTotal.textContent = String(summary.total);
+      if (statNew && summary.new !== undefined) statNew.textContent = String(summary.new);
+
+      const pillTotal = document.getElementById('pill-total-leads');
+      const pillNew = document.getElementById('pill-new-leads');
+      const pillContacted = document.getElementById('pill-contacted-leads');
+      const pillQualified = document.getElementById('pill-qualified-leads');
+      const pillClosed = document.getElementById('pill-closed-leads');
+      const pillArchived = document.getElementById('pill-archived-leads');
+
+      if (pillTotal && summary.total !== undefined) pillTotal.textContent = String(summary.total);
+      if (pillNew && summary.new !== undefined) pillNew.textContent = String(summary.new);
+      if (pillContacted && summary.contacted !== undefined) pillContacted.textContent = String(summary.contacted);
+      if (pillQualified && summary.qualified !== undefined) pillQualified.textContent = String(summary.qualified);
+      if (pillClosed && summary.closed !== undefined) pillClosed.textContent = String(summary.closed);
+      if (pillArchived && summary.archived !== undefined) pillArchived.textContent = String(summary.archived);
+    }
+
+    // Build lead table row HTML
+    function buildLeadRowHtml(c) {
+      const dateStr = c.created_at ? new Date(c.created_at).toLocaleDateString() : 'Today';
+      const cleanPhone = (c.phone || '').replace(/[^0-9]/g, '');
+      const hasNote = Boolean(c.admin_notes && c.admin_notes.trim().length > 0);
+
+      return `
+        <tr style="border-bottom: 1px solid #F3F4F6;" class="lead-row" data-id="${c.id}" data-status="${escapeHtml(c.status)}" data-notes="${escapeHtml(c.admin_notes || '')}" data-message="${escapeHtml(c.message || '')}" data-name="${escapeHtml(c.name)}" data-email="${escapeHtml(c.email)}" data-phone="${escapeHtml(c.phone)}" data-company="${escapeHtml(c.company || '')}" data-type="${escapeHtml(c.inquiry_type)}" data-created="${escapeHtml(c.created_at || '')}">
+          <td style="padding: 1rem;">
+            <strong style="color: #0A1C16;">#${c.id}</strong>
+            <div style="font-size: 0.75rem; color: #6B7280;">${dateStr}</div>
+          </td>
+          <td style="padding: 1rem;">
+            <strong style="color: #111827; display: block;">${escapeHtml(c.name)}</strong>
+            <span style="font-size: 0.8rem; color: #6B7280;">${escapeHtml(c.email)}</span>
+          </td>
+          <td style="padding: 1rem;">
+            <a href="tel:${escapeHtml(c.phone)}" style="font-weight: 600; color: #0A1C16; display: block; text-decoration: none;">${escapeHtml(c.phone)}</a>
+            <a href="https://wa.me/${cleanPhone}" target="_blank" rel="noopener noreferrer" style="font-size: 0.75rem; color: #059669; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+              <i class="fa-brands fa-whatsapp"></i> WhatsApp Chat
+            </a>
+          </td>
+          <td style="padding: 1rem;">
+            <span style="background: #F3F4F6; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; text-transform: capitalize; color: #374151;">
+              ${escapeHtml(c.inquiry_type)}
+            </span>
+          </td>
+          <td style="padding: 1rem; color: #4B5563;">
+            ${escapeHtml(c.company || 'Individual Broker')}
+          </td>
+          <td style="padding: 1rem;">
+            <select class="status-selector" data-id="${c.id}" style="padding: 0.4rem 0.6rem; font-size: 0.8rem; border-radius: 6px; font-weight: 600; border: 1px solid #D1D5DB; background: white;">
+              <option value="new" ${c.status === 'new' ? 'selected' : ''}>New</option>
+              <option value="contacted" ${c.status === 'contacted' ? 'selected' : ''}>Contacted</option>
+              <option value="qualified" ${c.status === 'qualified' ? 'selected' : ''}>Qualified</option>
+              <option value="closed" ${c.status === 'closed' ? 'selected' : ''}>Closed Deal</option>
+              <option value="archived" ${c.status === 'archived' ? 'selected' : ''}>Archived</option>
+            </select>
+          </td>
+          <td style="padding: 1rem; text-align: center;">
+            <button class="btn btn-sm btn-dark-outline manage-lead-btn" data-id="${c.id}" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;">
+              <i class="fa-solid fa-pen-to-square"></i> Notes & Details
+            </button>
+            ${hasNote ? `
+              <div style="font-size: 0.7rem; color: #D97706; margin-top: 3px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <i class="fa-solid fa-note-sticky"></i> Note attached
+              </div>` : ''}
+          </td>
+        </tr>
+      `;
+    }
+
+    // Attach row event listeners (status dropdown + notes button)
+    function attachRowEventListeners() {
+      // Status selector change
+      document.querySelectorAll('.status-selector').forEach(sel => {
+        sel.onchange = async () => {
+          const id = sel.getAttribute('data-id');
+          const newStatus = sel.value;
+          sel.disabled = true;
+
+          try {
+            const res = await fetch('/api/admin/leads', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id, status: newStatus })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+              const parentRow = sel.closest('.lead-row');
+              if (parentRow) parentRow.setAttribute('data-status', newStatus);
+              if (data.summary) updateLeadKpis(data.summary);
+            } else {
+              alert(data.message || 'Failed to update status.');
+              // Revert selection
+              const parentRow = sel.closest('.lead-row');
+              if (parentRow) sel.value = parentRow.getAttribute('data-status') || 'new';
+            }
+          } catch {
+            alert('Network error while updating lead status.');
+          } finally {
+            sel.disabled = false;
+          }
+        };
+      });
+
+      // Manage Notes & Details button
+      document.querySelectorAll('.manage-lead-btn').forEach(btn => {
+        btn.onclick = () => {
+          const row = btn.closest('.lead-row');
+          if (!row) return;
+
+          currentEditingLead = {
+            id: row.getAttribute('data-id'),
+            name: row.getAttribute('data-name'),
+            email: row.getAttribute('data-email'),
+            phone: row.getAttribute('data-phone'),
+            company: row.getAttribute('data-company'),
+            inquiry_type: row.getAttribute('data-type'),
+            created_at: row.getAttribute('data-created'),
+            status: row.getAttribute('data-status') || 'new',
+            message: row.getAttribute('data-message') || '',
+            admin_notes: row.getAttribute('data-notes') || ''
+          };
+
+          modalLeadId.textContent = `#${currentEditingLead.id}`;
+          modalLeadName.textContent = currentEditingLead.name || 'Prospect';
+          modalLeadMeta.innerHTML = `
+            <span><i class="fa-regular fa-envelope"></i> ${escapeHtml(currentEditingLead.email)}</span>
+            <span><i class="fa-solid fa-phone"></i> ${escapeHtml(currentEditingLead.phone)}</span>
+            ${currentEditingLead.company ? `<span><i class="fa-regular fa-building"></i> ${escapeHtml(currentEditingLead.company)}</span>` : ''}
+            <span><i class="fa-regular fa-calendar"></i> ${currentEditingLead.created_at ? new Date(currentEditingLead.created_at).toLocaleDateString() : 'Today'}</span>
+          `;
+
+          modalLeadStatus.value = currentEditingLead.status;
+          modalProspectMsg.textContent = currentEditingLead.message || 'No additional message left by prospect.';
+          modalAdminNotes.value = currentEditingLead.admin_notes || '';
+          modalNotesCount.textContent = `${modalAdminNotes.value.length} / 5,000`;
+          modalSaveFeedback.innerHTML = '';
+          modalSaveBtn.disabled = false;
+
+          leadNotesModal.showModal();
+        };
       });
     }
 
-    if (searchInput) searchInput.addEventListener('input', filterLeads);
-    if (statusFilter) statusFilter.addEventListener('change', filterLeads);
+    // Server-side fetch leads with pagination, filters, and search
+    async function fetchLeads(page = 1) {
+      currentLeadPage = page;
+      const params = new URLSearchParams({
+        page: String(currentLeadPage),
+        limit: String(currentLeadLimit),
+        status: currentLeadStatus,
+        search: currentLeadSearch
+      });
 
-    // Live status update handler
-    document.querySelectorAll('.status-selector').forEach(sel => {
-      sel.addEventListener('change', async () => {
-        const id = sel.getAttribute('data-id');
-        const newStatus = sel.value;
+      // Update CSV download link
+      if (exportCsvBtn) {
+        exportCsvBtn.href = `/api/admin/leads?format=csv&status=${currentLeadStatus}&search=${encodeURIComponent(currentLeadSearch)}`;
+      }
 
-        sel.disabled = true;
+      leadsTableBody.innerHTML = `
+        <tr>
+          <td colspan="7" style="padding: 2.5rem 1rem; text-align: center; color: #6B7280;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; color: #059669; margin-bottom: 0.5rem; display: block;"></i>
+            Loading inquiries from database...
+          </td>
+        </tr>
+      `;
+
+      try {
+        const res = await fetch(`/api/admin/leads?${params.toString()}`);
+        if (!res.ok) throw new Error('Failed to load leads');
+        const data = await res.json();
+
+        if (data.success) {
+          const list = data.contacts || [];
+          if (list.length === 0) {
+            leadsTableBody.innerHTML = `
+              <tr>
+                <td colspan="7" style="padding: 3rem 1rem; text-align: center; color: #6B7280;">
+                  <div style="font-size: 2rem; margin-bottom: 0.5rem; color: #D1D5DB;"><i class="fa-solid fa-inbox"></i></div>
+                  <div style="font-weight: 700; color: #111827; font-size: 1rem;">No Matching Inquiries Found</div>
+                  <p style="font-size: 0.85rem; margin-top: 0.25rem; color: #9CA3AF;">Try clearing your search query or selecting a different status filter.</p>
+                </td>
+              </tr>
+            `;
+          } else {
+            leadsTableBody.innerHTML = list.map(buildLeadRowHtml).join('');
+            // Track known IDs
+            list.forEach(c => {
+              if (c.id) {
+                knownLeadIds.add(c.id);
+                if (c.id > latestKnownLeadId) latestKnownLeadId = c.id;
+              }
+            });
+            attachRowEventListeners();
+          }
+
+          // Update pagination controls
+          const p = data.pagination || {};
+          const total = p.total || 0;
+          const start = total === 0 ? 0 : (p.page - 1) * p.limit + 1;
+          const end = Math.min(total, p.page * p.limit);
+
+          if (paginationStart) paginationStart.textContent = String(start);
+          if (paginationEnd) paginationEnd.textContent = String(end);
+          if (paginationTotal) paginationTotal.textContent = String(total);
+          if (paginationPageInd) paginationPageInd.textContent = `Page ${p.page || 1} of ${p.totalPages || 1}`;
+
+          if (paginationPrevBtn) paginationPrevBtn.disabled = !p.hasPrev;
+          if (paginationNextBtn) paginationNextBtn.disabled = !p.hasNext;
+
+          // Update KPI metrics
+          if (data.summary) {
+            updateLeadKpis(data.summary);
+          }
+        }
+      } catch (err) {
+        leadsTableBody.innerHTML = `
+          <tr>
+            <td colspan="7" style="padding: 2.5rem 1rem; text-align: center; color: #DC2626;">
+              <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
+              Failed to load inquiries from server. Please check database connectivity.
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    // Debounced search
+    let searchTimeout = null;
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          currentLeadSearch = (searchInput.value || '').trim();
+          fetchLeads(1);
+        }, 300);
+      });
+    }
+
+    // Status filter dropdown
+    if (statusFilter) {
+      statusFilter.addEventListener('change', () => {
+        currentLeadStatus = statusFilter.value;
+        // Sync status pill active state
+        document.querySelectorAll('.lead-pill-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-status') === currentLeadStatus);
+          btn.style.background = btn.getAttribute('data-status') === currentLeadStatus ? '#0A1C16' : '#F3F4F6';
+          btn.style.color = btn.getAttribute('data-status') === currentLeadStatus ? 'white' : '#374151';
+        });
+        fetchLeads(1);
+      });
+    }
+
+    // Pipeline status pills
+    document.querySelectorAll('.lead-pill-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetStatus = btn.getAttribute('data-status') || 'all';
+        currentLeadStatus = targetStatus;
+        if (statusFilter) statusFilter.value = targetStatus;
+
+        document.querySelectorAll('.lead-pill-btn').forEach(b => {
+          const isActive = b.getAttribute('data-status') === targetStatus;
+          b.classList.toggle('active', isActive);
+          b.style.background = isActive ? '#0A1C16' : '#F3F4F6';
+          b.style.color = isActive ? 'white' : '#374151';
+        });
+
+        fetchLeads(1);
+      });
+    });
+
+    // Pagination limit selector
+    if (paginationLimitSelect) {
+      paginationLimitSelect.addEventListener('change', () => {
+        currentLeadLimit = parseInt(paginationLimitSelect.value, 10) || 25;
+        fetchLeads(1);
+      });
+    }
+
+    // Prev / Next button clicks
+    if (paginationPrevBtn) {
+      paginationPrevBtn.addEventListener('click', () => {
+        if (currentLeadPage > 1) fetchLeads(currentLeadPage - 1);
+      });
+    }
+
+    if (paginationNextBtn) {
+      paginationNextBtn.addEventListener('click', () => {
+        fetchLeads(currentLeadPage + 1);
+      });
+    }
+
+    // Notes character counter
+    if (modalAdminNotes) {
+      modalAdminNotes.addEventListener('input', () => {
+        modalNotesCount.textContent = `${modalAdminNotes.value.length} / 5,000`;
+      });
+    }
+
+    // Save notes and status
+    if (modalSaveBtn) {
+      modalSaveBtn.addEventListener('click', async () => {
+        if (!currentEditingLead) return;
+        const id = currentEditingLead.id;
+        const newStatus = modalLeadStatus.value;
+        const newNotes = modalAdminNotes.value;
+
+        modalSaveBtn.disabled = true;
+        modalSaveFeedback.innerHTML = `<span style="color: #4B5563;"><i class="fa-solid fa-spinner fa-spin"></i> Persisting to Cloudflare D1...</span>`;
+
         try {
           const res = await fetch('/api/admin/leads', {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, status: newStatus })
+            body: JSON.stringify({ id, status: newStatus, admin_notes: newNotes })
           });
-          if (res.ok) {
-            const parentRow = sel.closest('.lead-row');
-            if (parentRow) parentRow.setAttribute('data-status', newStatus);
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            modalSaveFeedback.innerHTML = `<span style="color: #059669;"><i class="fa-solid fa-check"></i> Changes saved successfully!</span>`;
+
+            // Update row in DOM if currently rendered
+            const row = document.querySelector(`.lead-row[data-id="${id}"]`);
+            if (row) {
+              row.setAttribute('data-status', newStatus);
+              row.setAttribute('data-notes', newNotes);
+              const sel = row.querySelector('.status-selector');
+              if (sel) sel.value = newStatus;
+
+              // Update or append note attached icon
+              const actionsTd = row.querySelector('td:last-child');
+              if (actionsTd) {
+                let noteInd = actionsTd.querySelector('.note-snippet-attached');
+                if (newNotes.trim().length > 0) {
+                  if (!noteInd) {
+                    const div = document.createElement('div');
+                    div.className = 'note-snippet-attached';
+                    div.style.cssText = 'font-size: 0.7rem; color: #D97706; margin-top: 3px; display: flex; align-items: center; justify-content: center; gap: 4px;';
+                    div.innerHTML = `<i class="fa-solid fa-note-sticky"></i> Note attached`;
+                    actionsTd.appendChild(div);
+                  }
+                } else if (noteInd) {
+                  noteInd.remove();
+                }
+              }
+            }
+
+            // Update KPIs with fresh authoritative server summary
+            if (data.summary) {
+              updateLeadKpis(data.summary);
+            }
+
+            setTimeout(() => {
+              leadNotesModal.close();
+              modalSaveFeedback.innerHTML = '';
+            }, 600);
           } else {
-            alert('Failed to update status.');
+            modalSaveFeedback.innerHTML = `<span style="color: #DC2626;"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(data.message || 'Save failed.')}</span>`;
+            modalSaveBtn.disabled = false;
           }
         } catch {
-          alert('Network error while updating status.');
-        } finally {
-          sel.disabled = false;
+          modalSaveFeedback.innerHTML = `<span style="color: #DC2626;"><i class="fa-solid fa-triangle-exclamation"></i> Network error while persisting notes.</span>`;
+          modalSaveBtn.disabled = false;
         }
       });
-    });
+    }
 
-    // Modal view
-    document.querySelectorAll('.view-note-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const name = btn.getAttribute('data-name');
-        const message = btn.getAttribute('data-message');
-        modalLeadName.textContent = `Inquiry Note: ${name}`;
-        modalLeadMessage.textContent = message;
-        dialog.showModal();
+    if (modalCancelBtn) modalCancelBtn.addEventListener('click', () => leadNotesModal.close());
+    if (modalCloseX) modalCloseX.addEventListener('click', () => leadNotesModal.close());
+
+    // In-App Toast notification for newly arrived leads
+    function showNewLeadToast(lead) {
+      if (!toastContainer) return;
+      const toast = document.createElement('div');
+      toast.style.cssText = 'background: #0A1C16; color: white; border: 1px solid #10B981; border-radius: 12px; padding: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); pointer-events: auto; animation: pulse 0.3s ease; display: flex; flex-direction: column; gap: 6px;';
+      toast.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #4ADE80; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #4ADE80; display: inline-block;"></span> New Inquiry Received!
+          </span>
+          <button class="toast-close-btn" style="background: none; border: none; color: #9CA3AF; cursor: pointer; font-size: 1.1rem; line-height: 1;">&times;</button>
+        </div>
+        <div style="font-weight: 700; font-size: 0.95rem; color: white;">${escapeHtml(lead.name)}</div>
+        <div style="font-size: 0.8rem; color: #D1D5DB;">${escapeHtml(lead.company || lead.phone || lead.inquiry_type)}</div>
+        <button class="toast-view-btn" data-id="${lead.id}" style="align-self: flex-start; margin-top: 4px; background: rgba(74, 222, 128, 0.15); color: #4ADE80; border: 1px solid rgba(74, 222, 128, 0.3); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">
+          View Lead &rarr;
+        </button>
+      `;
+
+      toast.querySelector('.toast-close-btn')?.addEventListener('click', () => toast.remove());
+      toast.querySelector('.toast-view-btn')?.addEventListener('click', () => {
+        toast.remove();
+        // Open lead modal directly
+        currentEditingLead = lead;
+        modalLeadId.textContent = `#${lead.id}`;
+        modalLeadName.textContent = lead.name || 'Prospect';
+        modalLeadMeta.innerHTML = `
+          <span><i class="fa-regular fa-envelope"></i> ${escapeHtml(lead.email)}</span>
+          <span><i class="fa-solid fa-phone"></i> ${escapeHtml(lead.phone)}</span>
+          ${lead.company ? `<span><i class="fa-regular fa-building"></i> ${escapeHtml(lead.company)}</span>` : ''}
+          <span><i class="fa-regular fa-calendar"></i> Today</span>
+        `;
+        modalLeadStatus.value = lead.status || 'new';
+        modalProspectMsg.textContent = lead.message || 'No additional message left by prospect.';
+        modalAdminNotes.value = lead.admin_notes || '';
+        modalNotesCount.textContent = `${modalAdminNotes.value.length} / 5,000`;
+        modalSaveFeedback.innerHTML = '';
+        modalSaveBtn.disabled = false;
+        leadNotesModal.showModal();
       });
+
+      toastContainer.appendChild(toast);
+      setTimeout(() => { if (toast.parentNode) toast.remove(); }, 10000);
+    }
+
+    // Real-time polling for new leads (every 20 seconds while tab is active)
+    async function pollForNewLeads() {
+      if (document.visibilityState === 'hidden') return;
+      if (isLeadPolling) return;
+      isLeadPolling = true;
+
+      try {
+        const res = await fetch(`/api/admin/leads?since_id=${latestKnownLeadId}&limit=10`);
+        if (!res.ok) {
+          if (syncIndicator) {
+            syncIndicator.innerHTML = `<span style="width: 6px; height: 6px; border-radius: 50%; background: #F59E0B; display: inline-block;"></span> Reconnecting...`;
+            syncIndicator.style.color = '#D97706';
+          }
+          return;
+        }
+
+        if (syncIndicator) {
+          syncIndicator.innerHTML = `<span style="width: 6px; height: 6px; border-radius: 50%; background: #059669; display: inline-block;"></span> Live Sync Active`;
+          syncIndicator.style.color = '#059669';
+        }
+
+        const data = await res.json();
+        if (data.success && Array.isArray(data.contacts) && data.contacts.length > 0) {
+          const freshLeads = data.contacts.filter(c => c.id && !knownLeadIds.has(c.id));
+          if (freshLeads.length > 0) {
+            freshLeads.forEach(lead => {
+              knownLeadIds.add(lead.id);
+              if (lead.id > latestKnownLeadId) latestKnownLeadId = lead.id;
+
+              // 1. In-app toast alert
+              showNewLeadToast(lead);
+
+              // 2. Prepend row to table if on page 1 and matches active status filter
+              if (currentLeadPage === 1 && (currentLeadStatus === 'all' || currentLeadStatus === lead.status)) {
+                const emptyRow = leadsTableBody.querySelector('td[colspan="7"]')?.closest('tr');
+                if (emptyRow) emptyRow.remove();
+
+                const tempDiv = document.createElement('tbody');
+                tempDiv.innerHTML = buildLeadRowHtml(lead);
+                const newRow = tempDiv.firstElementChild;
+                if (newRow) {
+                  newRow.style.background = '#ECFDF5';
+                  leadsTableBody.insertBefore(newRow, leadsTableBody.firstChild);
+                  setTimeout(() => { newRow.style.transition = 'background 2s ease'; newRow.style.background = ''; }, 3000);
+                }
+              }
+            });
+
+            attachRowEventListeners();
+
+            // 3. Update KPI counters with authoritative summary
+            if (data.summary) {
+              updateLeadKpis(data.summary);
+            }
+          }
+        }
+      } catch {
+        if (syncIndicator) {
+          syncIndicator.innerHTML = `<span style="width: 6px; height: 6px; border-radius: 50%; background: #F59E0B; display: inline-block;"></span> Reconnecting...`;
+          syncIndicator.style.color = '#D97706';
+        }
+      } finally {
+        isLeadPolling = false;
+      }
+    }
+
+    // Initial event listener binding for server-rendered rows
+    attachRowEventListeners();
+
+    // Start background polling every 20 seconds
+    setInterval(pollForNewLeads, 20000);
+
+    // Poll immediately when tab becomes visible after backgrounding
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        pollForNewLeads();
+      }
     });
 
-    if (closeModalBtn) {
-      closeModalBtn.addEventListener('click', () => dialog.close());
+    // Wire secure POST logout
+    const logoutBtn = document.getElementById('btn-admin-logout');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        logoutBtn.disabled = true;
+        logoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging out...';
+        try {
+          await fetch('/api/admin/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+        } finally {
+          window.location.href = '/admin/login';
+        }
+      });
     }
   </script>
 

@@ -10,10 +10,12 @@
     "build": "npx -y tailwindcss@3 -i src/styles/tailwind-input.css -o public/css/tailwind.css --minify -c tailwind.config.cjs && astro build && node scripts/prepare-cloudflare.js",
     "pages:build": "npx -y tailwindcss@3 -i src/styles/tailwind-input.css -o public/css/tailwind.css --minify -c tailwind.config.cjs && astro build && node scripts/prepare-cloudflare.js",
     "preview": "astro preview",
-    "test:security": "node tests/p0-auth-security.test.mjs",
+    "test:security": "node --experimental-strip-types tests/p0-security-remediation.test.mjs && node tests/p0-auth-security.test.mjs",
     "test:gsc": "node tests/p1-gsc.test.mjs",
     "test:analytics": "node tests/p1-analytics.test.mjs",
-    "test:all": "node tests/p0-auth-security.test.mjs && node tests/p1-gsc.test.mjs && node tests/p1-analytics.test.mjs",
+    "test:leads": "node --experimental-strip-types tests/p1-leads.test.mjs",
+    "test:hardening": "node --experimental-strip-types tests/p2-hardening-perf.test.mjs",
+    "test:all": "node --experimental-strip-types tests/p0-security-remediation.test.mjs && node tests/p0-auth-security.test.mjs && node tests/p1-gsc.test.mjs && node tests/p1-analytics.test.mjs && node --experimental-strip-types tests/p1-leads.test.mjs && node --experimental-strip-types tests/p2-hardening-perf.test.mjs",
     "astro": "astro"
   },
   "dependencies": {

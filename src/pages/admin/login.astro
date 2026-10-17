@@ -3,7 +3,7 @@ export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
 import { getRuntimeEnv } from '../../lib/env';
-import { verifySessionToken } from '../../lib/auth';
+import { verifySessionToken, sanitizeRedirectUrl } from '../../lib/auth';
 
 // Check if user is already authenticated with a valid cryptographic session
 const sessionCookie = Astro.cookies.get('sahyak_admin_session')?.value;
@@ -19,7 +19,8 @@ if (sessionCookie && sessionCookie.startsWith('session_')) {
     if (sessionSecret) {
       const verification = await verifySessionToken(sessionCookie, sessionSecret, adminEmailsConfig, env.DB);
       if (verification.valid) {
-        return Astro.redirect('/admin');
+        const targetRedirect = sanitizeRedirectUrl(Astro.url.searchParams.get('redirect'), '/admin');
+        return Astro.redirect(targetRedirect);
       }
     }
   } catch {}
@@ -94,9 +95,41 @@ const seoDesc = "Secure administrator portal access for Sahyak Real Estate CRM."
           const data = await res.json();
 
           if (res.ok && data.success) {
-            // Get redirect destination if specified in query
+            // Strictly sanitize redirect destination to eliminate Open Redirect vulnerabilities
+            function getSafeRedirectUrl(raw) {
+              if (!raw || typeof raw !== 'string') return '/admin';
+              const trimmed = raw.trim();
+              if (!trimmed) return '/admin';
+              // Reject control characters (0x00 - 0x1F, 0x7F - 0x9F)
+              if (/[\u0000-\u001F\u007F-\u009F]/.test(trimmed)) return '/admin';
+              // Reject backslashes anywhere before query/hash
+              const pathPart = trimmed.split('?')[0].split('#')[0];
+              if (pathPart.includes('\\')) return '/admin';
+              // Reject protocol-relative or backslash-prefixed paths
+              if (!trimmed.startsWith('/') || trimmed.startsWith('//') || trimmed.startsWith('/\\')) return '/admin';
+              // Reject explicit schemes (e.g. javascript:, data:, https:)
+              if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) return '/admin';
+
+              try {
+                // Parse relative to current origin to inspect standard URL component resolution
+                const parsed = new URL(trimmed, window.location.origin);
+                if (parsed.origin !== window.location.origin) return '/admin';
+                if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '/admin';
+                if (!parsed.pathname.startsWith('/') || parsed.pathname.startsWith('//')) return '/admin';
+
+                const cleanRelative = parsed.pathname + parsed.search + parsed.hash;
+                // Restrict redirect strictly to admin portal routes
+                if (cleanRelative !== '/admin' && !cleanRelative.startsWith('/admin/') && !cleanRelative.startsWith('/admin?') && !cleanRelative.startsWith('/admin#')) {
+                  return '/admin';
+                }
+                return cleanRelative;
+              } catch {
+                return '/admin';
+              }
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
-            const redirectUrl = urlParams.get('redirect') || '/admin';
+            const redirectUrl = getSafeRedirectUrl(urlParams.get('redirect'));
             window.location.href = redirectUrl;
           } else {
             alertEl.textContent = data.message || 'Authentication failed. Please check your credentials.';

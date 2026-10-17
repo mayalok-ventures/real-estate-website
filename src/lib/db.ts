@@ -74,7 +74,9 @@ export async function ensureTables(db: D1Database | undefined): Promise<void> {
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           last_active_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
-      `)
+      `),
+      db.prepare(`CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status)`),
+      db.prepare(`CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at)`)
     ]);
 
     // Check if resources have initial seeds
@@ -151,6 +153,37 @@ const memoryResources: ResourceItem[] = [
   }
 ];
 
+export interface ContactFilterOptions {
+  status?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+  sinceId?: number;
+  forExport?: boolean;
+}
+
+export interface LeadSummary {
+  total: number;
+  new: number;
+  contacted: number;
+  qualified: number;
+  closed: number;
+  archived: number;
+}
+
+export interface PaginatedContactsResult {
+  contacts: ContactSubmission[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+  summary: LeadSummary;
+}
+
+export { sanitizeCsvCell } from './csv.ts';
+
 export async function insertContact(db: D1Database | undefined, contact: ContactSubmission): Promise<number> {
   if (db) {
     await ensureTables(db);
@@ -172,7 +205,7 @@ export async function insertContact(db: D1Database | undefined, contact: Contact
     return result.meta?.last_row_id || 1;
   }
 
-  // Fallback in-memory
+  // Safe fallback for local development or test mocks
   const newId = memoryContacts.length + 1;
   const newContact: ContactSubmission = {
     ...contact,
@@ -184,55 +217,203 @@ export async function insertContact(db: D1Database | undefined, contact: Contact
   return newId;
 }
 
+export async function getLeadSummary(db: D1Database | undefined): Promise<LeadSummary> {
+  const summary: LeadSummary = { total: 0, new: 0, contacted: 0, qualified: 0, closed: 0, archived: 0 };
+  if (db) {
+    await ensureTables(db);
+    try {
+      const rows = await db.prepare(`SELECT status, count(*) as count FROM contacts GROUP BY status`).all<{ status: string; count: number }>();
+      if (rows.results) {
+        for (const r of rows.results) {
+          const c = Number(r.count) || 0;
+          summary.total += c;
+          if (r.status === 'new') summary.new = c;
+          else if (r.status === 'contacted') summary.contacted = c;
+          else if (r.status === 'qualified') summary.qualified = c;
+          else if (r.status === 'closed') summary.closed = c;
+          else if (r.status === 'archived') summary.archived = c;
+        }
+      }
+    } catch (e) {
+      console.error('[DB] Failed to fetch lead summary:', e);
+    }
+    return summary;
+  }
+
+  // Memory fallback for mock/local test runs
+  for (const c of memoryContacts) {
+    summary.total++;
+    const s = c.status || 'new';
+    if (s === 'new') summary.new++;
+    else if (s === 'contacted') summary.contacted++;
+    else if (s === 'qualified') summary.qualified++;
+    else if (s === 'closed') summary.closed++;
+    else if (s === 'archived') summary.archived++;
+  }
+  return summary;
+}
+
+export async function getContactsWithCount(
+  db: D1Database | undefined,
+  options?: ContactFilterOptions
+): Promise<PaginatedContactsResult> {
+  const page = Math.max(1, parseInt(String(options?.page || 1), 10) || 1);
+  const requestedLimit = parseInt(String(options?.limit || 25), 10) || 25;
+  const limit = Math.max(1, Math.min(100, requestedLimit));
+  const offset = (page - 1) * limit;
+  const sinceId = options?.sinceId ? Math.max(0, parseInt(String(options.sinceId), 10) || 0) : 0;
+  const forExport = Boolean(options?.forExport);
+
+  if (db) {
+    await ensureTables(db);
+
+    const conditions: string[] = [];
+    const params: any[] = [];
+
+    if (sinceId > 0) {
+      conditions.push('id > ?');
+      params.push(sinceId);
+    }
+    if (options?.status && options.status !== 'all') {
+      conditions.push('status = ?');
+      params.push(options.status);
+    }
+    if (options?.search) {
+      const term = `%${options.search.trim()}%`;
+      conditions.push('(name LIKE ? OR email LIKE ? OR phone LIKE ? OR company LIKE ?)');
+      params.push(term, term, term, term);
+    }
+
+    const whereClause = conditions.length > 0 ? ` WHERE ` + conditions.join(' AND ') : '';
+
+    // 1. Fetch matching total count
+    const countQuery = `SELECT count(*) as total FROM contacts` + whereClause;
+    const countRes = await db.prepare(countQuery).bind(...params).first<{ total: number }>();
+    const total = Number(countRes?.total) || 0;
+
+    // 2. Fetch contacts with deterministic ordering (tie-breaker on id DESC)
+    let dataQuery = `SELECT * FROM contacts` + whereClause;
+    const dataParams = [...params];
+
+    if (sinceId > 0) {
+      dataQuery += ` ORDER BY id ASC LIMIT ?`;
+      dataParams.push(limit);
+    } else if (forExport) {
+      dataQuery += ` ORDER BY created_at DESC, id DESC LIMIT 10000`;
+    } else {
+      dataQuery += ` ORDER BY created_at DESC, id DESC LIMIT ? OFFSET ?`;
+      dataParams.push(limit, offset);
+    }
+
+    const result = await db.prepare(dataQuery).bind(...dataParams).all<ContactSubmission>();
+    const contacts = result.results || [];
+
+    // 3. Fetch authoritative pipeline summary
+    const summary = await getLeadSummary(db);
+
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+
+    return {
+      contacts,
+      total,
+      page,
+      limit,
+      totalPages,
+      hasNext: page < totalPages,
+      hasPrev: page > 1,
+      summary
+    };
+  }
+
+  // Memory fallback for mock/local test runs
+  let list = [...memoryContacts];
+  if (sinceId > 0) {
+    list = list.filter(c => (c.id || 0) > sinceId);
+  }
+  if (options?.status && options.status !== 'all') {
+    list = list.filter(c => c.status === options.status);
+  }
+  if (options?.search) {
+    const s = options.search.toLowerCase().trim();
+    list = list.filter(c =>
+      (c.name || '').toLowerCase().includes(s) ||
+      (c.email || '').toLowerCase().includes(s) ||
+      (c.phone || '').includes(s) ||
+      (c.company || '').toLowerCase().includes(s)
+    );
+  }
+
+  const total = list.length;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const contacts = forExport ? list : list.slice(offset, offset + limit);
+  const summary = await getLeadSummary(undefined);
+
+  return {
+    contacts,
+    total,
+    page,
+    limit,
+    totalPages,
+    hasNext: page < totalPages,
+    hasPrev: page > 1,
+    summary
+  };
+}
+
 export async function getContacts(
   db: D1Database | undefined,
   filter?: { status?: string; search?: string; limit?: number; offset?: number }
 ): Promise<ContactSubmission[]> {
   const limit = filter?.limit || 50;
   const offset = filter?.offset || 0;
+  const page = Math.floor(offset / limit) + 1;
 
+  const result = await getContactsWithCount(db, {
+    status: filter?.status,
+    search: filter?.search,
+    page,
+    limit
+  });
+  return result.contacts;
+}
+
+export async function updateContact(
+  db: D1Database | undefined,
+  id: number,
+  updates: { status?: string; admin_notes?: string | null }
+): Promise<boolean> {
   if (db) {
     await ensureTables(db);
-    let query = `SELECT * FROM contacts`;
+    const sets: string[] = ['updated_at = CURRENT_TIMESTAMP'];
     const params: any[] = [];
-    const conditions: string[] = [];
 
-    if (filter?.status && filter.status !== 'all') {
-      conditions.push(`status = ?`);
-      params.push(filter.status);
+    if (updates.status !== undefined) {
+      sets.push('status = ?');
+      params.push(updates.status);
     }
-    if (filter?.search) {
-      conditions.push(`(name LIKE ? OR email LIKE ? OR phone LIKE ? OR company LIKE ?)`);
-      const searchPattern = `%${filter.search}%`;
-      params.push(searchPattern, searchPattern, searchPattern, searchPattern);
+    if (updates.admin_notes !== undefined) {
+      sets.push('admin_notes = ?');
+      params.push(updates.admin_notes);
     }
 
-    if (conditions.length > 0) {
-      query += ` WHERE ` + conditions.join(' AND ');
+    if (sets.length === 1) {
+      return true; // No updates requested
     }
 
-    query += ` ORDER BY created_at DESC LIMIT ? OFFSET ?`;
-    params.push(limit, offset);
-
-    const result = await db.prepare(query).bind(...params).all<ContactSubmission>();
-    return result.results || [];
+    params.push(id);
+    const query = `UPDATE contacts SET ${sets.join(', ')} WHERE id = ?`;
+    await db.prepare(query).bind(...params).run();
+    return true;
   }
 
-  // Memory fallback
-  let list = [...memoryContacts];
-  if (filter?.status && filter.status !== 'all') {
-    list = list.filter(c => c.status === filter.status);
+  const found = memoryContacts.find(c => c.id === id);
+  if (found) {
+    if (updates.status !== undefined) found.status = updates.status as any;
+    if (updates.admin_notes !== undefined) found.admin_notes = updates.admin_notes;
+    found.updated_at = new Date().toISOString();
+    return true;
   }
-  if (filter?.search) {
-    const s = filter.search.toLowerCase();
-    list = list.filter(c =>
-      c.name.toLowerCase().includes(s) ||
-      c.email.toLowerCase().includes(s) ||
-      c.phone.includes(s) ||
-      (c.company && c.company.toLowerCase().includes(s))
-    );
-  }
-  return list.slice(offset, offset + limit);
+  return true;
 }
 
 export async function updateContactStatus(
@@ -241,22 +422,7 @@ export async function updateContactStatus(
   status: string,
   adminNotes?: string
 ): Promise<boolean> {
-  if (db) {
-    await ensureTables(db);
-    await db.prepare(
-      `UPDATE contacts SET status = ?, admin_notes = COALESCE(?, admin_notes), updated_at = CURRENT_TIMESTAMP WHERE id = ?`
-    ).bind(status, adminNotes || null, id).run();
-    return true;
-  }
-
-  const found = memoryContacts.find(c => c.id === id);
-  if (found) {
-    found.status = status as any;
-    if (adminNotes) found.admin_notes = adminNotes;
-    found.updated_at = new Date().toISOString();
-    return true;
-  }
-  return false;
+  return updateContact(db, id, { status, admin_notes: adminNotes });
 }
 
 export async function getResources(db: D1Database | undefined): Promise<ResourceItem[]> {

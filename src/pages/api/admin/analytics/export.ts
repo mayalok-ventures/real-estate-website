@@ -30,8 +30,9 @@ export const GET: APIRoute = async ({ url, locals }) => {
       }
     });
   } catch (err: any) {
+    const isDbUnavailable = err.message?.includes('database binding is unconfigured') || err.message?.includes('unavailable');
     return new Response(`Error generating CSV: ${err.message}`, {
-      status: 500,
+      status: isDbUnavailable ? 503 : 500,
       headers: { 'Content-Type': 'text/plain' }
     });
   }

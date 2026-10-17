@@ -203,7 +203,43 @@ await runTest('Same-origin PATCH /api/admin/leads -> 200 OK', async () => {
   assert(json.success === true, 'Expected mutation success to be true');
 });
 
-// Test 14: Logout clears session cookie
+// Test 14: P0-B Open Redirect protection when already authenticated
+await runTest('P0-B: Open redirect target https://evil.com safely falls back to /admin', async () => {
+  assert(validSessionCookie.length > 0, 'Valid session cookie required');
+  const res = await fetch(`${BASE_URL}/admin/login?redirect=https://evil.com`, {
+    headers: { Cookie: validSessionCookie },
+    redirect: 'manual'
+  });
+  assert(res.status === 302, `Expected 302 redirect, got ${res.status}`);
+  const location = res.headers.get('location') || '';
+  assert(location === '/admin', `Expected redirect to '/admin', got: '${location}'`);
+});
+
+// Test 15: P0-B Protocol-relative open redirect protection
+await runTest('P0-B: Protocol-relative //evil.com safely falls back to /admin', async () => {
+  assert(validSessionCookie.length > 0, 'Valid session cookie required');
+  const res = await fetch(`${BASE_URL}/admin/login?redirect=//evil.com`, {
+    headers: { Cookie: validSessionCookie },
+    redirect: 'manual'
+  });
+  assert(res.status === 302, `Expected 302 redirect, got ${res.status}`);
+  const location = res.headers.get('location') || '';
+  assert(location === '/admin', `Expected redirect to '/admin', got: '${location}'`);
+});
+
+// Test 16: P0-B Legitimate internal deep link is preserved
+await runTest('P0-B: Legitimate deep link /admin/leads is preserved', async () => {
+  assert(validSessionCookie.length > 0, 'Valid session cookie required');
+  const res = await fetch(`${BASE_URL}/admin/login?redirect=/admin/leads`, {
+    headers: { Cookie: validSessionCookie },
+    redirect: 'manual'
+  });
+  assert(res.status === 302, `Expected 302 redirect, got ${res.status}`);
+  const location = res.headers.get('location') || '';
+  assert(location === '/admin/leads', `Expected redirect to '/admin/leads', got: '${location}'`);
+});
+
+// Test 17: Logout clears session cookie
 await runTest('POST /api/admin/logout -> 200 OK and purges cookie', async () => {
   assert(validSessionCookie.length > 0, 'Valid session cookie required');
   const res = await fetch(`${BASE_URL}/api/admin/logout`, {
@@ -214,6 +250,41 @@ await runTest('POST /api/admin/logout -> 200 OK and purges cookie', async () => 
   const setCookie = res.headers.get('set-cookie');
   assert(setCookie && (setCookie.includes('Max-Age=0') || setCookie.includes('Expires=') || setCookie.includes('deleted')), 'Expected cookie deletion header');
 });
+
+// Test 18: P0-A Spoofed Cf-Access-Authenticated-User-Email header without valid JWT assertion is rejected on API
+await runTest('P0-A: Spoofed Cf-Access-Authenticated-User-Email on API -> 401 Unauthorized', async () => {
+  const res = await fetch(`${BASE_URL}/api/admin/leads`, {
+    headers: {
+      'Cf-Access-Authenticated-User-Email': 'admin@sahyak.com',
+      'Content-Type': 'application/json'
+    }
+  });
+  assert(res.status === 401, `Expected status 401, got ${res.status}`);
+  const json = await res.json();
+  assert(json.success === false, 'Expected success to be false');
+});
+
+// Test 19: P0-A Spoofed Cf-Access-Authenticated-User-Email header on UI route redirects to login
+await runTest('P0-A: Spoofed Cf-Access-Authenticated-User-Email on /admin -> Redirects to login', async () => {
+  const res = await fetch(`${BASE_URL}/admin`, {
+    headers: {
+      'Cf-Access-Authenticated-User-Email': 'admin@sahyak.com'
+    },
+    redirect: 'manual'
+  });
+  assert(res.status === 302, `Expected 302 redirect, got ${res.status}`);
+  const location = res.headers.get('location') || '';
+  assert(location.includes('/admin/login'), `Expected redirect to /admin/login, got: ${location}`);
+});
+
+// Test 20: Public routes remain accessible without authentication
+const publicRoutes = ['/', '/pricing', '/about', '/contact'];
+for (const pRoute of publicRoutes) {
+  await runTest(`Public route ${pRoute} is accessible without authentication`, async () => {
+    const res = await fetch(`${BASE_URL}${pRoute}`);
+    assert(res.status === 200, `Expected status 200 on ${pRoute}, got ${res.status}`);
+  });
+}
 
 console.log('\n====================================================');
 console.log(`SUMMARY: ${results.filter(r => r.status === 'PASS').length}/${results.length} TESTS PASSED`);

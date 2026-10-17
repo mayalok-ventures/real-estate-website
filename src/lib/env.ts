@@ -7,6 +7,8 @@ export interface ProductionRuntimeEnv {
   ADMIN_SESSION_SECRET: string;
   ADMIN_EMAILS: string;
   ADMIN_SECRET: string;
+  CF_ACCESS_TEAM_NAME: string;
+  CF_ACCESS_AUD: string;
   CLOUDFLARE_D1_DATABASE_ID: string;
   CLOUDFLARE_D1_DATABASE_NAME: string;
   CONTACT_EMAIL: string;
@@ -123,6 +125,8 @@ export async function getRuntimeEnv(contextOrLocals?: any): Promise<ProductionRu
     ADMIN_SESSION_SECRET: adminSessionSecret,
     ADMIN_EMAILS: getVal('ADMIN_EMAILS', 'admin@sahyak.com,team@sahyak.com,support@sahyak.com'),
     ADMIN_SECRET: adminSecret,
+    CF_ACCESS_TEAM_NAME: getVal('CF_ACCESS_TEAM_NAME', ''),
+    CF_ACCESS_AUD: getVal('CF_ACCESS_AUD', ''),
     CLOUDFLARE_D1_DATABASE_ID: getVal('CLOUDFLARE_D1_DATABASE_ID', '29ac8dce-f4f3-4878-aa36-53648608b38c'),
     CLOUDFLARE_D1_DATABASE_NAME: getVal('CLOUDFLARE_D1_DATABASE_NAME', 'mobile-crm-website'),
     CONTACT_EMAIL: getVal('CONTACT_EMAIL', 'support@sahyak.com'),

@@ -143,3 +143,35 @@ test('9. Protected API routes: /api/admin/gsc/inspect requires admin authenticat
   });
   assert.strictEqual(res.status, 401);
 });
+
+test('10. SSRF Defense: cross-origin inspection targets are rejected', async () => {
+  const res = await inspectUrl('http://169.254.169.254/latest/meta-data', 'https://sahyak.com');
+  assert.strictEqual(res.verdict, 'HTTP_ERROR');
+  assert.strictEqual(res.httpStatus, 400);
+  assert.ok(res.title.includes('SSRF Protection'));
+  assert.ok(res.inspectionMessage.includes('rejected to prevent SSRF'));
+
+  const evilRes = await inspectUrl('https://evil.com/phishing', 'https://sahyak.com');
+  assert.strictEqual(evilRes.verdict, 'HTTP_ERROR');
+  assert.strictEqual(evilRes.httpStatus, 400);
+});
+
+test('11. Private Key Length: truncated 40-character private_key_id returns actionable error and invalid format flag', async () => {
+  const dummy40Key = '-----BEGIN PRIVATE KEY-----\n328901234567890123456789012345678901b059\n-----END PRIVATE KEY-----';
+  const result = await getSearchConsoleData({
+    GOOGLE_SEARCH_CONSOLE_CLIENT_EMAIL: 'sa@project.iam.gserviceaccount.com',
+    GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY: dummy40Key
+  }, { range: '28d', forceRefresh: true });
+
+  assert.strictEqual(result.status, 'auth_error');
+  assert.strictEqual(result.isKeyFormatValid, false);
+  assert.ok(result.statusMessage.includes('private_key_id') || result.statusMessage.includes('too short'));
+});
+
+test('12. GSC Property Normalization: URL-prefix vs domain properties', async () => {
+  const { normalizeGscProperty } = await import('../src/lib/googleSearchConsole.ts');
+  assert.strictEqual(normalizeGscProperty('https://sahyak.com'), 'https://sahyak.com/');
+  assert.strictEqual(normalizeGscProperty('https://sahyak.com/'), 'https://sahyak.com/');
+  assert.strictEqual(normalizeGscProperty('sc-domain:sahyak.com'), 'sc-domain:sahyak.com');
+});
+

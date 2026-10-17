@@ -119,16 +119,24 @@
       // 1. Initial Pageview
       sendTrack('pageview', false);
 
-      // 2. Heartbeat every 15 seconds to track active presence
+      // 2. Heartbeat every 10 seconds to track active presence (skips inactive/background tabs)
       const heartbeatInterval = setInterval(function() {
+        if (document.visibilityState === 'hidden') return;
         sendTrack('heartbeat', false);
-      }, 15000);
+      }, 10000);
 
       // 3. Page visibility change / leave beacon
       document.addEventListener('visibilitychange', function() {
         if (document.visibilityState === 'hidden') {
+          // Commit accumulated time for current section before pausing tracking
+          const now = Date.now();
+          const elapsed = Math.round((now - currentSectionStart) / 1000);
+          if (elapsed > 0) {
+            sectionDurations[currentVisibleSection] = (sectionDurations[currentVisibleSection] || 0) + elapsed;
+          }
           sendTrack('leave', true);
         } else {
+          // Resume section timing from current moment (excludes background time)
           currentSectionStart = Date.now();
           sendTrack('heartbeat', false);
         }
@@ -136,6 +144,11 @@
 
       window.addEventListener('pagehide', function() {
         clearInterval(heartbeatInterval);
+        const now = Date.now();
+        const elapsed = Math.round((now - currentSectionStart) / 1000);
+        if (elapsed > 0) {
+          sectionDurations[currentVisibleSection] = (sectionDurations[currentVisibleSection] || 0) + elapsed;
+        }
         sendTrack('leave', true);
       });
 
